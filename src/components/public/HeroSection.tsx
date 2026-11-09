@@ -2,22 +2,57 @@ import Link from "next/link";
 import { ShieldCheck, Sun, CheckCircle2, ArrowRight } from "lucide-react";
 import LeadCaptureForm from "@/components/forms/LeadCaptureForm";
 import connectDB from "@/lib/db/connection";
+import Setting from "@/models/Setting";
 import Page from "@/models/Page";
 
 export default async function HeroSection() {
-  let homePage: any = null;
+  let heroData = {
+    badge: "Certified Solar EPC • Bihar | Jharkhand | Uttar Pradesh",
+    headline: "Power Your Future with Solar Energy",
+    subheading:
+      "Reliable Solar Panel Solutions & Professional Installation Across Bihar, Jharkhand, and Uttar Pradesh. Complete engineering, DISCOM net metering liaison, and PM Surya Ghar subsidy guidance.",
+    checkpoints: [
+      "Modules from 10W to 730W",
+      "Up to ₹78,000 Govt Subsidy Guidance",
+      "Heavy-Duty Hot-Dip Galvanized Mounts",
+      "25-Year Linear Power Warranty",
+    ],
+    ctaPrimaryText: "Get Free Solar Consultation",
+    ctaPrimaryLink: "/get-quote",
+    ctaSecondaryText: "Explore Real Installations",
+    ctaSecondaryLink: "/projects",
+    transparencyNote:
+      "Strict Transparency: No hidden costs. Zero public pricing fabrication. Private quotations only.",
+  };
+
   try {
     await connectDB();
-    homePage = await Page.findOne({ slug: "home", isPublished: true }).lean();
+    const [homeSetting, homePage] = await Promise.all([
+      Setting.findOne({ key: "homepage" }).lean(),
+      Page.findOne({ slug: "home", isPublished: true }).lean(),
+    ]);
+
+    if (homeSetting && homeSetting.value) {
+      const val: any = homeSetting.value;
+      if (val.hero) {
+        heroData = { ...heroData, ...val.hero };
+      } else {
+        if (val.headline) heroData.headline = val.headline;
+        if (val.subheading) heroData.subheading = val.subheading;
+      }
+    } else if (homePage) {
+      if (homePage.heroHeading) heroData.headline = homePage.heroHeading;
+      if (homePage.heroSubtitle) heroData.subheading = homePage.heroSubtitle;
+      if (homePage.sections?.[0]?.badgeText) heroData.badge = homePage.sections[0].badgeText;
+    }
   } catch (e) {
     // fallback gracefully
   }
 
-  const badgeText = homePage?.sections?.[0]?.badgeText || "Certified Solar EPC • Bihar | Jharkhand | Uttar Pradesh";
-  const heroHeading = homePage?.heroHeading || "Power Your Future with Solar Energy";
-  const heroSubtitle =
-    homePage?.heroSubtitle ||
-    "Reliable Solar Panel Solutions & Professional Installation Across Bihar, Jharkhand, and Uttar Pradesh. Complete engineering, DISCOM net metering liaison, and PM Surya Ghar subsidy guidance.";
+  const badgeText = heroData.badge;
+  const heroHeading = heroData.headline;
+  const heroSubtitle = heroData.subheading;
+  const checkpoints = heroData.checkpoints || [];
 
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-navy-900 via-navy-800 to-navy-900 text-white py-16 lg:py-24">
@@ -52,44 +87,34 @@ export default async function HeroSection() {
 
             {/* Quick trust checklist */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs sm:text-sm text-slate-200">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-solar-green shrink-0" />
-                <span>Modules from <strong>10W to 730W</strong></span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-solar-green shrink-0" />
-                <span>Up to ₹78,000 Govt Subsidy Guidance</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-solar-green shrink-0" />
-                <span>Heavy-Duty Hot-Dip Galvanized Mounts</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-solar-green shrink-0" />
-                <span>25-Year Linear Power Warranty</span>
-              </div>
+              {checkpoints.map((cp: string, idx: number) => (
+                <div key={idx} className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-solar-green shrink-0" />
+                  <span>{cp}</span>
+                </div>
+              ))}
             </div>
 
             {/* CTAs */}
             <div className="flex flex-wrap items-center gap-4 pt-4">
               <Link
-                href="/get-quote"
+                href={heroData.ctaPrimaryLink || "/get-quote"}
                 className="px-6 py-3.5 rounded-xl font-bold text-sm bg-solar-green text-white hover:bg-solar-green-hover shadow-lg shadow-solar-green/30 flex items-center gap-2 transition-transform hover:scale-105 active:scale-95"
               >
-                <span>Get Free Solar Consultation</span>
+                <span>{heroData.ctaPrimaryText || "Get Free Solar Consultation"}</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
-                href="/projects"
+                href={heroData.ctaSecondaryLink || "/projects"}
                 className="px-6 py-3.5 rounded-xl font-bold text-sm bg-white/10 text-white hover:bg-white/20 border border-white/20 backdrop-blur-sm transition-colors"
               >
-                Explore Real Installations
+                {heroData.ctaSecondaryText || "Explore Real Installations"}
               </Link>
             </div>
 
             <div className="flex items-center gap-3 pt-2 text-xs text-slate-400">
               <ShieldCheck className="w-4 h-4 text-solar-yellow shrink-0" />
-              <span>Strict Transparency: No hidden costs. Zero public pricing fabrication. Private quotations only.</span>
+              <span>{heroData.transparencyNote}</span>
             </div>
           </div>
 
@@ -103,7 +128,7 @@ export default async function HeroSection() {
                 <h3 className="text-xl font-display font-extrabold text-navy-800 mt-2">
                   Request Free Site Feasibility
                 </h3>
-                <p className="text-xs text-slate-muted mt-1">
+                <p className="text-xs text-slate-muted mt-1 leading-relaxed">
                   Connect directly with our regional solar engineer.
                 </p>
               </div>

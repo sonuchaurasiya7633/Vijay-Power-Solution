@@ -1,46 +1,77 @@
 import { Award, Zap, MapPin, Calendar } from "lucide-react";
+import connectDB from "@/lib/db/connection";
+import Setting from "@/models/Setting";
 
-interface StatItem {
-  label: string;
-  value: string;
-  suffix?: string;
-  icon: typeof Zap;
-}
-
-export default function StatsSection() {
-  const stats: StatItem[] = [
+export default async function StatsSection() {
+  const defaultStats = [
     {
       label: "Rooftop Installations",
       value: "350+",
       suffix: "Confirmed Sites",
-      icon: Award,
     },
     {
       label: "Clean Capacity Installed",
       value: "2.8+",
       suffix: "Megawatts",
-      icon: Zap,
     },
     {
       label: "Primary Service Regions",
       value: "3",
       suffix: "Bihar, JH, UP",
-      icon: MapPin,
     },
     {
       label: "Engineering Experience",
       value: "8+",
       suffix: "Years Active",
-      icon: Calendar,
     },
   ];
+
+  let displayStats = defaultStats;
+
+  try {
+    await connectDB();
+    const homeSetting = await Setting.findOne({ key: "homepage" }).lean();
+    if (homeSetting && homeSetting.value) {
+      const val: any = homeSetting.value;
+      if (Array.isArray(val.stats) && val.stats.length === 4) {
+        displayStats = val.stats;
+      } else if (val.installationsCount || val.capacityMw || val.experienceYears) {
+        displayStats = [
+          {
+            label: "Rooftop Installations",
+            value: `${val.installationsCount || 350}+`,
+            suffix: "Confirmed Sites",
+          },
+          {
+            label: "Clean Capacity Installed",
+            value: `${val.capacityMw || 2.8}+`,
+            suffix: "Megawatts",
+          },
+          {
+            label: "Primary Service Regions",
+            value: "3",
+            suffix: "Bihar, JH, UP",
+          },
+          {
+            label: "Engineering Experience",
+            value: `${val.experienceYears || 8}+`,
+            suffix: "Years Active",
+          },
+        ];
+      }
+    }
+  } catch (e) {
+    // Graceful fallback
+  }
+
+  const icons = [Award, Zap, MapPin, Calendar];
 
   return (
     <section className="bg-navy-50 py-12 border-y border-slate-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {stats.map((stat, idx) => {
-            const Icon = stat.icon;
+          {displayStats.map((stat, idx) => {
+            const Icon = icons[idx % icons.length];
             return (
               <div
                 key={idx}

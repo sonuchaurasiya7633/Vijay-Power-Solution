@@ -849,6 +849,115 @@ async function seedDemoData() {
       createdAt: now,
       updatedAt: now,
     },
+    {
+      key: "homepage",
+      value: {
+        hero: {
+          badge: "Certified Solar EPC • Bihar | Jharkhand | Uttar Pradesh",
+          headline: "Power Your Future with Solar Energy",
+          subheading:
+            "Reliable Solar Panel Solutions & Professional Installation Across Bihar, Jharkhand, and Uttar Pradesh. Complete engineering, DISCOM net metering liaison, and PM Surya Ghar subsidy guidance.",
+          checkpoints: [
+            "Modules from 10W to 730W",
+            "Up to ₹78,000 Govt Subsidy Guidance",
+            "Heavy-Duty Hot-Dip Galvanized Mounts",
+            "25-Year Linear Power Warranty",
+          ],
+          ctaPrimaryText: "Get Free Solar Consultation",
+          ctaPrimaryLink: "/get-quote",
+          ctaSecondaryText: "Explore Real Installations",
+          ctaSecondaryLink: "/projects",
+          transparencyNote:
+            "Strict Transparency: No hidden costs. Zero public pricing fabrication. Private quotations only.",
+        },
+        stats: [
+          { label: "Rooftop Installations", value: "350+", suffix: "Confirmed Sites" },
+          { label: "Clean Capacity Installed", value: "2.8+", suffix: "Megawatts" },
+          { label: "Primary Service Regions", value: "3", suffix: "Bihar, JH, UP" },
+          { label: "Engineering Experience", value: "8+", suffix: "Years Active" },
+        ],
+        whyUs: {
+          badge: "Our Commitments",
+          title: "Why Choose VIJOY POWER SOLUTION",
+          subtitle:
+            "Solar is a 25-year investment. We combine robust civil-electrical engineering with dedicated local service across Bihar, Jharkhand, and Uttar Pradesh.",
+          pillars: [
+            {
+              title: "Site-Specific Engineering",
+              desc: "No cookie-cutter solar kits. We perform precision shadow modeling and roof load calculations before finalizing any array layout.",
+            },
+            {
+              title: "Tier-1 ALMM Certified Panels",
+              desc: "Exclusively tier-1 panels with 25 to 30 year performance warranties, fully compliant with national PM Surya Ghar subsidy guidelines.",
+            },
+            {
+              title: "Heavy-Duty Mounting Structures",
+              desc: "Engineered hot-dip galvanized steel structures capable of withstanding severe eastern Indian monsoon storm winds up to 150 km/h.",
+            },
+            {
+              title: "Hassle-Free Net Metering Liaison",
+              desc: "Complete end-to-end liaison with SBPDCL, NBPDCL, JBVNL, and UPPCL for prompt bi-directional meter testing and grid connection.",
+            },
+            {
+              title: "Regional Support in Bihar, JH & UP",
+              desc: "Dedicated field technicians based locally in Patna, Gaya, Ranchi, and Lucknow for swift on-site maintenance and troubleshooting.",
+            },
+            {
+              title: "Strict Commercial Transparency",
+              desc: "Transparent private commercial line items with zero hidden charges, realistic ROI models, and clear documentation.",
+            },
+          ],
+        },
+        process: {
+          badge: "Clear Customer Journey",
+          title: "How Your Solar Journey Works",
+          subtitle:
+            "From initial rooftop shadow assessment to final DISCOM net-meter synchronization in 8 transparent steps.",
+          steps: [
+            { step: "01", title: "Submit Enquiry", desc: "Share your location, electricity bill, and primary objectives via our online form or WhatsApp." },
+            { step: "02", title: "Initial Consultation", desc: "Our solar consultant reviews your sanctioned power load and discusses system options." },
+            { step: "03", title: "Site Survey", desc: "A field engineer inspects your roof orientation, shadow obstructions, and cable routes." },
+            { step: "04", title: "Engineering Design", desc: "Custom 3D layout, module count, and inverter capacity engineered for your property." },
+            { step: "05", title: "Private Quotation & Approval", desc: "Comprehensive transparent quotation with line items and subsidy projections for your review." },
+            { step: "06", title: "Installation Scheduling", desc: "Delivery of ALMM certified modules, inverters, and galvanized steel mounting structures." },
+            { step: "07", title: "Installation & Testing", desc: "Rigorous physical mounting, DC/AC wiring, multi-point chemical earthing, and lightning protection." },
+            { step: "08", title: "Handover & Net Metering", desc: "DISCOM synchronization, bi-directional meter testing, cloud monitoring app setup, and handover." },
+          ],
+        },
+        videos: {
+          badge: "Video Stories & Walkthroughs",
+          title: "See Our Installations in Action",
+          subtitle:
+            "Watch real site surveys, rooftop mounting structure erections, inverter synchronization, and client reviews.",
+          items: [
+            {
+              title: "10 kW Elevated Rooftop Solar Walkthrough in Patna",
+              location: "Kankarbagh, Patna",
+              duration: "1:05",
+              thumbnail: "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=800&q=80",
+              videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+            },
+            {
+              title: "25 kW Bodh Gaya Hotel Solar Commissioning & SBPDCL Inspection",
+              location: "Bodh Gaya, Bihar",
+              duration: "1:42",
+              thumbnail: "https://images.unsplash.com/photo-1548337138-e87d889cc369?w=800&q=80",
+              videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            },
+          ],
+        },
+        ctaBanner: {
+          badge: "Free Engineering Consultation Across Bihar, JH & UP",
+          title: "Ready to Switch to Solar?",
+          description:
+            "Take the first step towards clean, reliable power and drastically lower monthly electricity bills. Book an appointment with our solar engineering specialist today.",
+          buttonText: "Request Free Consultation",
+          buttonLink: "/get-quote",
+        },
+      },
+      createdAt: now,
+      updatedAt: now,
+    },
   ]);
 
   console.log("\n===============================================================");

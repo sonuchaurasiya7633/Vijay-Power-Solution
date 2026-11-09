@@ -1,7 +1,46 @@
 import Link from "next/link";
 import { Phone, MessageCircle, ArrowRight, Sun } from "lucide-react";
+import connectDB from "@/lib/db/connection";
+import Setting from "@/models/Setting";
 
-export default function CtaBanner() {
+export default async function CtaBanner() {
+  let ctaData = {
+    badge: "Free Engineering Consultation Across Bihar, JH & UP",
+    title: "Ready to Switch to Solar?",
+    description:
+      "Take the first step towards clean, reliable power and drastically lower monthly electricity bills. Book an appointment with our solar engineering specialist today.",
+    buttonText: "Request Free Consultation",
+    buttonLink: "/get-quote",
+    phone: "+91 94310 00000",
+    whatsapp: "919431000000",
+  };
+
+  try {
+    await connectDB();
+    const [homeSetting, generalSetting] = await Promise.all([
+      Setting.findOne({ key: "homepage" }).lean(),
+      Setting.findOne({ key: "general" }).lean(),
+    ]);
+
+    if (homeSetting && homeSetting.value) {
+      const val: any = homeSetting.value;
+      if (val.ctaBanner) {
+        ctaData = { ...ctaData, ...val.ctaBanner };
+      }
+    }
+
+    if (generalSetting && generalSetting.value) {
+      const g: any = generalSetting.value;
+      if (g.phone) ctaData.phone = g.phone;
+      if (g.whatsapp) ctaData.whatsapp = g.whatsapp;
+    }
+  } catch (e) {
+    // Graceful fallback
+  }
+
+  const cleanPhone = ctaData.phone ? ctaData.phone.replace(/[^0-9+]/g, "") : "+919431000000";
+  const cleanWa = ctaData.whatsapp ? ctaData.whatsapp.replace(/[^0-9]/g, "") : "919431000000";
+
   return (
     <section className="bg-gradient-to-r from-navy-900 via-navy-800 to-navy-900 text-white py-16 relative overflow-hidden">
       <div className="absolute -right-20 -bottom-20 w-80 h-80 rounded-full bg-solar-green/15 blur-3xl pointer-events-none" />
@@ -10,27 +49,27 @@ export default function CtaBanner() {
           <div className="space-y-3 max-w-2xl text-center lg:text-left">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-solar-green/20 text-solar-yellow text-xs font-semibold">
               <Sun className="w-3.5 h-3.5" />
-              <span>Free Engineering Consultation Across Bihar, JH & UP</span>
+              <span>{ctaData.badge}</span>
             </div>
             <h2 className="text-3xl sm:text-4xl font-display font-extrabold text-white tracking-tight">
-              Ready to Switch to Solar?
+              {ctaData.title}
             </h2>
             <p className="text-sm sm:text-base text-slate-200 leading-relaxed">
-              Take the first step towards clean, reliable power and drastically lower monthly electricity bills. Book an appointment with our solar engineering specialist today.
+              {ctaData.description}
             </p>
           </div>
 
           <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto shrink-0">
             <Link
-              href="/get-quote"
+              href={ctaData.buttonLink || "/get-quote"}
               className="w-full sm:w-auto px-6 py-3.5 rounded-xl font-bold text-sm bg-solar-green text-white hover:bg-solar-green-hover shadow-lg shadow-solar-green/20 flex items-center justify-center gap-2 transition-transform hover:scale-105"
             >
-              <span>Request Free Consultation</span>
+              <span>{ctaData.buttonText || "Request Free Consultation"}</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
 
             <a
-              href="https://wa.me/919431000000?text=Hello%20VIJOY%20POWER%20SOLUTION,%20I%20would%20like%20to%20request%20a%20solar%20rooftop%20consultation."
+              href={`https://wa.me/${cleanWa}?text=Hello%20VIJOY%20POWER%20SOLUTION,%20I%20would%20like%20to%20request%20a%20solar%20rooftop%20consultation.`}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full sm:w-auto px-5 py-3.5 rounded-xl font-bold text-sm bg-white/10 text-white hover:bg-white/20 border border-white/20 flex items-center justify-center gap-2 transition-colors"
@@ -40,7 +79,7 @@ export default function CtaBanner() {
             </a>
 
             <a
-              href="tel:+919431000000"
+              href={`tel:${cleanPhone}`}
               className="w-full sm:w-auto px-4 py-3.5 rounded-xl font-bold text-sm bg-white/10 text-white hover:bg-white/20 border border-white/20 flex items-center justify-center gap-1.5 transition-colors"
             >
               <Phone className="w-4 h-4 text-solar-yellow" />
