@@ -2,11 +2,25 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Package, Plus, Zap, CheckCircle2, Loader2, Trash2 } from "lucide-react";
+import { Package, Plus, Zap, CheckCircle2, Loader2, Trash2, X } from "lucide-react";
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  const [form, setForm] = useState({
+    name: "",
+    slug: "",
+    brand: "VPS Solar",
+    ratedPowerWp: 550,
+    cellTechnology: "Mono PERC",
+    wattageGroup: "351W - 550W",
+    moduleEfficiencyPercent: 21.5,
+    description: "",
+    isPublished: true,
+  });
 
   const fetchProducts = async () => {
     try {
@@ -25,6 +39,58 @@ export default function AdminProductsPage() {
   useEffect(() => {
     fetchProducts();
   }, []);
+
+  const handleNameChange = (val: string) => {
+    const slug = val.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    setForm({ ...form, name: val, slug });
+  };
+
+  const handlePowerChange = (power: number) => {
+    let group = "10W - 100W";
+    if (power > 550) group = "551W - 730W";
+    else if (power > 350) group = "351W - 550W";
+    else if (power > 100) group = "101W - 350W";
+
+    setForm({ ...form, ratedPowerWp: power, wattageGroup: group });
+  };
+
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (form.ratedPowerWp < 10 || form.ratedPowerWp > 730) {
+      return alert("Solar panel rated power must strictly be between 10W and 730W");
+    }
+
+    setSaving(true);
+    try {
+      const res = await fetch("/api/products", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setShowAddModal(false);
+        setForm({
+          name: "",
+          slug: "",
+          brand: "VPS Solar",
+          ratedPowerWp: 550,
+          cellTechnology: "Mono PERC",
+          wattageGroup: "351W - 550W",
+          moduleEfficiencyPercent: 21.5,
+          description: "",
+          isPublished: true,
+        });
+        fetchProducts();
+      } else {
+        alert(data.error || "Failed to create product");
+      }
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const togglePublish = async (id: string, currentStatus: boolean) => {
     await fetch(`/api/products/${id}`, {
@@ -53,6 +119,14 @@ export default function AdminProductsPage() {
             Verified engineering module catalogue. Strictly non-ecommerce (no public pricing).
           </p>
         </div>
+
+        <button
+          onClick={() => setShowAddModal(true)}
+          className="px-4 py-2 rounded-xl text-xs font-bold bg-solar-green text-white hover:bg-solar-green-hover flex items-center gap-1.5 transition-colors shadow-sm"
+        >
+          <Plus className="w-4 h-4" />
+          <span>Add Solar Panel</span>
+        </button>
       </div>
 
       <div className="bg-white rounded-2xl border border-slate-border shadow-sm overflow-hidden">
@@ -135,6 +209,125 @@ export default function AdminProductsPage() {
           </div>
         )}
       </div>
+
+      {/* Add Product Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 z-50 bg-navy-950/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl border border-slate-border shadow-xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95">
+            <div className="p-5 border-b border-slate-border flex items-center justify-between">
+              <h3 className="text-base font-bold text-navy-800">Add Solar Module (10W - 730W)</h3>
+              <button onClick={() => setShowAddModal(false)} className="p-1 text-slate-400 hover:text-navy-800">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <form onSubmit={handleCreate} className="p-5 space-y-4 text-xs">
+              <div>
+                <label className="font-bold text-navy-800 block mb-1">Module Name *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Waaree 550W Mono PERC Bifacial Solar Panel"
+                  value={form.name}
+                  onChange={(e) => handleNameChange(e.target.value)}
+                  className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-bold text-navy-800 block mb-1">Slug *</label>
+                  <input
+                    type="text"
+                    required
+                    value={form.slug}
+                    onChange={(e) => setForm({ ...form, slug: e.target.value })}
+                    className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="font-bold text-navy-800 block mb-1">Brand *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Waaree / Tata Power / VPS"
+                    value={form.brand}
+                    onChange={(e) => setForm({ ...form, brand: e.target.value })}
+                    className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <label className="font-bold text-navy-800 block mb-1">Rated Power (10-730W) *</label>
+                  <input
+                    type="number"
+                    min={10}
+                    max={730}
+                    required
+                    value={form.ratedPowerWp}
+                    onChange={(e) => handlePowerChange(Number(e.target.value))}
+                    className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green font-bold"
+                  />
+                </div>
+                <div>
+                  <label className="font-bold text-navy-800 block mb-1">Technology</label>
+                  <select
+                    value={form.cellTechnology}
+                    onChange={(e) => setForm({ ...form, cellTechnology: e.target.value })}
+                    className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green"
+                  >
+                    <option value="Mono PERC">Mono PERC</option>
+                    <option value="TOPCon">TOPCon</option>
+                    <option value="Bifacial">Bifacial</option>
+                    <option value="Monocrystalline">Monocrystalline</option>
+                    <option value="Polycrystalline">Polycrystalline</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="font-bold text-navy-800 block mb-1">Efficiency (%)</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={form.moduleEfficiencyPercent}
+                    onChange={(e) => setForm({ ...form, moduleEfficiencyPercent: Number(e.target.value) })}
+                    className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="font-bold text-navy-800 block mb-1">Technical Overview</label>
+                <textarea
+                  rows={3}
+                  placeholder="Engineering features, cell construction, durability under Indian weather conditions..."
+                  value={form.description}
+                  onChange={(e) => setForm({ ...form, description: e.target.value })}
+                  className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green"
+                />
+              </div>
+
+              <div className="pt-2 flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  className="px-4 py-2 rounded-xl text-slate-muted hover:bg-slate-50 font-bold"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="px-5 py-2 rounded-xl bg-solar-green text-white font-bold hover:bg-solar-green-hover flex items-center gap-1.5 shadow-sm"
+                >
+                  {saving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                  <span>Save Module</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

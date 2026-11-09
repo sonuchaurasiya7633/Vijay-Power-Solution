@@ -2,16 +2,98 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { MapPin, Plus, CheckCircle2 } from "lucide-react";
+import { MapPin, Plus, CheckCircle2, Trash2, X, Loader2 } from "lucide-react";
 
 export default function AdminServiceAreasPage() {
   const [locations, setLocations] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
+  const [form, setForm] = useState({
+    state: "Bihar",
+    stateSlug: "bihar",
+    district: "",
+    city: "",
+    citySlug: "",
+    contactPhone: "+91 94310 00000",
+    overviewText: "Turnkey solar solutions, net metering assistance, and DISCOM grid-tie installations.",
+    serviceAvailability: "available",
+    priorityArea: true,
+    isPublished: true,
+  });
+
+  const fetchLocations = () => {
     fetch("/api/service-areas")
       .then((r) => r.json())
-      .then((d) => setLocations(d.locations || []));
+      .then((d) => setLocations(d.locations || []))
+      .catch((e) => console.error(e))
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchLocations();
   }, []);
+
+  const handleCityChange = (val: string) => {
+    const citySlug = val.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    setForm({ ...form, city: val, citySlug });
+  };
+
+  const handleStateChange = (stateName: string) => {
+    const stateSlug = stateName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    setForm({ ...form, state: stateName, stateSlug });
+  };
+
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.district || !form.city) return alert("District and City are required");
+    setSaving(true);
+    try {
+      const res = await fetch("/api/service-areas", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (res.ok) {
+        setShowAddModal(false);
+        setForm({
+          state: "Bihar",
+          stateSlug: "bihar",
+          district: "",
+          city: "",
+          citySlug: "",
+          contactPhone: "+91 94310 00000",
+          overviewText: "Turnkey solar solutions, net metering assistance, and DISCOM grid-tie installations.",
+          serviceAvailability: "available",
+          priorityArea: true,
+          isPublished: true,
+        });
+        fetchLocations();
+      } else {
+        const d = await res.json();
+        alert(d.error || "Failed to add location");
+      }
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async (id: string, city: string) => {
+    if (!confirm(`Are you sure you want to remove ${city} from verified service areas?`)) return;
+    try {
+      const res = await fetch(`/api/service-areas/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        fetchLocations();
+      } else {
+        alert("Failed to delete service area");
+      }
+    } catch (err: any) {
+      alert(err.message);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -25,30 +107,149 @@ export default function AdminServiceAreasPage() {
             Verified state and city hierarchy: State → District → City. Only published verified locations appear publicly.
           </p>
         </div>
+
+        <button
+          onClick={() => setShowAddModal(true)}
+          className="px-4 py-2 rounded-xl text-xs font-bold bg-solar-green text-white hover:bg-solar-green-hover flex items-center gap-1.5 transition-colors shadow-sm"
+        >
+          <Plus className="w-4 h-4" />
+          <span>Add Location</span>
+        </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {locations.map((loc) => (
-          <div key={loc._id} className="p-6 bg-white rounded-2xl border border-slate-border shadow-sm space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold uppercase tracking-wider text-solar-green bg-solar-green-light px-2 py-0.5 rounded">
-                {loc.state}
-              </span>
-              <span className="text-[10px] font-bold text-navy-800 bg-slate-bg px-2 py-0.5 rounded">
-                District: {loc.district}
-              </span>
+      {loading ? (
+        <div className="p-16 text-center text-xs text-slate-muted flex items-center justify-center gap-2">
+          <Loader2 className="w-5 h-5 animate-spin text-solar-green" />
+          <span>Loading service areas...</span>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {locations.map((loc) => (
+            <div key={loc._id} className="p-6 bg-white rounded-2xl border border-slate-border shadow-sm space-y-3 flex flex-col justify-between">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase tracking-wider text-solar-green bg-solar-green-light px-2 py-0.5 rounded">
+                    {loc.state}
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold text-navy-800 bg-slate-bg px-2 py-0.5 rounded">
+                      District: {loc.district}
+                    </span>
+                    <button
+                      onClick={() => handleDelete(loc._id, loc.city)}
+                      className="p-1 text-slate-400 hover:text-red-500 rounded"
+                      title="Delete Location"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+                <h3 className="text-lg font-bold text-navy-800">{loc.city}</h3>
+                <p className="text-xs text-slate-muted line-clamp-2">{loc.overviewText || "Full solar EPC coverage."}</p>
+              </div>
+              <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
+                <span className="text-xs font-mono text-slate-muted">/{loc.stateSlug}/{loc.citySlug}</span>
+                <Link href={`/service-areas/${loc.stateSlug}/${loc.citySlug}`} target="_blank" className="text-xs font-bold text-solar-green hover:underline">
+                  View Page
+                </Link>
+              </div>
             </div>
-            <h3 className="text-lg font-bold text-navy-800">{loc.city}</h3>
-            <p className="text-xs text-slate-muted line-clamp-2">{loc.overviewText || "Full solar EPC coverage."}</p>
-            <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
-              <span className="text-xs font-mono text-slate-muted">/{loc.stateSlug}/{loc.citySlug}</span>
-              <Link href={`/service-areas/${loc.stateSlug}/${loc.citySlug}`} target="_blank" className="text-xs font-bold text-solar-green hover:underline">
-                View Page
-              </Link>
+          ))}
+        </div>
+      )}
+
+      {/* Add Location Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 z-50 bg-navy-950/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl border border-slate-border shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95">
+            <div className="p-5 border-b border-slate-border flex items-center justify-between">
+              <h3 className="text-base font-bold text-navy-800">Add Service Location</h3>
+              <button onClick={() => setShowAddModal(false)} className="p-1 text-slate-400 hover:text-navy-800">
+                <X className="w-4 h-4" />
+              </button>
             </div>
+            <form onSubmit={handleCreate} className="p-5 space-y-4 text-xs">
+              <div>
+                <label className="font-bold text-navy-800 block mb-1">State *</label>
+                <select
+                  value={form.state}
+                  onChange={(e) => handleStateChange(e.target.value)}
+                  className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green"
+                >
+                  <option value="Bihar">Bihar</option>
+                  <option value="Jharkhand">Jharkhand</option>
+                  <option value="Uttar Pradesh">Uttar Pradesh</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="font-bold text-navy-800 block mb-1">District *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Muzaffarpur / Dhanbad / Gorakhpur"
+                  value={form.district}
+                  onChange={(e) => setForm({ ...form, district: e.target.value })}
+                  className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-bold text-navy-800 block mb-1">City / Town *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Muzaffarpur"
+                    value={form.city}
+                    onChange={(e) => handleCityChange(e.target.value)}
+                    className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green"
+                  />
+                </div>
+                <div>
+                  <label className="font-bold text-navy-800 block mb-1">City Slug *</label>
+                  <input
+                    type="text"
+                    required
+                    value={form.citySlug}
+                    onChange={(e) => setForm({ ...form, citySlug: e.target.value })}
+                    className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green font-mono"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="font-bold text-navy-800 block mb-1">Overview Description</label>
+                <textarea
+                  rows={2}
+                  placeholder="Local net metering assistance, DISCOM coverage..."
+                  value={form.overviewText}
+                  onChange={(e) => setForm({ ...form, overviewText: e.target.value })}
+                  className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green"
+                />
+              </div>
+
+              <div className="pt-2 flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  className="px-4 py-2 rounded-xl text-slate-muted hover:bg-slate-50 font-bold"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="px-5 py-2 rounded-xl bg-solar-green text-white font-bold hover:bg-solar-green-hover flex items-center gap-1.5 shadow-sm"
+                >
+                  {saving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                  <span>Save Location</span>
+                </button>
+              </div>
+            </form>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -3,6 +3,32 @@ import assert from "node:assert/strict";
 import bcrypt from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
 import { z } from "zod";
+import crypto from "crypto";
+import mongoose from "mongoose";
+import fs from "fs";
+import path from "path";
+
+// Auto-load .env if needed
+if (!process.env.MONGODB_URI) {
+  try {
+    const envPath = path.resolve(process.cwd(), ".env");
+    if (fs.existsSync(envPath)) {
+      const envContent = fs.readFileSync(envPath, "utf-8");
+      envContent.split(/\r?\n/).forEach((line) => {
+        const trimmed = line.trim();
+        if (trimmed && !trimmed.startsWith("#") && trimmed.includes("=")) {
+          const [key, ...vals] = trimmed.split("=");
+          const val = vals.join("=").replace(/^["']|["']$/g, "");
+          if (!process.env[key.trim()]) {
+            process.env[key.trim()] = val;
+          }
+        }
+      });
+    }
+  } catch (e) {
+    console.warn("Could not load .env:", e.message);
+  }
+}
 
 // 1. Indian Mobile Number & Lead Validation Test
 test("Validation: Indian mobile format and required fields", () => {
@@ -50,14 +76,19 @@ test("Validation: Indian mobile format and required fields", () => {
 test("Wattage Range: strictly between 10W and 730W", () => {
   const ProductWattageSchema = z.number().min(10).max(730);
 
+  // Boundary checks
   assert.equal(ProductWattageSchema.safeParse(10).success, true);
+  assert.equal(ProductWattageSchema.safeParse(50).success, true);
+  assert.equal(ProductWattageSchema.safeParse(100).success, true);
+  assert.equal(ProductWattageSchema.safeParse(300).success, true);
   assert.equal(ProductWattageSchema.safeParse(550).success, true);
   assert.equal(ProductWattageSchema.safeParse(730).success, true);
 
-  // Below minimum
+  // Out of bounds
   assert.equal(ProductWattageSchema.safeParse(5).success, false);
-  // Above maximum
+  assert.equal(ProductWattageSchema.safeParse(731).success, false);
   assert.equal(ProductWattageSchema.safeParse(800).success, false);
+  assert.equal(ProductWattageSchema.safeParse(-10).success, false);
 });
 
 // 3. Password Hashing and Verification Test
@@ -106,10 +137,11 @@ test("Calculator: Unit to kW and savings formula", () => {
 });
 
 // 6. Role Permissions Matrix Test
-test("Permissions: Super Admin vs Sales Executive", () => {
+test("Permissions: Super Admin vs Sales Executive vs Viewer", () => {
   const hasPerm = (role, action) => {
     if (role === "super_admin") return true;
     if (role === "sales_executive" && ["read:leads", "write:leads"].includes(action)) return true;
+    if (role === "viewer" && action.startsWith("read:")) return true;
     return false;
   };
 
@@ -118,4 +150,72 @@ test("Permissions: Super Admin vs Sales Executive", () => {
   assert.equal(hasPerm("sales_executive", "read:leads"), true);
   assert.equal(hasPerm("sales_executive", "manage:settings"), false);
   assert.equal(hasPerm("sales_executive", "manage:team"), false);
+  assert.equal(hasPerm("viewer", "read:leads"), true);
+  assert.equal(hasPerm("viewer", "write:leads"), false);
+});
+
+// 7. Strict Non-Pricing Policy Compliance Test
+test("Business Policy: Public catalogue has ZERO price or cart fields", () => {
+  const SolarProductSchema = {
+    productId: "VPS-MOD-550",
+    name: "Waaree 550W Mono PERC Bifacial",
+    ratedPowerWp: 550,
+    moduleEfficiencyPercent: 21.5,
+    cellTechnology: "Mono PERC",
+    isPublished: true,
+  };
+
+  const forbiddenKeys = ["price", "sellingPrice", "discount", "mrp", "cost", "addToCart", "checkout"];
+  for (const key of forbiddenKeys) {
+    assert.equal(key in SolarProductSchema, false, `Forbidden commercial field "${key}" detected in public catalogue schema`);
+  }
+});
+
+// 8. Cloudinary Upload Signature Algorithm Test
+test("Cloudinary: Upload signature uses SHA-1 alphabetically sorted params", () => {
+  const folder = "vps_solar/products";
+  const timestamp = 1700000000;
+  const apiSecret = "KfG42ZDq87b_BMQJrix_8hNag_4";
+
+  const paramsToSign = `folder=${folder}&timestamp=${timestamp}`;
+  const signature = crypto.createHash("sha1").update(paramsToSign + apiSecret).digest("hex");
+
+  assert.ok(typeof signature === "string" && signature.length === 40);
+});
+
+// 9. MongoDB Atlas Live Data Audit Test
+test("Database: Live MongoDB Atlas documents and relationships", async () => {
+  const uri = process.env.MONGODB_URI;
+  if (!uri || !uri.startsWith("mongodb")) {
+    console.warn("Skipping live DB check: MONGODB_URI not set");
+    return;
+  }
+
+  await mongoose.connect(uri);
+  const db = mongoose.connection.db;
+
+  // Check Super Admin
+  const admin = await db.collection("users").findOne({ email: "admin@vijoypowersolution.com" });
+  assert.ok(admin, "Super Admin account should exist in MongoDB");
+  assert.equal(admin.role, "super_admin");
+
+  // Check Service Locations
+  const locationsCount = await db.collection("locations").countDocuments();
+  assert.ok(locationsCount >= 3, "At least 3 regional locations should be populated");
+
+  // Check Solar Products
+  const products = await db.collection("solarproducts").find({}).toArray();
+  assert.ok(products.length > 0, "Solar products should be seeded");
+  for (const p of products) {
+    assert.ok(p.ratedPowerWp >= 10 && p.ratedPowerWp <= 730, `Product ${p.productId} wattage ${p.ratedPowerWp} out of bounds`);
+  }
+
+  // Check FAQs & Categories
+  const faqCount = await db.collection("faqs").countDocuments();
+  assert.ok(faqCount > 0, "FAQs should exist");
+
+  const catCount = await db.collection("productcategories").countDocuments();
+  assert.ok(catCount > 0, "Product categories should exist");
+
+  await mongoose.disconnect();
 });

@@ -1,16 +1,96 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Star, ShieldCheck, CheckCircle2 } from "lucide-react";
+import { Star, ShieldCheck, CheckCircle2, Plus, Trash2, X, Loader2 } from "lucide-react";
 
 export default function AdminTestimonialsPage() {
   const [reviews, setReviews] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
+  const [form, setForm] = useState({
+    customerName: "",
+    customerCity: "",
+    customerState: "Bihar",
+    systemCapacityKw: 5,
+    rating: 5,
+    reviewText: "",
+    hasConsentToPublish: true,
+    isApproved: true,
+  });
+
+  const fetchReviews = () => {
     fetch("/api/testimonials?adminMode=true")
       .then((r) => r.json())
-      .then((d) => setReviews(d.testimonials || []));
+      .then((d) => setReviews(d.testimonials || []))
+      .catch((e) => console.error(e))
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchReviews();
   }, []);
+
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      const res = await fetch("/api/testimonials", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (res.ok) {
+        setShowAddModal(false);
+        setForm({
+          customerName: "",
+          customerCity: "",
+          customerState: "Bihar",
+          systemCapacityKw: 5,
+          rating: 5,
+          reviewText: "",
+          hasConsentToPublish: true,
+          isApproved: true,
+        });
+        fetchReviews();
+      } else {
+        const d = await res.json();
+        alert(d.error || "Failed to create testimonial");
+      }
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const toggleApproval = async (id: string, currentStatus: boolean) => {
+    try {
+      const res = await fetch(`/api/testimonials/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isApproved: !currentStatus }),
+      });
+      if (res.ok) {
+        fetchReviews();
+      }
+    } catch (err: any) {
+      alert(err.message);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to remove this customer review?")) return;
+    try {
+      const res = await fetch(`/api/testimonials/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        fetchReviews();
+      }
+    } catch (err: any) {
+      alert(err.message);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -24,35 +104,190 @@ export default function AdminTestimonialsPage() {
             Strict consent enforcement: only reviews with verified client approval are displayed publicly.
           </p>
         </div>
+
+        <button
+          onClick={() => setShowAddModal(true)}
+          className="px-4 py-2 rounded-xl text-xs font-bold bg-solar-green text-white hover:bg-solar-green-hover flex items-center gap-1.5 transition-colors shadow-sm"
+        >
+          <Plus className="w-4 h-4" />
+          <span>Add Testimonial</span>
+        </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {reviews.map((t) => (
-          <div key={t._id} className="p-6 bg-white rounded-2xl border border-slate-border shadow-sm space-y-4 flex flex-col justify-between">
-            <div className="space-y-2">
-              <div className="flex items-center gap-1">
-                {[...Array(t.rating || 5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-solar-yellow text-solar-yellow" />
-                ))}
+      {loading ? (
+        <div className="p-16 text-center text-xs text-slate-muted flex items-center justify-center gap-2">
+          <Loader2 className="w-5 h-5 animate-spin text-solar-green" />
+          <span>Loading customer reviews...</span>
+        </div>
+      ) : reviews.length === 0 ? (
+        <div className="p-16 bg-white rounded-2xl border border-slate-border text-center space-y-2">
+          <Star className="w-10 h-10 text-slate-300 mx-auto" />
+          <h3 className="text-sm font-bold text-navy-800">No testimonials found</h3>
+          <p className="text-xs text-slate-muted">Add customer reviews with explicit consent.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {reviews.map((t) => (
+            <div key={t._id} className="p-6 bg-white rounded-2xl border border-slate-border shadow-sm space-y-4 flex flex-col justify-between">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1">
+                    {[...Array(t.rating || 5)].map((_, i) => (
+                      <Star key={i} className="w-4 h-4 fill-solar-yellow text-solar-yellow" />
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => handleDelete(t._id)}
+                    className="p-1 text-slate-400 hover:text-red-500 rounded"
+                    title="Delete Review"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+                <p className="text-xs text-navy-800 italic leading-relaxed">
+                  &ldquo;{t.reviewText}&rdquo;
+                </p>
               </div>
-              <p className="text-xs text-navy-800 italic leading-relaxed">
-                &ldquo;{t.reviewText}&rdquo;
-              </p>
-            </div>
 
-            <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+              <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+                <div>
+                  <h4 className="text-xs font-bold text-navy-800">{t.customerName}</h4>
+                  <p className="text-[10px] text-slate-muted">{t.customerCity}, {t.customerState} ({t.systemCapacityKw}kW)</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => toggleApproval(t._id, t.isApproved)}
+                    className={`text-[10px] font-bold px-2 py-0.5 rounded cursor-pointer ${
+                      t.isApproved ? "text-green-700 bg-green-50" : "text-amber-700 bg-amber-50"
+                    }`}
+                  >
+                    {t.isApproved ? "Approved" : "Pending"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Add Testimonial Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 z-50 bg-navy-950/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl border border-slate-border shadow-xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95">
+            <div className="p-5 border-b border-slate-border flex items-center justify-between">
+              <h3 className="text-base font-bold text-navy-800">Add Customer Review</h3>
+              <button onClick={() => setShowAddModal(false)} className="p-1 text-slate-400 hover:text-navy-800">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <form onSubmit={handleCreate} className="p-5 space-y-4 text-xs">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-bold text-navy-800 block mb-1">Customer Name *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Anand Prakash"
+                    value={form.customerName}
+                    onChange={(e) => setForm({ ...form, customerName: e.target.value })}
+                    className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green"
+                  />
+                </div>
+                <div>
+                  <label className="font-bold text-navy-800 block mb-1">Rating (1-5)</label>
+                  <select
+                    value={form.rating}
+                    onChange={(e) => setForm({ ...form, rating: Number(e.target.value) })}
+                    className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green"
+                  >
+                    <option value={5}>5 Stars</option>
+                    <option value={4}>4 Stars</option>
+                    <option value={3}>3 Stars</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <label className="font-bold text-navy-800 block mb-1">City *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Patna"
+                    value={form.customerCity}
+                    onChange={(e) => setForm({ ...form, customerCity: e.target.value })}
+                    className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green"
+                  />
+                </div>
+                <div>
+                  <label className="font-bold text-navy-800 block mb-1">State *</label>
+                  <select
+                    value={form.customerState}
+                    onChange={(e) => setForm({ ...form, customerState: e.target.value })}
+                    className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green"
+                  >
+                    <option value="Bihar">Bihar</option>
+                    <option value="Jharkhand">Jharkhand</option>
+                    <option value="Uttar Pradesh">Uttar Pradesh</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="font-bold text-navy-800 block mb-1">Capacity (kW)</label>
+                  <input
+                    type="number"
+                    value={form.systemCapacityKw}
+                    onChange={(e) => setForm({ ...form, systemCapacityKw: Number(e.target.value) })}
+                    className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green"
+                  />
+                </div>
+              </div>
+
               <div>
-                <h4 className="text-xs font-bold text-navy-800">{t.customerName}</h4>
-                <p className="text-[10px] text-slate-muted">{t.customerCity}, {t.customerState}</p>
+                <label className="font-bold text-navy-800 block mb-1">Review Statement *</label>
+                <textarea
+                  rows={4}
+                  required
+                  placeholder="Customer feedback regarding electricity bill savings and installation..."
+                  value={form.reviewText}
+                  onChange={(e) => setForm({ ...form, reviewText: e.target.value })}
+                  className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green leading-relaxed"
+                />
               </div>
-              <span className="text-[10px] font-bold text-green-700 bg-green-50 px-2 py-0.5 rounded flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3" />
-                <span>Consent</span>
-              </span>
-            </div>
+
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="consent"
+                  checked={form.hasConsentToPublish}
+                  onChange={(e) => setForm({ ...form, hasConsentToPublish: e.target.checked })}
+                  className="rounded text-solar-green focus:ring-0"
+                />
+                <label htmlFor="consent" className="text-slate-muted">
+                  Client has given documented consent for this review to be displayed publicly.
+                </label>
+              </div>
+
+              <div className="pt-2 flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  className="px-4 py-2 rounded-xl text-slate-muted hover:bg-slate-50 font-bold"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="px-5 py-2 rounded-xl bg-solar-green text-white font-bold hover:bg-solar-green-hover flex items-center gap-1.5 shadow-sm"
+                >
+                  {saving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                  <span>Save Review</span>
+                </button>
+              </div>
+            </form>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
