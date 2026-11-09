@@ -1,5 +1,29 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
+import fs from "fs";
+import path from "path";
+
+// Load .env manually if not populated
+if (!process.env.MONGODB_URI) {
+  try {
+    const envPath = path.resolve(process.cwd(), ".env");
+    if (fs.existsSync(envPath)) {
+      const envContent = fs.readFileSync(envPath, "utf-8");
+      envContent.split(/\r?\n/).forEach((line) => {
+        const trimmed = line.trim();
+        if (trimmed && !trimmed.startsWith("#") && trimmed.includes("=")) {
+          const [key, ...vals] = trimmed.split("=");
+          const val = vals.join("=").replace(/^["']|["']$/g, "");
+          if (!process.env[key.trim()]) {
+            process.env[key.trim()] = val;
+          }
+        }
+      });
+    }
+  } catch (e) {
+    console.warn("Could not auto-load .env:", e.message);
+  }
+}
 
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/vijoy_power_solution";
 

@@ -7,8 +7,9 @@ const apiSecret = process.env.CLOUDINARY_API_SECRET || "abcdefghijklmnopqrstuvwx
 export function generateUploadSignature(folder: string) {
   const timestamp = Math.round(new Date().getTime() / 1000);
   const paramsToSign = `folder=${folder}&timestamp=${timestamp}`;
+  // Cloudinary standard signature uses SHA-1
   const signature = crypto
-    .createHash("sha256")
+    .createHash("sha1")
     .update(paramsToSign + apiSecret)
     .digest("hex");
 
