@@ -1,11 +1,40 @@
 import type { Metadata } from "next";
+import connectDB from "@/lib/db/connection";
+import Page from "@/models/Page";
 
 export const metadata: Metadata = {
   title: "Regulatory Disclaimer | VIJOY POWER SOLUTION",
   description: "Official disclaimers on solar generation estimates, government subsidies, and pricing.",
 };
 
-export default function DisclaimerPage() {
+export const revalidate = 60;
+
+export default async function DisclaimerPage() {
+  let dynamicPage: any = null;
+  try {
+    await connectDB();
+    dynamicPage = await Page.findOne({ slug: "disclaimer", isPublished: true }).lean();
+  } catch (e) {
+    console.error("Error loading dynamic disclaimer:", e);
+  }
+
+  if (dynamicPage && dynamicPage.contentHtml) {
+    return (
+      <div className="bg-white py-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 text-navy-800">
+          <h1 className="text-3xl font-display font-extrabold">{dynamicPage.title || "Regulatory & Engineering Disclaimer"}</h1>
+          {dynamicPage.heroSubtitle && (
+            <p className="text-sm text-slate-muted">{dynamicPage.heroSubtitle}</p>
+          )}
+          <div
+            className="prose prose-slate max-w-none text-sm text-slate-muted leading-relaxed"
+            dangerouslySetInnerHTML={{ __html: dynamicPage.contentHtml }}
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white py-16">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 text-navy-800">

@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Star, ShieldCheck, CheckCircle2, Plus, Trash2, X, Loader2 } from "lucide-react";
+import { Star, ShieldCheck, CheckCircle2, Plus, Trash2, Edit3, X, Loader2, Save } from "lucide-react";
 
 export default function AdminTestimonialsPage() {
   const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
   const [form, setForm] = useState({
@@ -32,31 +33,54 @@ export default function AdminTestimonialsPage() {
     fetchReviews();
   }, []);
 
-  const handleCreate = async (e: React.FormEvent) => {
+  const openCreateModal = () => {
+    setEditingId(null);
+    setForm({
+      customerName: "",
+      customerCity: "",
+      customerState: "Bihar",
+      systemCapacityKw: 5,
+      rating: 5,
+      reviewText: "",
+      hasConsentToPublish: true,
+      isApproved: true,
+    });
+    setShowModal(true);
+  };
+
+  const openEditModal = (t: any) => {
+    setEditingId(t._id);
+    setForm({
+      customerName: t.customerName || "",
+      customerCity: t.customerCity || "",
+      customerState: t.customerState || "Bihar",
+      systemCapacityKw: t.systemCapacityKw || 5,
+      rating: t.rating || 5,
+      reviewText: t.reviewText || "",
+      hasConsentToPublish: t.hasConsentToPublish !== undefined ? t.hasConsentToPublish : true,
+      isApproved: t.isApproved !== undefined ? t.isApproved : true,
+    });
+    setShowModal(true);
+  };
+
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     try {
-      const res = await fetch("/api/testimonials", {
-        method: "POST",
+      const url = editingId ? `/api/testimonials/${editingId}` : "/api/testimonials";
+      const method = editingId ? "PATCH" : "POST";
+
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
       if (res.ok) {
-        setShowAddModal(false);
-        setForm({
-          customerName: "",
-          customerCity: "",
-          customerState: "Bihar",
-          systemCapacityKw: 5,
-          rating: 5,
-          reviewText: "",
-          hasConsentToPublish: true,
-          isApproved: true,
-        });
+        setShowModal(false);
         fetchReviews();
       } else {
         const d = await res.json();
-        alert(d.error || "Failed to create testimonial");
+        alert(d.error || "Failed to save testimonial");
       }
     } catch (err: any) {
       alert(err.message);
@@ -86,6 +110,8 @@ export default function AdminTestimonialsPage() {
       const res = await fetch(`/api/testimonials/${id}`, { method: "DELETE" });
       if (res.ok) {
         fetchReviews();
+      } else {
+        alert("Failed to delete review");
       }
     } catch (err: any) {
       alert(err.message);
@@ -106,7 +132,7 @@ export default function AdminTestimonialsPage() {
         </div>
 
         <button
-          onClick={() => setShowAddModal(true)}
+          onClick={openCreateModal}
           className="px-4 py-2 rounded-xl text-xs font-bold bg-solar-green text-white hover:bg-solar-green-hover flex items-center gap-1.5 transition-colors shadow-sm"
         >
           <Plus className="w-4 h-4" />
@@ -136,13 +162,22 @@ export default function AdminTestimonialsPage() {
                       <Star key={i} className="w-4 h-4 fill-solar-yellow text-solar-yellow" />
                     ))}
                   </div>
-                  <button
-                    onClick={() => handleDelete(t._id)}
-                    className="p-1 text-slate-400 hover:text-red-500 rounded"
-                    title="Delete Review"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => openEditModal(t)}
+                      className="p-1 text-slate-400 hover:text-navy-800 rounded"
+                      title="Edit Review"
+                    >
+                      <Edit3 className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(t._id)}
+                      className="p-1 text-slate-400 hover:text-red-500 rounded"
+                      title="Delete Review"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
                 <p className="text-xs text-navy-800 italic leading-relaxed">
                   &ldquo;{t.reviewText}&rdquo;
@@ -170,17 +205,19 @@ export default function AdminTestimonialsPage() {
         </div>
       )}
 
-      {/* Add Testimonial Modal */}
-      {showAddModal && (
+      {/* Add / Edit Testimonial Modal */}
+      {showModal && (
         <div className="fixed inset-0 z-50 bg-navy-950/50 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl border border-slate-border shadow-xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95">
             <div className="p-5 border-b border-slate-border flex items-center justify-between">
-              <h3 className="text-base font-bold text-navy-800">Add Customer Review</h3>
-              <button onClick={() => setShowAddModal(false)} className="p-1 text-slate-400 hover:text-navy-800">
+              <h3 className="text-base font-bold text-navy-800">
+                {editingId ? "Edit Customer Review" : "Add Customer Review"}
+              </h3>
+              <button onClick={() => setShowModal(false)} className="p-1 text-slate-400 hover:text-navy-800">
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <form onSubmit={handleCreate} className="p-5 space-y-4 text-xs">
+            <form onSubmit={handleSave} className="p-5 space-y-4 text-xs">
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="font-bold text-navy-800 block mb-1">Customer Name *</label>
@@ -262,7 +299,7 @@ export default function AdminTestimonialsPage() {
                   onChange={(e) => setForm({ ...form, hasConsentToPublish: e.target.checked })}
                   className="rounded text-solar-green focus:ring-0"
                 />
-                <label htmlFor="consent" className="text-slate-muted">
+                <label htmlFor="consent" className="text-slate-muted cursor-pointer">
                   Client has given documented consent for this review to be displayed publicly.
                 </label>
               </div>
@@ -270,7 +307,7 @@ export default function AdminTestimonialsPage() {
               <div className="pt-2 flex justify-end gap-2">
                 <button
                   type="button"
-                  onClick={() => setShowAddModal(false)}
+                  onClick={() => setShowModal(false)}
                   className="px-4 py-2 rounded-xl text-slate-muted hover:bg-slate-50 font-bold"
                 >
                   Cancel
@@ -281,7 +318,7 @@ export default function AdminTestimonialsPage() {
                   className="px-5 py-2 rounded-xl bg-solar-green text-white font-bold hover:bg-solar-green-hover flex items-center gap-1.5 shadow-sm"
                 >
                   {saving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-                  <span>Save Review</span>
+                  <span>{editingId ? "Update Review" : "Save Review"}</span>
                 </button>
               </div>
             </form>

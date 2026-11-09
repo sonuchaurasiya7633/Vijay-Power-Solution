@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ShieldCheck, User, Plus, CheckCircle2, Loader2, Trash2, X, AlertCircle } from "lucide-react";
+import { ShieldCheck, User, Plus, CheckCircle2, Loader2, Trash2, X, AlertCircle, Edit2 } from "lucide-react";
 
 export default function AdminTeamPage() {
   const [team, setTeam] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [editingUser, setEditingUser] = useState<any | null>(null);
   const [saving, setSaving] = useState(false);
 
   const [form, setForm] = useState({
@@ -15,6 +16,14 @@ export default function AdminTeamPage() {
     password: "",
     phone: "",
     role: "sales_executive",
+  });
+
+  const [editForm, setEditForm] = useState({
+    name: "",
+    phone: "",
+    role: "sales_executive",
+    password: "",
+    isActive: true,
   });
 
   const fetchTeam = async () => {
@@ -34,6 +43,50 @@ export default function AdminTeamPage() {
   useEffect(() => {
     fetchTeam();
   }, []);
+
+  const openEditModal = (user: any) => {
+    setEditingUser(user);
+    setEditForm({
+      name: user.name || "",
+      phone: user.phone || "",
+      role: user.role || "sales_executive",
+      password: "",
+      isActive: user.isActive !== false,
+    });
+  };
+
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingUser) return;
+    setSaving(true);
+    try {
+      const payload: any = {
+        name: editForm.name,
+        phone: editForm.phone,
+        role: editForm.role,
+        isActive: editForm.isActive,
+      };
+      if (editForm.password) {
+        payload.password = editForm.password;
+      }
+      const res = await fetch(`/api/team/${editingUser._id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setEditingUser(null);
+        fetchTeam();
+      } else {
+        alert(data.error || "Failed to update staff member");
+      }
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -164,6 +217,13 @@ export default function AdminTeamPage() {
                       </span>
                     </td>
                     <td className="p-4 flex items-center gap-2">
+                      <button
+                        onClick={() => openEditModal(m)}
+                        className="p-1 text-slate-400 hover:text-solar-green rounded"
+                        title="Edit Staff Member"
+                      >
+                        <Edit2 className="w-3.5 h-3.5" />
+                      </button>
                       {m.email !== "admin@vijoypowersolution.com" && (
                         <>
                           <button
@@ -280,6 +340,109 @@ export default function AdminTeamPage() {
                 >
                   {saving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                   <span>Create Account</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Modal */}
+      {editingUser && (
+        <div className="fixed inset-0 z-50 bg-navy-950/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl border border-slate-border shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95">
+            <div className="p-5 border-b border-slate-border flex items-center justify-between">
+              <div>
+                <h3 className="text-base font-bold text-navy-800">Edit Staff Account</h3>
+                <p className="text-[11px] text-slate-muted">{editingUser.email}</p>
+              </div>
+              <button onClick={() => setEditingUser(null)} className="p-1 text-slate-400 hover:text-navy-800">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <form onSubmit={handleUpdate} className="p-5 space-y-4 text-xs">
+              <div>
+                <label className="font-bold text-navy-800 block mb-1">Full Name *</label>
+                <input
+                  type="text"
+                  required
+                  value={editForm.name}
+                  onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                  className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green"
+                />
+              </div>
+
+              <div>
+                <label className="font-bold text-navy-800 block mb-1">Phone Number</label>
+                <input
+                  type="tel"
+                  placeholder="+91 94310 12345"
+                  value={editForm.phone}
+                  onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+                  className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green"
+                />
+              </div>
+
+              <div>
+                <label className="font-bold text-navy-800 block mb-1">Security Role *</label>
+                <select
+                  disabled={editingUser.email === "admin@vijoypowersolution.com"}
+                  value={editForm.role}
+                  onChange={(e) => setEditForm({ ...editForm, role: e.target.value })}
+                  className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green disabled:bg-slate-100"
+                >
+                  <option value="super_admin">Super Administrator</option>
+                  <option value="sales_executive">Sales Executive</option>
+                  <option value="sales_manager">Sales Manager</option>
+                  <option value="technician">Technician (Surveys & Visits)</option>
+                  <option value="installation_manager">Installation Manager (EPC)</option>
+                  <option value="content_editor">Content Editor (CMS)</option>
+                  <option value="admin">Administrator</option>
+                  <option value="viewer">Viewer (Read-Only)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="font-bold text-navy-800 block mb-1">Reset Password (leave blank to keep current)</label>
+                <input
+                  type="password"
+                  placeholder="Enter new password (optional)"
+                  value={editForm.password}
+                  onChange={(e) => setEditForm({ ...editForm, password: e.target.value })}
+                  className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green"
+                />
+              </div>
+
+              {editingUser.email !== "admin@vijoypowersolution.com" && (
+                <div className="flex items-center gap-2 pt-1">
+                  <input
+                    type="checkbox"
+                    id="isActive"
+                    checked={editForm.isActive}
+                    onChange={(e) => setEditForm({ ...editForm, isActive: e.target.checked })}
+                    className="w-4 h-4 rounded text-solar-green focus:ring-solar-green"
+                  />
+                  <label htmlFor="isActive" className="text-navy-800 font-bold">
+                    Active Account Status
+                  </label>
+                </div>
+              )}
+
+              <div className="pt-2 flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setEditingUser(null)}
+                  className="px-4 py-2 rounded-xl text-slate-muted hover:bg-slate-50 font-bold"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="px-5 py-2 rounded-xl bg-solar-green text-white font-bold hover:bg-solar-green-hover flex items-center gap-1.5 shadow-sm"
+                >
+                  {saving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                  <span>Save Changes</span>
                 </button>
               </div>
             </form>

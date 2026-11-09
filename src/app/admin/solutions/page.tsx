@@ -2,12 +2,13 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Sparkles, ArrowRight, Loader2, Plus, Trash2, X } from "lucide-react";
+import { Sparkles, ArrowRight, Loader2, Plus, Trash2, Edit3, X, Save } from "lucide-react";
 
 export default function AdminSolutionsPage() {
   const [solutions, setSolutions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
   const [form, setForm] = useState({
@@ -32,35 +33,61 @@ export default function AdminSolutionsPage() {
     fetchSolutions();
   }, []);
 
-  const handleTitleChange = (val: string) => {
-    const slug = val.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-    setForm({ ...form, title: val, slug });
+  const openCreateModal = () => {
+    setEditingId(null);
+    setForm({
+      title: "",
+      slug: "",
+      category: "residential",
+      tagline: "",
+      typicalCapacityRange: "3kW - 10kW",
+      description: "",
+      isPublished: true,
+    });
+    setShowModal(true);
   };
 
-  const handleCreate = async (e: React.FormEvent) => {
+  const openEditModal = (s: any) => {
+    setEditingId(s._id);
+    setForm({
+      title: s.title || "",
+      slug: s.slug || "",
+      category: s.category || "residential",
+      tagline: s.tagline || "",
+      typicalCapacityRange: s.typicalCapacityRange || "3kW - 10kW",
+      description: s.description || "",
+      isPublished: s.isPublished !== undefined ? s.isPublished : true,
+    });
+    setShowModal(true);
+  };
+
+  const handleTitleChange = (val: string) => {
+    if (!editingId) {
+      const slug = val.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      setForm({ ...form, title: val, slug });
+    } else {
+      setForm({ ...form, title: val });
+    }
+  };
+
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     try {
-      const res = await fetch("/api/solutions", {
-        method: "POST",
+      const url = editingId ? `/api/solutions/${editingId}` : "/api/solutions";
+      const method = editingId ? "PATCH" : "POST";
+
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
       if (res.ok) {
-        setShowAddModal(false);
-        setForm({
-          title: "",
-          slug: "",
-          category: "residential",
-          tagline: "",
-          typicalCapacityRange: "3kW - 10kW",
-          description: "",
-          isPublished: true,
-        });
+        setShowModal(false);
         fetchSolutions();
       } else {
         const d = await res.json();
-        alert(d.error || "Failed to create solution");
+        alert(d.error || "Failed to save solution");
       }
     } catch (err: any) {
       alert(err.message);
@@ -97,7 +124,7 @@ export default function AdminSolutionsPage() {
         </div>
 
         <button
-          onClick={() => setShowAddModal(true)}
+          onClick={openCreateModal}
           className="px-4 py-2 rounded-xl text-xs font-bold bg-solar-green text-white hover:bg-solar-green-hover flex items-center gap-1.5 transition-colors shadow-sm"
         >
           <Plus className="w-4 h-4" />
@@ -119,13 +146,22 @@ export default function AdminSolutionsPage() {
                   <span className="text-[10px] font-bold text-solar-green uppercase bg-solar-green-light px-2 py-0.5 rounded">
                     {s.category}
                   </span>
-                  <button
-                    onClick={() => handleDelete(s._id, s.title)}
-                    className="p-1 text-slate-400 hover:text-red-500 rounded"
-                    title="Delete Solution"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => openEditModal(s)}
+                      className="p-1 text-slate-400 hover:text-navy-800 rounded"
+                      title="Edit Solution"
+                    >
+                      <Edit3 className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(s._id, s.title)}
+                      className="p-1 text-slate-400 hover:text-red-500 rounded"
+                      title="Delete Solution"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
                 <h3 className="text-base font-bold text-navy-800">{s.title}</h3>
                 <p className="text-xs text-slate-muted line-clamp-2">{s.tagline}</p>
@@ -141,17 +177,19 @@ export default function AdminSolutionsPage() {
         </div>
       )}
 
-      {/* Add Solution Modal */}
-      {showAddModal && (
+      {/* Add / Edit Solution Modal */}
+      {showModal && (
         <div className="fixed inset-0 z-50 bg-navy-950/50 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl border border-slate-border shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95">
             <div className="p-5 border-b border-slate-border flex items-center justify-between">
-              <h3 className="text-base font-bold text-navy-800">Add Solar Solution Package</h3>
-              <button onClick={() => setShowAddModal(false)} className="p-1 text-slate-400 hover:text-navy-800">
+              <h3 className="text-base font-bold text-navy-800">
+                {editingId ? "Edit Solar Solution" : "Add Solar Solution Package"}
+              </h3>
+              <button onClick={() => setShowModal(false)} className="p-1 text-slate-400 hover:text-navy-800">
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <form onSubmit={handleCreate} className="p-5 space-y-4 text-xs">
+            <form onSubmit={handleSave} className="p-5 space-y-4 text-xs">
               <div>
                 <label className="font-bold text-navy-800 block mb-1">Solution Title *</label>
                 <input
@@ -216,7 +254,7 @@ export default function AdminSolutionsPage() {
               <div className="pt-2 flex justify-end gap-2">
                 <button
                   type="button"
-                  onClick={() => setShowAddModal(false)}
+                  onClick={() => setShowModal(false)}
                   className="px-4 py-2 rounded-xl text-slate-muted hover:bg-slate-50 font-bold"
                 >
                   Cancel
@@ -227,7 +265,7 @@ export default function AdminSolutionsPage() {
                   className="px-5 py-2 rounded-xl bg-solar-green text-white font-bold hover:bg-solar-green-hover flex items-center gap-1.5 shadow-sm"
                 >
                   {saving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-                  <span>Save Solution</span>
+                  <span>{editingId ? "Update Solution" : "Save Solution"}</span>
                 </button>
               </div>
             </form>

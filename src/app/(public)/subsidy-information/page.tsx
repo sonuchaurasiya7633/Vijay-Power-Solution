@@ -3,6 +3,8 @@ import Link from "next/link";
 import { ShieldAlert, ExternalLink, CheckCircle2, FileText, Landmark, ArrowRight } from "lucide-react";
 import LeadCaptureForm from "@/components/forms/LeadCaptureForm";
 import CtaBanner from "@/components/public/CtaBanner";
+import connectDB from "@/lib/db/connection";
+import Page from "@/models/Page";
 
 export const metadata: Metadata = {
   title: "PM Surya Ghar Subsidy Guide | Rooftop Solar in Bihar, JH & UP",
@@ -10,7 +12,22 @@ export const metadata: Metadata = {
     "Comprehensive educational guide on PM Surya Ghar: Muft Bijli Yojana subsidies (up to ₹78,000), DISCOM net metering requirements, eligibility, and application procedure in Bihar, Jharkhand, and UP.",
 };
 
-export default function SubsidyInformationPage() {
+export const revalidate = 60;
+
+export default async function SubsidyInformationPage() {
+  let dynamicPage: any = null;
+  try {
+    await connectDB();
+    dynamicPage = await Page.findOne({ slug: "subsidy-information", isPublished: true }).lean();
+  } catch (err) {
+    console.error("Error loading dynamic subsidy page:", err);
+  }
+
+  const title = dynamicPage?.title || "PM Surya Ghar: Muft Bijli Yojana";
+  const heroSubtitle =
+    dynamicPage?.heroSubtitle ||
+    "Educational guide to national financial assistance, eligibility guidelines, DISCOM technical requirements, and step-by-step application workflow for rooftop solar in Bihar, Jharkhand, and Uttar Pradesh.";
+
   return (
     <div className="bg-white">
       {/* Header */}
@@ -20,10 +37,10 @@ export default function SubsidyInformationPage() {
             Government Initiatives & Schemes
           </span>
           <h1 className="text-3xl sm:text-5xl font-display font-extrabold text-white tracking-tight">
-            PM Surya Ghar: Muft Bijli Yojana
+            {title}
           </h1>
           <p className="text-sm sm:text-base text-slate-300 max-w-3xl leading-relaxed">
-            Educational guide to national financial assistance, eligibility guidelines, DISCOM technical requirements, and step-by-step application workflow for rooftop solar in Bihar, Jharkhand, and Uttar Pradesh.
+            {heroSubtitle}
           </p>
         </div>
       </div>

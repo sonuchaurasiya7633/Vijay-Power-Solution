@@ -29,6 +29,7 @@ import {
   Settings,
   ChevronRight,
   LogOut,
+  FileCode2,
 } from "lucide-react";
 
 interface AdminSidebarProps {
@@ -76,6 +77,7 @@ export default function AdminSidebar({ userRole = "admin", userName = "Staff" }:
       group: "CMS & Platform",
       items: [
         { label: "Homepage CMS", href: "/admin/cms/home", icon: Sliders },
+        { label: "Pages CMS", href: "/admin/pages", icon: FileCode2 },
         { label: "SEO Manager", href: "/admin/seo", icon: Globe },
         { label: "Analytics & Reports", href: "/admin/analytics", icon: BarChart3 },
         { label: "Team & Roles", href: "/admin/team", icon: ShieldCheck },

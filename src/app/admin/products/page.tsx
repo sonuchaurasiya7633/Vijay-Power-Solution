@@ -2,12 +2,13 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Package, Plus, Zap, CheckCircle2, Loader2, Trash2, X } from "lucide-react";
+import { Package, Plus, Zap, CheckCircle2, Loader2, Trash2, Edit3, X, Save } from "lucide-react";
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
   const [form, setForm] = useState({
@@ -40,9 +41,45 @@ export default function AdminProductsPage() {
     fetchProducts();
   }, []);
 
+  const openCreateModal = () => {
+    setEditingId(null);
+    setForm({
+      name: "",
+      slug: "",
+      brand: "VPS Solar",
+      ratedPowerWp: 550,
+      cellTechnology: "Mono PERC",
+      wattageGroup: "351W - 550W",
+      moduleEfficiencyPercent: 21.5,
+      description: "",
+      isPublished: true,
+    });
+    setShowModal(true);
+  };
+
+  const openEditModal = (p: any) => {
+    setEditingId(p._id);
+    setForm({
+      name: p.name || "",
+      slug: p.slug || "",
+      brand: p.brand || "VPS Solar",
+      ratedPowerWp: p.ratedPowerWp || 550,
+      cellTechnology: p.cellTechnology || "Mono PERC",
+      wattageGroup: p.wattageGroup || "351W - 550W",
+      moduleEfficiencyPercent: p.moduleEfficiencyPercent || 21.5,
+      description: p.description || "",
+      isPublished: p.isPublished !== undefined ? p.isPublished : true,
+    });
+    setShowModal(true);
+  };
+
   const handleNameChange = (val: string) => {
-    const slug = val.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-    setForm({ ...form, name: val, slug });
+    if (!editingId) {
+      const slug = val.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      setForm({ ...form, name: val, slug });
+    } else {
+      setForm({ ...form, name: val });
+    }
   };
 
   const handlePowerChange = (power: number) => {
@@ -54,7 +91,7 @@ export default function AdminProductsPage() {
     setForm({ ...form, ratedPowerWp: power, wattageGroup: group });
   };
 
-  const handleCreate = async (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (form.ratedPowerWp < 10 || form.ratedPowerWp > 730) {
       return alert("Solar panel rated power must strictly be between 10W and 730W");
@@ -62,28 +99,20 @@ export default function AdminProductsPage() {
 
     setSaving(true);
     try {
-      const res = await fetch("/api/products", {
-        method: "POST",
+      const url = editingId ? `/api/products/${editingId}` : "/api/products";
+      const method = editingId ? "PATCH" : "POST";
+
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
       const data = await res.json();
       if (res.ok) {
-        setShowAddModal(false);
-        setForm({
-          name: "",
-          slug: "",
-          brand: "VPS Solar",
-          ratedPowerWp: 550,
-          cellTechnology: "Mono PERC",
-          wattageGroup: "351W - 550W",
-          moduleEfficiencyPercent: 21.5,
-          description: "",
-          isPublished: true,
-        });
+        setShowModal(false);
         fetchProducts();
       } else {
-        alert(data.error || "Failed to create product");
+        alert(data.error || "Failed to save product");
       }
     } catch (err: any) {
       alert(err.message);
@@ -121,7 +150,7 @@ export default function AdminProductsPage() {
         </div>
 
         <button
-          onClick={() => setShowAddModal(true)}
+          onClick={openCreateModal}
           className="px-4 py-2 rounded-xl text-xs font-bold bg-solar-green text-white hover:bg-solar-green-hover flex items-center gap-1.5 transition-colors shadow-sm"
         >
           <Plus className="w-4 h-4" />
@@ -182,6 +211,14 @@ export default function AdminProductsPage() {
                     </td>
                     <td className="p-4 flex items-center gap-2">
                       <button
+                        onClick={() => openEditModal(p)}
+                        className="p-1.5 rounded bg-navy-50 text-navy-800 hover:bg-navy-800 hover:text-white font-bold text-[11px] flex items-center gap-1 transition-colors"
+                        title="Edit Product"
+                      >
+                        <Edit3 className="w-3.5 h-3.5" />
+                        <span>Edit</span>
+                      </button>
+                      <button
                         onClick={() => togglePublish(p._id, p.isPublished)}
                         className="px-2.5 py-1 rounded-lg border border-slate-border text-navy-800 hover:bg-slate-50 font-bold text-[11px]"
                       >
@@ -210,17 +247,19 @@ export default function AdminProductsPage() {
         )}
       </div>
 
-      {/* Add Product Modal */}
-      {showAddModal && (
+      {/* Add / Edit Product Modal */}
+      {showModal && (
         <div className="fixed inset-0 z-50 bg-navy-950/50 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl border border-slate-border shadow-xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95">
             <div className="p-5 border-b border-slate-border flex items-center justify-between">
-              <h3 className="text-base font-bold text-navy-800">Add Solar Module (10W - 730W)</h3>
-              <button onClick={() => setShowAddModal(false)} className="p-1 text-slate-400 hover:text-navy-800">
+              <h3 className="text-base font-bold text-navy-800">
+                {editingId ? "Edit Solar Panel" : "Add Solar Module (10W - 730W)"}
+              </h3>
+              <button onClick={() => setShowModal(false)} className="p-1 text-slate-400 hover:text-navy-800">
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <form onSubmit={handleCreate} className="p-5 space-y-4 text-xs">
+            <form onSubmit={handleSave} className="p-5 space-y-4 text-xs">
               <div>
                 <label className="font-bold text-navy-800 block mb-1">Module Name *</label>
                 <input
@@ -310,7 +349,7 @@ export default function AdminProductsPage() {
               <div className="pt-2 flex justify-end gap-2">
                 <button
                   type="button"
-                  onClick={() => setShowAddModal(false)}
+                  onClick={() => setShowModal(false)}
                   className="px-4 py-2 rounded-xl text-slate-muted hover:bg-slate-50 font-bold"
                 >
                   Cancel
@@ -321,7 +360,7 @@ export default function AdminProductsPage() {
                   className="px-5 py-2 rounded-xl bg-solar-green text-white font-bold hover:bg-solar-green-hover flex items-center gap-1.5 shadow-sm"
                 >
                   {saving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-                  <span>Save Module</span>
+                  <span>{editingId ? "Update Product" : "Save Module"}</span>
                 </button>
               </div>
             </form>

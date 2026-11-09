@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Layers, Plus, CheckCircle2, Loader2, Trash2, X } from "lucide-react";
+import { Layers, Plus, CheckCircle2, Loader2, Trash2, Edit3, X, Save } from "lucide-react";
 
 export default function AdminCategoriesPage() {
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
   // Form state
@@ -35,28 +36,51 @@ export default function AdminCategoriesPage() {
     fetchCats();
   }, []);
 
-  const handleNameChange = (val: string) => {
-    const slug = val.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-    setForm({ ...form, name: val, slug });
+  const openCreateModal = () => {
+    setEditingId(null);
+    setForm({ name: "", slug: "", description: "", technologyType: "Monocrystalline" });
+    setShowModal(true);
   };
 
-  const handleCreate = async (e: React.FormEvent) => {
+  const openEditModal = (c: any) => {
+    setEditingId(c._id);
+    setForm({
+      name: c.name || "",
+      slug: c.slug || "",
+      description: c.description || "",
+      technologyType: c.technologyType || "Monocrystalline",
+    });
+    setShowModal(true);
+  };
+
+  const handleNameChange = (val: string) => {
+    if (!editingId) {
+      const slug = val.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      setForm({ ...form, name: val, slug });
+    } else {
+      setForm({ ...form, name: val });
+    }
+  };
+
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name || !form.slug) return alert("Please fill name and slug");
     setSaving(true);
     try {
-      const res = await fetch("/api/categories", {
-        method: "POST",
+      const url = editingId ? `/api/categories/${editingId}` : "/api/categories";
+      const method = editingId ? "PATCH" : "POST";
+
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
       const data = await res.json();
       if (res.ok) {
-        setShowAddModal(false);
-        setForm({ name: "", slug: "", description: "", technologyType: "Monocrystalline" });
+        setShowModal(false);
         fetchCats();
       } else {
-        alert(data.error || "Failed to create category");
+        alert(data.error || "Failed to save category");
       }
     } catch (err: any) {
       alert(err.message);
@@ -93,7 +117,7 @@ export default function AdminCategoriesPage() {
         </div>
 
         <button
-          onClick={() => setShowAddModal(true)}
+          onClick={openCreateModal}
           className="px-4 py-2 rounded-xl text-xs font-bold bg-solar-green text-white hover:bg-solar-green-hover flex items-center gap-1.5 transition-colors shadow-sm"
         >
           <Plus className="w-4 h-4" />
@@ -124,13 +148,22 @@ export default function AdminCategoriesPage() {
                   <div className="w-8 h-8 rounded-lg bg-solar-green-light text-solar-green flex items-center justify-center font-bold text-xs">
                     <Layers className="w-4 h-4" />
                   </div>
-                  <button
-                    onClick={() => handleDelete(c._id, c.name)}
-                    className="p-1 text-slate-400 hover:text-red-500 rounded"
-                    title="Delete Category"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => openEditModal(c)}
+                      className="p-1 text-slate-400 hover:text-navy-800 rounded"
+                      title="Edit Category"
+                    >
+                      <Edit3 className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(c._id, c.name)}
+                      className="p-1 text-slate-400 hover:text-red-500 rounded"
+                      title="Delete Category"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
                 <h3 className="text-sm font-bold text-navy-800">{c.name}</h3>
                 <p className="text-xs text-slate-muted font-mono">{c.slug}</p>
@@ -149,17 +182,19 @@ export default function AdminCategoriesPage() {
         </div>
       )}
 
-      {/* Add Modal */}
-      {showAddModal && (
+      {/* Add / Edit Modal */}
+      {showModal && (
         <div className="fixed inset-0 z-50 bg-navy-950/50 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl border border-slate-border shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95">
             <div className="p-5 border-b border-slate-border flex items-center justify-between">
-              <h3 className="text-base font-bold text-navy-800">Add Technology Category</h3>
-              <button onClick={() => setShowAddModal(false)} className="p-1 text-slate-400 hover:text-navy-800">
+              <h3 className="text-base font-bold text-navy-800">
+                {editingId ? "Edit Technology Category" : "Add Technology Category"}
+              </h3>
+              <button onClick={() => setShowModal(false)} className="p-1 text-slate-400 hover:text-navy-800">
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <form onSubmit={handleCreate} className="p-5 space-y-4 text-xs">
+            <form onSubmit={handleSave} className="p-5 space-y-4 text-xs">
               <div>
                 <label className="font-bold text-navy-800 block mb-1">Category Name *</label>
                 <input
@@ -214,7 +249,7 @@ export default function AdminCategoriesPage() {
               <div className="pt-2 flex justify-end gap-2">
                 <button
                   type="button"
-                  onClick={() => setShowAddModal(false)}
+                  onClick={() => setShowModal(false)}
                   className="px-4 py-2 rounded-xl text-slate-muted hover:bg-slate-50 font-bold"
                 >
                   Cancel
@@ -225,7 +260,7 @@ export default function AdminCategoriesPage() {
                   className="px-5 py-2 rounded-xl bg-solar-green text-white font-bold hover:bg-solar-green-hover flex items-center gap-1.5 shadow-sm"
                 >
                   {saving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-                  <span>Save Category</span>
+                  <span>{editingId ? "Update Category" : "Save Category"}</span>
                 </button>
               </div>
             </form>

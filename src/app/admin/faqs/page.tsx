@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { HelpCircle, Plus, Trash2, X, Loader2 } from "lucide-react";
+import { HelpCircle, Plus, Trash2, Edit3, X, Loader2, Save } from "lucide-react";
 
 export default function AdminFaqsPage() {
   const [faqs, setFaqs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
   const [form, setForm] = useState({
@@ -28,22 +29,41 @@ export default function AdminFaqsPage() {
     fetchFaqs();
   }, []);
 
-  const handleCreate = async (e: React.FormEvent) => {
+  const openCreateModal = () => {
+    setEditingId(null);
+    setForm({ question: "", answer: "", category: "general", sortOrder: 1 });
+    setShowModal(true);
+  };
+
+  const openEditModal = (f: any) => {
+    setEditingId(f._id);
+    setForm({
+      question: f.question || "",
+      answer: f.answer || "",
+      category: f.category || "general",
+      sortOrder: f.sortOrder || 1,
+    });
+    setShowModal(true);
+  };
+
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     try {
-      const res = await fetch("/api/faqs", {
-        method: "POST",
+      const url = editingId ? `/api/faqs/${editingId}` : "/api/faqs";
+      const method = editingId ? "PATCH" : "POST";
+
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
       if (res.ok) {
-        setShowAddModal(false);
-        setForm({ question: "", answer: "", category: "general", sortOrder: 1 });
+        setShowModal(false);
         fetchFaqs();
       } else {
         const d = await res.json();
-        alert(d.error || "Failed to create FAQ");
+        alert(d.error || "Failed to save FAQ");
       }
     } catch (err: any) {
       alert(err.message);
@@ -80,7 +100,7 @@ export default function AdminFaqsPage() {
         </div>
 
         <button
-          onClick={() => setShowAddModal(true)}
+          onClick={openCreateModal}
           className="px-4 py-2 rounded-xl text-xs font-bold bg-solar-green text-white hover:bg-solar-green-hover flex items-center gap-1.5 transition-colors shadow-sm"
         >
           <Plus className="w-4 h-4" />
@@ -107,8 +127,15 @@ export default function AdminFaqsPage() {
                 <span className="text-[10px] font-bold uppercase tracking-wider text-solar-green bg-solar-green-light px-2 py-0.5 rounded">
                   {f.category}
                 </span>
-                <div className="flex items-center gap-3">
-                  <span className="text-xs text-slate-muted">Sort: {f.sortOrder}</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-slate-muted mr-2">Sort: {f.sortOrder}</span>
+                  <button
+                    onClick={() => openEditModal(f)}
+                    className="p-1 text-slate-400 hover:text-navy-800 rounded"
+                    title="Edit FAQ"
+                  >
+                    <Edit3 className="w-3.5 h-3.5" />
+                  </button>
                   <button
                     onClick={() => handleDelete(f._id)}
                     className="p-1 text-slate-400 hover:text-red-500 rounded"
@@ -125,17 +152,19 @@ export default function AdminFaqsPage() {
         </div>
       )}
 
-      {/* Add FAQ Modal */}
-      {showAddModal && (
+      {/* Add / Edit FAQ Modal */}
+      {showModal && (
         <div className="fixed inset-0 z-50 bg-navy-950/50 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl border border-slate-border shadow-xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95">
             <div className="p-5 border-b border-slate-border flex items-center justify-between">
-              <h3 className="text-base font-bold text-navy-800">Add New FAQ</h3>
-              <button onClick={() => setShowAddModal(false)} className="p-1 text-slate-400 hover:text-navy-800">
+              <h3 className="text-base font-bold text-navy-800">
+                {editingId ? "Edit FAQ" : "Add New FAQ"}
+              </h3>
+              <button onClick={() => setShowModal(false)} className="p-1 text-slate-400 hover:text-navy-800">
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <form onSubmit={handleCreate} className="p-5 space-y-4 text-xs">
+            <form onSubmit={handleSave} className="p-5 space-y-4 text-xs">
               <div>
                 <label className="font-bold text-navy-800 block mb-1">Question *</label>
                 <input
@@ -170,7 +199,9 @@ export default function AdminFaqsPage() {
                   >
                     <option value="general">General</option>
                     <option value="technical">Technical</option>
-                    <option value="financial">Financial / Subsidy</option>
+                    <option value="subsidy">Subsidy & PM Surya Ghar</option>
+                    <option value="residential">Residential Solar</option>
+                    <option value="commercial">Commercial Solar</option>
                     <option value="installation">Installation</option>
                     <option value="maintenance">Maintenance</option>
                   </select>
@@ -190,7 +221,7 @@ export default function AdminFaqsPage() {
               <div className="pt-2 flex justify-end gap-2">
                 <button
                   type="button"
-                  onClick={() => setShowAddModal(false)}
+                  onClick={() => setShowModal(false)}
                   className="px-4 py-2 rounded-xl text-slate-muted hover:bg-slate-50 font-bold"
                 >
                   Cancel
@@ -201,7 +232,7 @@ export default function AdminFaqsPage() {
                   className="px-5 py-2 rounded-xl bg-solar-green text-white font-bold hover:bg-solar-green-hover flex items-center gap-1.5 shadow-sm"
                 >
                   {saving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-                  <span>Save FAQ</span>
+                  <span>{editingId ? "Update FAQ" : "Save FAQ"}</span>
                 </button>
               </div>
             </form>

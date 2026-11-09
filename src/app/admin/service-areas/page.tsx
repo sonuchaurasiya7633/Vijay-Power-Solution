@@ -2,12 +2,13 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { MapPin, Plus, CheckCircle2, Trash2, X, Loader2 } from "lucide-react";
+import { MapPin, Plus, CheckCircle2, Trash2, Edit3, X, Loader2, Save } from "lucide-react";
 
 export default function AdminServiceAreasPage() {
   const [locations, setLocations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
   const [form, setForm] = useState({
@@ -35,9 +36,47 @@ export default function AdminServiceAreasPage() {
     fetchLocations();
   }, []);
 
+  const openCreateModal = () => {
+    setEditingId(null);
+    setForm({
+      state: "Bihar",
+      stateSlug: "bihar",
+      district: "",
+      city: "",
+      citySlug: "",
+      contactPhone: "+91 94310 00000",
+      overviewText: "Turnkey solar solutions, net metering assistance, and DISCOM grid-tie installations.",
+      serviceAvailability: "available",
+      priorityArea: true,
+      isPublished: true,
+    });
+    setShowModal(true);
+  };
+
+  const openEditModal = (loc: any) => {
+    setEditingId(loc._id);
+    setForm({
+      state: loc.state || "Bihar",
+      stateSlug: loc.stateSlug || "bihar",
+      district: loc.district || "",
+      city: loc.city || "",
+      citySlug: loc.citySlug || "",
+      contactPhone: loc.contactPhone || "+91 94310 00000",
+      overviewText: loc.overviewText || "",
+      serviceAvailability: loc.serviceAvailability || "available",
+      priorityArea: loc.priorityArea !== undefined ? loc.priorityArea : true,
+      isPublished: loc.isPublished !== undefined ? loc.isPublished : true,
+    });
+    setShowModal(true);
+  };
+
   const handleCityChange = (val: string) => {
-    const citySlug = val.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-    setForm({ ...form, city: val, citySlug });
+    if (!editingId) {
+      const citySlug = val.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      setForm({ ...form, city: val, citySlug });
+    } else {
+      setForm({ ...form, city: val });
+    }
   };
 
   const handleStateChange = (stateName: string) => {
@@ -45,34 +84,25 @@ export default function AdminServiceAreasPage() {
     setForm({ ...form, state: stateName, stateSlug });
   };
 
-  const handleCreate = async (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.district || !form.city) return alert("District and City are required");
     setSaving(true);
     try {
-      const res = await fetch("/api/service-areas", {
-        method: "POST",
+      const url = editingId ? `/api/service-areas/${editingId}` : "/api/service-areas";
+      const method = editingId ? "PATCH" : "POST";
+
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
       if (res.ok) {
-        setShowAddModal(false);
-        setForm({
-          state: "Bihar",
-          stateSlug: "bihar",
-          district: "",
-          city: "",
-          citySlug: "",
-          contactPhone: "+91 94310 00000",
-          overviewText: "Turnkey solar solutions, net metering assistance, and DISCOM grid-tie installations.",
-          serviceAvailability: "available",
-          priorityArea: true,
-          isPublished: true,
-        });
+        setShowModal(false);
         fetchLocations();
       } else {
         const d = await res.json();
-        alert(d.error || "Failed to add location");
+        alert(d.error || "Failed to save location");
       }
     } catch (err: any) {
       alert(err.message);
@@ -109,7 +139,7 @@ export default function AdminServiceAreasPage() {
         </div>
 
         <button
-          onClick={() => setShowAddModal(true)}
+          onClick={openCreateModal}
           className="px-4 py-2 rounded-xl text-xs font-bold bg-solar-green text-white hover:bg-solar-green-hover flex items-center gap-1.5 transition-colors shadow-sm"
         >
           <Plus className="w-4 h-4" />
@@ -136,6 +166,13 @@ export default function AdminServiceAreasPage() {
                       District: {loc.district}
                     </span>
                     <button
+                      onClick={() => openEditModal(loc)}
+                      className="p-1 text-slate-400 hover:text-navy-800 rounded"
+                      title="Edit Location"
+                    >
+                      <Edit3 className="w-3.5 h-3.5" />
+                    </button>
+                    <button
                       onClick={() => handleDelete(loc._id, loc.city)}
                       className="p-1 text-slate-400 hover:text-red-500 rounded"
                       title="Delete Location"
@@ -158,17 +195,19 @@ export default function AdminServiceAreasPage() {
         </div>
       )}
 
-      {/* Add Location Modal */}
-      {showAddModal && (
+      {/* Add / Edit Location Modal */}
+      {showModal && (
         <div className="fixed inset-0 z-50 bg-navy-950/50 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl border border-slate-border shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95">
             <div className="p-5 border-b border-slate-border flex items-center justify-between">
-              <h3 className="text-base font-bold text-navy-800">Add Service Location</h3>
-              <button onClick={() => setShowAddModal(false)} className="p-1 text-slate-400 hover:text-navy-800">
+              <h3 className="text-base font-bold text-navy-800">
+                {editingId ? "Edit Service Location" : "Add Service Location"}
+              </h3>
+              <button onClick={() => setShowModal(false)} className="p-1 text-slate-400 hover:text-navy-800">
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <form onSubmit={handleCreate} className="p-5 space-y-4 text-xs">
+            <form onSubmit={handleSave} className="p-5 space-y-4 text-xs">
               <div>
                 <label className="font-bold text-navy-800 block mb-1">State *</label>
                 <select
@@ -221,7 +260,7 @@ export default function AdminServiceAreasPage() {
               <div>
                 <label className="font-bold text-navy-800 block mb-1">Overview Description</label>
                 <textarea
-                  rows={2}
+                  rows={3}
                   placeholder="Local net metering assistance, DISCOM coverage..."
                   value={form.overviewText}
                   onChange={(e) => setForm({ ...form, overviewText: e.target.value })}
@@ -232,7 +271,7 @@ export default function AdminServiceAreasPage() {
               <div className="pt-2 flex justify-end gap-2">
                 <button
                   type="button"
-                  onClick={() => setShowAddModal(false)}
+                  onClick={() => setShowModal(false)}
                   className="px-4 py-2 rounded-xl text-slate-muted hover:bg-slate-50 font-bold"
                 >
                   Cancel
@@ -243,7 +282,7 @@ export default function AdminServiceAreasPage() {
                   className="px-5 py-2 rounded-xl bg-solar-green text-white font-bold hover:bg-solar-green-hover flex items-center gap-1.5 shadow-sm"
                 >
                   {saving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-                  <span>Save Location</span>
+                  <span>{editingId ? "Update Location" : "Save Location"}</span>
                 </button>
               </div>
             </form>

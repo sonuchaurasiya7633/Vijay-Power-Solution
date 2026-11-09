@@ -1,9 +1,29 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Phone, Mail, MapPin, MessageCircle, ShieldCheck, Sun } from "lucide-react";
+import connectDB from "@/lib/db/connection";
+import Setting from "@/models/Setting";
 
-export default function Footer() {
+export default async function Footer() {
   const currentYear = new Date().getFullYear();
+  let contact = {
+    phone: "+91 94310 00000",
+    email: "contact@vijoypowersolution.com",
+    address: "Main Road, Near Power Grid Substation, Gaya, Bihar - 823001",
+    workingHours: "Mon – Sat: 9:00 AM – 7:00 PM",
+  };
+
+  try {
+    await connectDB();
+    const generalDoc = await Setting.findOne({ key: "general" }).lean();
+    if (generalDoc && generalDoc.value) {
+      contact = { ...contact, ...(generalDoc.value as object) };
+    }
+  } catch (e) {
+    // Graceful fallback
+  }
+
+  const cleanPhone = contact.phone ? contact.phone.replace(/[^0-9+]/g, "") : "+919431000000";
 
   return (
     <footer className="bg-navy-900 text-slate-300 pt-16 pb-10 border-t border-navy-700">
@@ -36,18 +56,18 @@ export default function Footer() {
             <div className="pt-2 flex flex-col gap-2.5 text-xs text-slate-300">
               <div className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-solar-yellow shrink-0 mt-0.5" />
-                <span>Main Road, Near Power Grid Substation, Gaya, Bihar - 823001</span>
+                <span>{contact.address}</span>
               </div>
               <div className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-solar-green shrink-0" />
-                <a href="tel:+919431000000" className="hover:text-white transition-colors">
-                  +91 94310 00000 (Mon – Sat: 9:00 AM – 7:00 PM)
+                <a href={`tel:${cleanPhone}`} className="hover:text-white transition-colors">
+                  {contact.phone} ({contact.workingHours})
                 </a>
               </div>
               <div className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-solar-yellow shrink-0" />
-                <a href="mailto:contact@vijoypowersolution.com" className="hover:text-white transition-colors">
-                  contact@vijoypowersolution.com
+                <a href={`mailto:${contact.email}`} className="hover:text-white transition-colors">
+                  {contact.email}
                 </a>
               </div>
             </div>

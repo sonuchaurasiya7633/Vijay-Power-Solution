@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { FolderGit2, Plus, CheckCircle2, Eye, EyeOff, Loader2, Trash2, X } from "lucide-react";
+import { FolderGit2, Plus, CheckCircle2, Eye, EyeOff, Loader2, Trash2, Edit3, X, Save } from "lucide-react";
 import { formatDateIST } from "@/lib/utils/formatters";
 
 export default function AdminProjectsPage() {
   const [projects, setProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
   const [form, setForm] = useState({
@@ -44,12 +45,54 @@ export default function AdminProjectsPage() {
     fetchProjects();
   }, []);
 
-  const handleTitleChange = (val: string) => {
-    const slug = val.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-    setForm({ ...form, title: val, slug });
+  const openCreateModal = () => {
+    setEditingId(null);
+    setForm({
+      title: "",
+      slug: "",
+      customerName: "",
+      city: "Patna",
+      state: "Bihar",
+      systemCapacityKw: 10,
+      systemType: "on-grid",
+      projectCategory: "residential",
+      coverImageUrl: "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=800&q=80",
+      hasCustomerConsent: true,
+      isPublished: true,
+      scopeOfWork: "Turnkey EPC: structure erection, solar panel mounting, bi-directional net-metering synchronization.",
+    });
+    setShowModal(true);
   };
 
-  const handleCreate = async (e: React.FormEvent) => {
+  const openEditModal = (p: any) => {
+    setEditingId(p._id);
+    setForm({
+      title: p.title || "",
+      slug: p.slug || "",
+      customerName: p.customerName || "",
+      city: p.city || "Patna",
+      state: p.state || "Bihar",
+      systemCapacityKw: p.systemCapacityKw || 10,
+      systemType: p.systemType || "on-grid",
+      projectCategory: p.projectCategory || "residential",
+      coverImageUrl: p.coverImageUrl || "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=800&q=80",
+      hasCustomerConsent: p.hasCustomerConsent !== undefined ? p.hasCustomerConsent : true,
+      isPublished: p.isPublished !== undefined ? p.isPublished : true,
+      scopeOfWork: p.scopeOfWork || "Turnkey EPC: structure erection, solar panel mounting, bi-directional net-metering synchronization.",
+    });
+    setShowModal(true);
+  };
+
+  const handleTitleChange = (val: string) => {
+    if (!editingId) {
+      const slug = val.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      setForm({ ...form, title: val, slug });
+    } else {
+      setForm({ ...form, title: val });
+    }
+  };
+
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.hasCustomerConsent) {
       return alert("Customer consent is strictly required before publishing any project publicly.");
@@ -57,8 +100,11 @@ export default function AdminProjectsPage() {
 
     setSaving(true);
     try {
-      const res = await fetch("/api/projects", {
-        method: "POST",
+      const url = editingId ? `/api/projects/${editingId}` : "/api/projects";
+      const method = editingId ? "PATCH" : "POST";
+
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
@@ -67,10 +113,10 @@ export default function AdminProjectsPage() {
       });
       const data = await res.json();
       if (res.ok) {
-        setShowAddModal(false);
+        setShowModal(false);
         fetchProjects();
       } else {
-        alert(data.error || "Failed to create project");
+        alert(data.error || "Failed to save project");
       }
     } catch (err: any) {
       alert(err.message);
@@ -108,7 +154,7 @@ export default function AdminProjectsPage() {
         </div>
 
         <button
-          onClick={() => setShowAddModal(true)}
+          onClick={openCreateModal}
           className="px-4 py-2 rounded-xl text-xs font-bold bg-solar-green text-white hover:bg-solar-green-hover flex items-center gap-1.5 transition-colors shadow-sm"
         >
           <Plus className="w-4 h-4" />
@@ -172,6 +218,14 @@ export default function AdminProjectsPage() {
                     <td className="p-4 text-slate-muted">{p.completionDate ? formatDateIST(p.completionDate) : "-"}</td>
                     <td className="p-4 flex items-center gap-2">
                       <button
+                        onClick={() => openEditModal(p)}
+                        className="p-1.5 rounded bg-navy-50 text-navy-800 hover:bg-navy-800 hover:text-white font-bold text-[11px] flex items-center gap-1 transition-colors"
+                        title="Edit Case Study"
+                      >
+                        <Edit3 className="w-3.5 h-3.5" />
+                        <span>Edit</span>
+                      </button>
+                      <button
                         onClick={() => togglePublish(p._id, p.isPublished)}
                         className="px-2.5 py-1 rounded-lg border border-slate-border text-navy-800 hover:bg-slate-50 font-bold text-[11px]"
                       >
@@ -200,17 +254,19 @@ export default function AdminProjectsPage() {
         )}
       </div>
 
-      {/* Add Project Modal */}
-      {showAddModal && (
+      {/* Add / Edit Project Modal */}
+      {showModal && (
         <div className="fixed inset-0 z-50 bg-navy-950/50 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl border border-slate-border shadow-xl w-full max-w-xl overflow-hidden animate-in fade-in zoom-in-95">
             <div className="p-5 border-b border-slate-border flex items-center justify-between">
-              <h3 className="text-base font-bold text-navy-800">Add Installation Case Study</h3>
-              <button onClick={() => setShowAddModal(false)} className="p-1 text-slate-400 hover:text-navy-800">
+              <h3 className="text-base font-bold text-navy-800">
+                {editingId ? "Edit Installation Case Study" : "Add Installation Case Study"}
+              </h3>
+              <button onClick={() => setShowModal(false)} className="p-1 text-slate-400 hover:text-navy-800">
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <form onSubmit={handleCreate} className="p-5 space-y-4 text-xs">
+            <form onSubmit={handleSave} className="p-5 space-y-4 text-xs">
               <div>
                 <label className="font-bold text-navy-800 block mb-1">Project Title *</label>
                 <input
@@ -337,7 +393,7 @@ export default function AdminProjectsPage() {
               <div className="pt-2 flex justify-end gap-2">
                 <button
                   type="button"
-                  onClick={() => setShowAddModal(false)}
+                  onClick={() => setShowModal(false)}
                   className="px-4 py-2 rounded-xl text-slate-muted hover:bg-slate-50 font-bold"
                 >
                   Cancel
@@ -348,7 +404,7 @@ export default function AdminProjectsPage() {
                   className="px-5 py-2 rounded-xl bg-solar-green text-white font-bold hover:bg-solar-green-hover flex items-center gap-1.5 shadow-sm"
                 >
                   {saving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-                  <span>Save Case Study</span>
+                  <span>{editingId ? "Update Case Study" : "Save Case Study"}</span>
                 </button>
               </div>
             </form>

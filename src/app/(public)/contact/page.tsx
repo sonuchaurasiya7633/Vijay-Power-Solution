@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Phone, Mail, MapPin, Clock, MessageCircle, ShieldCheck } from "lucide-react";
 import LeadCaptureForm from "@/components/forms/LeadCaptureForm";
+import connectDB from "@/lib/db/connection";
+import Setting from "@/models/Setting";
+import Page from "@/models/Page";
 
 export const metadata: Metadata = {
   title: "Contact Us & Regional Offices | VIJOY POWER SOLUTION",
@@ -8,7 +11,38 @@ export const metadata: Metadata = {
     "Contact VIJOY POWER SOLUTION for rooftop solar consultation, engineering surveys, and net metering assistance across Bihar, Jharkhand, and Uttar Pradesh.",
 };
 
-export default function ContactPage() {
+export const revalidate = 60;
+
+export default async function ContactPage() {
+  let settings: any = {
+    companyName: "VIJOY POWER SOLUTION",
+    phone: "+91 94310 00000",
+    whatsapp: "919431000000",
+    email: "contact@vijoypowersolution.com",
+    address: "Main Road, Near Power Grid Substation, Gaya, Bihar - 823001",
+    workingHours: "Monday – Saturday: 9:00 AM – 7:00 PM IST (Sunday closed)",
+  };
+  let pageContent: any = null;
+
+  try {
+    await connectDB();
+    const [settingDoc, pageDoc] = await Promise.all([
+      Setting.findOne({ key: "general" }).lean(),
+      Page.findOne({ slug: "contact", isPublished: true }).lean(),
+    ]);
+    if (settingDoc && settingDoc.value) {
+      settings = { ...settings, ...(settingDoc.value as object) };
+    }
+    if (pageDoc) {
+      pageContent = pageDoc;
+    }
+  } catch (err) {
+    console.error("Error loading dynamic contact settings:", err);
+  }
+
+  const cleanPhone = settings.phone ? settings.phone.replace(/[^0-9+]/g, "") : "+919431000000";
+  const cleanWa = settings.whatsapp ? settings.whatsapp.replace(/[^0-9]/g, "") : "919431000000";
+
   return (
     <div className="bg-white">
       {/* Header */}
@@ -18,10 +52,11 @@ export default function ContactPage() {
             Direct Communication
           </span>
           <h1 className="text-3xl sm:text-5xl font-display font-extrabold text-white tracking-tight">
-            Contact VIJOY POWER SOLUTION
+            {pageContent?.title || "Contact VIJOY POWER SOLUTION"}
           </h1>
           <p className="text-sm sm:text-base text-slate-300 max-w-3xl leading-relaxed">
-            Reach out to our certified solar engineering and technical support teams. We are available Monday through Saturday across Bihar, Jharkhand, and Uttar Pradesh.
+            {pageContent?.heroSubtitle ||
+              "Reach out to our certified solar engineering and technical support teams. We are available Monday through Saturday across Bihar, Jharkhand, and Uttar Pradesh."}
           </p>
         </div>
       </div>
@@ -48,7 +83,7 @@ export default function ContactPage() {
                 <div>
                   <h4 className="font-bold text-navy-800">Corporate & Operational Office</h4>
                   <p className="text-slate-muted mt-1 leading-relaxed">
-                    Main Road, Near Power Grid Substation, Gaya, Bihar - 823001
+                    {settings.address}
                   </p>
                 </div>
               </div>
@@ -57,8 +92,8 @@ export default function ContactPage() {
                 <Phone className="w-5 h-5 text-solar-green shrink-0 mt-0.5" />
                 <div>
                   <h4 className="font-bold text-navy-800">Direct Telephone</h4>
-                  <a href="tel:+919431000000" className="text-solar-green font-bold text-base block mt-1 hover:underline">
-                    +91 94310 00000
+                  <a href={`tel:${cleanPhone}`} className="text-solar-green font-bold text-base block mt-1 hover:underline">
+                    {settings.phone}
                   </a>
                   <p className="text-[11px] text-slate-muted mt-0.5">Toll-free assistance & site survey scheduling</p>
                 </div>
@@ -69,12 +104,12 @@ export default function ContactPage() {
                 <div>
                   <h4 className="font-bold text-navy-800">WhatsApp Support Desk</h4>
                   <a
-                    href="https://wa.me/919431000000?text=Hello%20VIJOY%20POWER%20SOLUTION,%20I%20would%20like%20to%20enquire%20about%20solar%20installation."
+                    href={`https://wa.me/${cleanWa}?text=Hello%20VIJOY%20POWER%20SOLUTION,%20I%20would%20like%20to%20enquire%20about%20solar%20installation.`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-green-600 font-bold block mt-1 hover:underline"
                   >
-                    Chat on +91 94310 00000
+                    Chat on {settings.phone || cleanWa}
                   </a>
                   <p className="text-[11px] text-slate-muted mt-0.5">Quick replies & document sharing</p>
                 </div>
@@ -84,8 +119,8 @@ export default function ContactPage() {
                 <Mail className="w-5 h-5 text-solar-yellow-hover shrink-0 mt-0.5" />
                 <div>
                   <h4 className="font-bold text-navy-800">Official Email</h4>
-                  <a href="mailto:contact@vijoypowersolution.com" className="text-navy-800 font-medium block mt-1 hover:underline">
-                    contact@vijoypowersolution.com
+                  <a href={`mailto:${settings.email}`} className="text-navy-800 font-medium block mt-1 hover:underline">
+                    {settings.email}
                   </a>
                 </div>
               </div>
@@ -95,7 +130,7 @@ export default function ContactPage() {
                 <div>
                   <h4 className="font-bold text-navy-800">Working Hours</h4>
                   <p className="text-slate-muted mt-1 leading-relaxed">
-                    Monday to Saturday: 9:00 AM – 7:00 PM IST (Sunday closed)
+                    {settings.workingHours || "Monday to Saturday: 9:00 AM – 7:00 PM IST (Sunday closed)"}
                   </p>
                 </div>
               </div>

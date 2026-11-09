@@ -24,9 +24,19 @@ export async function PATCH(
       return NextResponse.json({ error: "Cannot deactivate primary root super administrator" }, { status: 400 });
     }
 
+    const updates: any = {};
+    if (typeof body.name === "string") updates.name = body.name.trim();
+    if (typeof body.phone === "string") updates.phone = body.phone.trim();
+    if (typeof body.role === "string") updates.role = body.role;
+    if (typeof body.isActive === "boolean") updates.isActive = body.isActive;
+    if (body.password && body.password.length >= 6) {
+      const { hashPassword } = await import("@/lib/auth/passwords");
+      updates.passwordHash = await hashPassword(body.password);
+    }
+
     const updated = await User.findByIdAndUpdate(
       params.id,
-      { $set: body },
+      { $set: updates },
       { new: true, select: "-passwordHash" }
     );
 

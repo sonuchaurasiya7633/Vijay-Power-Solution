@@ -1,8 +1,24 @@
 import Link from "next/link";
 import { ShieldCheck, Sun, CheckCircle2, ArrowRight } from "lucide-react";
 import LeadCaptureForm from "@/components/forms/LeadCaptureForm";
+import connectDB from "@/lib/db/connection";
+import Page from "@/models/Page";
 
-export default function HeroSection() {
+export default async function HeroSection() {
+  let homePage: any = null;
+  try {
+    await connectDB();
+    homePage = await Page.findOne({ slug: "home", isPublished: true }).lean();
+  } catch (e) {
+    // fallback gracefully
+  }
+
+  const badgeText = homePage?.sections?.[0]?.badgeText || "Certified Solar EPC • Bihar | Jharkhand | Uttar Pradesh";
+  const heroHeading = homePage?.heroHeading || "Power Your Future with Solar Energy";
+  const heroSubtitle =
+    homePage?.heroSubtitle ||
+    "Reliable Solar Panel Solutions & Professional Installation Across Bihar, Jharkhand, and Uttar Pradesh. Complete engineering, DISCOM net metering liaison, and PM Surya Ghar subsidy guidance.";
+
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-navy-900 via-navy-800 to-navy-900 text-white py-16 lg:py-24">
       {/* Background ambient lighting */}
@@ -16,15 +32,22 @@ export default function HeroSection() {
           <div className="lg:col-span-7 space-y-6">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs font-semibold text-solar-yellow backdrop-blur-sm">
               <Sun className="w-3.5 h-3.5 text-solar-yellow animate-spin-slow" />
-              <span>Certified Solar EPC • Bihar | Jharkhand | Uttar Pradesh</span>
+              <span>{badgeText}</span>
             </div>
 
             <h1 className="font-display font-extrabold text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white tracking-tight leading-[1.12]">
-              Power Your Future with <span className="text-solar-green">Solar Energy</span>
+              {heroHeading.includes("Solar Energy") ? (
+                <>
+                  {heroHeading.replace("Solar Energy", "")}
+                  <span className="text-solar-green">Solar Energy</span>
+                </>
+              ) : (
+                heroHeading
+              )}
             </h1>
 
             <p className="text-base sm:text-lg text-slate-200 leading-relaxed max-w-2xl">
-              Reliable Solar Panel Solutions & Professional Installation Across <strong>Bihar</strong>, <strong>Jharkhand</strong>, and <strong>Uttar Pradesh</strong>. Complete engineering, DISCOM net metering liaison, and PM Surya Ghar subsidy guidance.
+              {heroSubtitle}
             </p>
 
             {/* Quick trust checklist */}
