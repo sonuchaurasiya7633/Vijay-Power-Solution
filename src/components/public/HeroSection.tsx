@@ -7,10 +7,10 @@ import Page from "@/models/Page";
 
 export default async function HeroSection() {
   let heroData = {
-    badge: "Certified Solar EPC • Bihar | Jharkhand | Uttar Pradesh",
-    headline: "Power Your Future with Solar Energy",
+    badge: "Certified Solar EPC • Serving Customers Across India",
+    headline: "Professional Solar Panel Installation Services Across India",
     subheading:
-      "Reliable Solar Panel Solutions & Professional Installation Across Bihar, Jharkhand, and Uttar Pradesh. Complete engineering, DISCOM net metering liaison, and PM Surya Ghar subsidy guidance.",
+      "Vijoy Power Solution delivers reliable solar panel supply and installation solutions for residential, commercial, industrial, and agricultural requirements across India.",
     backgroundImage: "/images/hero-solar-banner.jpg",
     checkpoints: [
       "Modules from 10W to 730W",
@@ -76,7 +76,7 @@ export default async function HeroSection() {
         <div className="lg:hidden w-full mb-4 rounded-2xl overflow-hidden border border-navy-700 shadow-2xl relative aspect-[16/9] bg-navy-900 group">
           <Image
             src={bgImage}
-            alt="VIJOY POWER SOLUTION - Solar Panels Installation in Bihar, Jharkhand & UP"
+            alt="VIJOY POWER SOLUTION - Solar Panels Installation Across India"
             fill
             priority
             sizes="100vw"
@@ -86,10 +86,10 @@ export default async function HeroSection() {
           <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none">
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-navy-900/90 backdrop-blur-md border border-solar-yellow/40 text-[10px] font-bold text-solar-yellow shadow-md">
               <CheckCircle2 className="w-3.5 h-3.5 text-solar-yellow shrink-0" />
-              <span>Certified Solar EPC • 10W to 730W</span>
+              <span>Pan India Solar EPC • 10W to 730W</span>
             </span>
             <span className="text-[10px] font-bold text-white bg-solar-green/90 px-2.5 py-0.5 rounded-md shadow-sm">
-              Bihar • JH • UP
+              All Over India
             </span>
           </div>
         </div>
@@ -98,7 +98,12 @@ export default async function HeroSection() {
         <div className="max-w-xl lg:max-w-2xl bg-gradient-to-br from-navy-900 via-navy-950 to-navy-900 p-5 sm:p-7 rounded-3xl border border-navy-700 shadow-2xl space-y-4">
           {/* Main Headline with High-Contrast Golden Yellow Accent */}
           <h1 className="font-display font-extrabold text-2xl sm:text-3xl md:text-4xl text-white tracking-tight leading-[1.18]">
-            {heroHeading.includes("Solar Energy") ? (
+            {heroHeading.includes("Across India") ? (
+              <>
+                {heroHeading.replace("Across India", "")}
+                <span className="text-solar-yellow font-black">Across India</span>
+              </>
+            ) : heroHeading.includes("Solar Energy") ? (
               <>
                 {heroHeading.replace("Solar Energy", "")}
                 <span className="text-solar-yellow font-black">Solar Energy</span>

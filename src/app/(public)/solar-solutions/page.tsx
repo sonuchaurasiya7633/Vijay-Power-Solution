@@ -5,7 +5,7 @@ import CtaBanner from "@/components/public/CtaBanner";
 export const metadata: Metadata = {
   title: "Solar Power Solutions | Residential, Commercial & Industrial EPC",
   description:
-    "Tailored solar architectures: Residential Rooftop, Commercial Enterprises, Industrial Captive Plants, On-Grid Net Metering, and Hybrid Battery Systems in Bihar, Jharkhand, and UP.",
+    "Tailored solar architectures: Residential Rooftop, Commercial Enterprises, Industrial Captive Plants, On-Grid Net Metering, and Hybrid Battery Systems across India.",
 };
 
 export default function SolarSolutionsPage() {

@@ -14,7 +14,7 @@ const defaultFaqs: FAQItem[] = [
     answer: "A standard 3 kW solar rooftop plant using modern high-efficiency 550W modules requires approximately 180 to 220 square feet of shadow-free rooftop space. If you require usable terrace space below, we can install elevated galvanized structures.",
   },
   {
-    question: "What is the subsidy under the PM Surya Ghar: Muft Bijli Yojana in Bihar, Jharkhand, and UP?",
+    question: "What is the subsidy under the PM Surya Ghar: Muft Bijli Yojana across India?",
     answer: "Under the PM Surya Ghar national scheme, residential rooftop systems receive up to ₹30,000 for 1 kW, ₹60,000 for 2 kW, and a maximum of ₹78,000 for systems 3 kW and above. The subsidy is disbursed directly to your bank account via DBT after DISCOM commissioning.",
   },
   {

@@ -29,19 +29,19 @@ export default function AdminAboutCmsPage() {
       badge: "Company Profile & Engineering Philosophy",
       title: "About VIJOY POWER SOLUTION",
       subtitle:
-        "Delivering clean, dependable solar rooftop engineering, ALMM-compliant panel supply, and seamless DISCOM net-metering across Eastern and Northern India.",
+        "Delivering clean, dependable solar rooftop engineering, ALMM-compliant panel supply, and seamless DISCOM net-metering across India.",
       imageUrl: "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=1000&q=85",
     },
     narrative: {
       badge: "Engineering Heritage",
-      headline: "Empowering Bihar, Jharkhand & UP with Reliable Renewable Energy",
+      headline: "Empowering India with Dependable Renewable Energy",
       paragraph1:
-        "VIJOY POWER SOLUTION was founded with a singular conviction: renewable energy must be engineered for real Indian operating conditions. Solar panels in Bihar and Uttar Pradesh face intense summer heat exceeding 45°C, high dust deposition, and severe monsoon winds.",
+        "VIJOY POWER SOLUTION was founded with a singular conviction: renewable energy must be engineered for real Indian operating conditions. Solar panels across Indian states face intense summer heat exceeding 45°C, high dust deposition, and severe monsoon winds.",
       paragraph2:
         "We bridge the gap between premium tier-1 equipment and flawless civil-electrical execution. From 10W specialized modules up to 730W high-efficiency Heterojunction and N-Type TOPCon bifacial arrays, every system is designed around the customer's exact roof geometry and energy consumption pattern.",
       missionTitle: "Our Mission",
       missionDesc:
-        "To make rooftop solar the most dependable, cost-effective power source for every home and enterprise in Eastern India.",
+        "To make rooftop solar the most dependable, cost-effective power source for every home and enterprise across India.",
       valuesTitle: "Our Core Value",
       valuesDesc:
         "Uncompromising engineering transparency: verified tier-1 equipment, zero fake pricing, and zero shortcuts on safety.",
@@ -57,16 +57,16 @@ export default function AdminAboutCmsPage() {
       },
       {
         title: "DISCOM Liaison Mastery",
-        desc: "End-to-end liaison with SBPDCL, NBPDCL, JBVNL, and UPPCL for rapid feasibility approval and bi-directional meter synchronization.",
+        desc: "End-to-end liaison with state electricity utility boards (DISCOMs) across India for rapid feasibility approval and net-meter synchronization.",
       },
       {
-        title: "Dedicated Local Field Support",
-        desc: "Trained resident technicians in Gaya, Patna, Ranchi, and Lucknow ensuring prompt routine maintenance and warranty service.",
+        title: "Nationwide Field Support",
+        desc: "Trained resident technicians and certified installation teams across India ensuring prompt routine maintenance and warranty service.",
       },
     ],
     leadership: {
       quote:
-        "Solar rooftop adoption is not just an equipment sale — it is a quarter-century engineering commitment to our clients in Bihar, Jharkhand, and UP.",
+        "Solar rooftop adoption is not just an equipment sale — it is a quarter-century engineering commitment to our clients across India.",
       author: "Eng. Vijay Kumar",
       designation: "Founder & Chief Technical Director",
     },

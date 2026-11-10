@@ -8,7 +8,7 @@ import Page from "@/models/Page";
 export const metadata: Metadata = {
   title: "Contact Us & Regional Offices | VIJOY POWER SOLUTION",
   description:
-    "Contact VIJOY POWER SOLUTION for rooftop solar consultation, engineering surveys, and net metering assistance across Bihar, Jharkhand, and Uttar Pradesh.",
+    "Contact VIJOY POWER SOLUTION for rooftop solar consultation, engineering surveys, and net metering assistance across India.",
 };
 
 export const revalidate = 60;
@@ -95,7 +95,7 @@ export default async function ContactPage() {
   const heroSubtitle =
     cmsContact?.hero?.subtitle ||
     pageContent?.heroSubtitle ||
-    "Reach out to our certified solar engineering and technical support teams. We are available Monday through Saturday across Bihar, Jharkhand, and Uttar Pradesh.";
+    "Reach out to our certified solar engineering and technical support teams. Serving customers across India with dedicated regional engineering and liaison desks.";
 
   return (
     <div className="bg-white">
@@ -221,7 +221,7 @@ export default async function ContactPage() {
                 Our Regional Offices & Liaison Desks
               </h3>
               <p className="text-xs sm:text-sm text-slate-muted">
-                Resident project engineers and DISCOM coordinators across Bihar, Jharkhand, and Uttar Pradesh.
+                Resident project engineers and DISCOM coordinators supporting installations across India.
               </p>
             </div>
 

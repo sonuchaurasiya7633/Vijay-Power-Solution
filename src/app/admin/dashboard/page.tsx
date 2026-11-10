@@ -134,7 +134,7 @@ export default async function AdminDashboardPage() {
             Solar Operations & CRM Dashboard
           </h2>
           <p className="text-xs text-slate-muted mt-0.5">
-            Real-time pipeline metrics, pending surveys, and active installations across Bihar, Jharkhand, and UP.
+            Real-time pipeline metrics, pending surveys, and active installations across India.
           </p>
         </div>
 

@@ -121,7 +121,7 @@ export default async function SolutionDetailPage({
                   Consult for {sol.title}
                 </h3>
                 <p className="text-xs text-slate-muted mt-1">
-                  Connect with our lead engineer in Bihar, Jharkhand, or UP. We provide site survey and private quotation.
+                  Connect with our lead engineer for your location. We provide site survey and private quotation across India.
                 </p>
               </div>
 

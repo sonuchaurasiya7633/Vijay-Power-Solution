@@ -11,7 +11,7 @@ import Setting from "@/models/Setting";
 export const metadata: Metadata = {
   title: "About Us | VIJOY POWER SOLUTION Solar EPC",
   description:
-    "Learn about VIJOY POWER SOLUTION, leading solar engineering and installation contractor operating in Bihar, Jharkhand, and Uttar Pradesh.",
+    "Learn about VIJOY POWER SOLUTION, leading solar engineering and installation contractor operating across India.",
 };
 
 export const revalidate = 60;
@@ -40,7 +40,7 @@ export default async function AboutPage() {
   const heroSubtitle =
     cmsAbout?.hero?.subtitle ||
     dynamicPage?.heroSubtitle ||
-    "Delivering clean, dependable solar rooftop engineering, ALMM-compliant panel supply, and seamless DISCOM net-metering across Eastern and Northern India.";
+    "Delivering clean, dependable solar rooftop engineering, ALMM-compliant panel supply, and seamless DISCOM net-metering across India.";
   const heroImage =
     cmsAbout?.hero?.imageUrl ||
     dynamicPage?.heroImage ||
@@ -48,10 +48,10 @@ export default async function AboutPage() {
 
   const storyBadge = cmsAbout?.narrative?.badge || "Engineering Heritage";
   const storyHeadline =
-    cmsAbout?.narrative?.headline || "Empowering Bihar, Jharkhand & UP with Reliable Renewable Energy";
+    cmsAbout?.narrative?.headline || "Empowering India with Dependable Renewable Energy";
   const paragraph1 =
     cmsAbout?.narrative?.paragraph1 ||
-    "VIJOY POWER SOLUTION was founded with a singular conviction: renewable energy must be engineered for real Indian operating conditions. Solar panels in Bihar and Uttar Pradesh face intense summer heat exceeding 45°C, high dust deposition, and severe monsoon winds.";
+    "VIJOY POWER SOLUTION was founded with a singular conviction: renewable energy must be engineered for real Indian operating conditions. Solar panels across Indian states face intense summer heat exceeding 45°C, high dust deposition, and severe monsoon winds.";
   const paragraph2 =
     cmsAbout?.narrative?.paragraph2 ||
     "We bridge the gap between premium tier-1 equipment and flawless civil-electrical execution. From 10W specialized modules up to 730W high-efficiency Heterojunction and N-Type TOPCon bifacial arrays, every system is designed around the customer's exact roof geometry and energy consumption pattern.";
@@ -75,17 +75,17 @@ export default async function AboutPage() {
     },
     {
       title: "DISCOM Liaison Mastery",
-      desc: "End-to-end liaison with SBPDCL, NBPDCL, JBVNL, and UPPCL for rapid feasibility approval and bi-directional meter synchronization.",
+      desc: "End-to-end liaison with state electricity utility boards (DISCOMs) across India for rapid feasibility approval and net-meter synchronization.",
     },
     {
-      title: "Dedicated Local Field Support",
-      desc: "Trained resident technicians in Gaya, Patna, Ranchi, and Lucknow ensuring prompt routine maintenance and warranty service.",
+      title: "Nationwide Field Support",
+      desc: "Trained resident technicians and certified installation teams across India ensuring prompt routine maintenance and warranty service.",
     },
   ];
 
   const leadership = cmsAbout?.leadership || {
     quote:
-      "Solar rooftop adoption is not just an equipment sale — it is a quarter-century engineering commitment to our clients in Bihar, Jharkhand, and UP.",
+      "Solar rooftop adoption is not just an equipment sale — it is a quarter-century engineering commitment to our clients across India.",
     author: "Eng. Vijay Kumar",
     designation: "Founder & Chief Technical Director",
   };

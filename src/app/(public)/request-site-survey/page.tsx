@@ -5,7 +5,7 @@ import LeadCaptureForm from "@/components/forms/LeadCaptureForm";
 export const metadata: Metadata = {
   title: "Request Rooftop Solar Site Survey | VIJOY POWER SOLUTION",
   description:
-    "Book an on-site rooftop feasibility inspection by our certified solar technicians in Bihar, Jharkhand, and Uttar Pradesh. Precise shadow analysis and structural evaluation.",
+    "Book an on-site rooftop feasibility inspection by our certified solar technicians across India. Precise shadow analysis and structural evaluation.",
 };
 
 export default function RequestSiteSurveyPage() {

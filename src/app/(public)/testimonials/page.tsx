@@ -6,7 +6,7 @@ import { ShieldCheck } from "lucide-react";
 export const metadata: Metadata = {
   title: "Customer Testimonials & Reviews | VIJOY POWER SOLUTION",
   description:
-    "Read genuine, customer-confirmed reviews from residential and commercial solar clients across Bihar, Jharkhand, and Uttar Pradesh.",
+    "Read genuine, customer-confirmed reviews from residential and commercial solar clients across India.",
 };
 
 export default function TestimonialsPage() {

@@ -9,7 +9,7 @@ import SolarService from "@/models/SolarService";
 export const metadata: Metadata = {
   title: "Solar Installation Services & EPC | VIJOY POWER SOLUTION",
   description:
-    "End-to-end solar services: Roof feasibility surveys, turnkey rooftop installation, DISCOM net metering liaison, subsidy guidance, and annual maintenance in Bihar, JH, and UP.",
+    "End-to-end solar services: Roof feasibility surveys, turnkey rooftop installation, DISCOM net metering liaison, subsidy guidance, and annual maintenance across India.",
 };
 
 export const dynamic = "force-dynamic";

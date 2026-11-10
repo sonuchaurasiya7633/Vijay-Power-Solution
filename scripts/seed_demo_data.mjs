@@ -826,13 +826,13 @@ async function seedDemoData() {
       key: "general",
       value: {
         companyName: "VIJOY POWER SOLUTION",
-        tagline: "Empowering Bihar, Jharkhand & UP with Reliable Solar Energy",
+        tagline: "Empowering India with Dependable Solar Energy",
         phone: "+91 94310 00000",
         whatsapp: "919431000000",
         email: "contact@vijoypowersolution.com",
         address: "Main Road, Near Power Grid Substation, Gaya, Bihar - 823001",
         workingHours: "Monday – Saturday: 9:00 AM – 7:00 PM IST (Sunday closed)",
-        primaryStates: ["Bihar", "Jharkhand", "Uttar Pradesh"],
+        primaryStates: ["Pan India", "Bihar", "Jharkhand", "Uttar Pradesh"],
       },
       createdAt: now,
       updatedAt: now,
@@ -853,11 +853,11 @@ async function seedDemoData() {
       key: "homepage",
       value: {
         hero: {
-          badge: "Certified Solar EPC • Bihar | Jharkhand | Uttar Pradesh",
-          headline: "Power Your Future with Solar Energy",
+          badge: "Certified Solar EPC • Serving Customers Across India",
+          headline: "Professional Solar Panel Installation Services Across India",
           subheading:
-            "Reliable Solar Panel Solutions & Professional Installation Across Bihar, Jharkhand, and Uttar Pradesh. Complete engineering, DISCOM net metering liaison, and PM Surya Ghar subsidy guidance.",
-          backgroundImage: "/images/hero-solar-rooftop.jpg",
+            "Vijoy Power Solution delivers reliable solar panel supply and installation solutions for residential, commercial, industrial, and agricultural requirements across India.",
+          backgroundImage: "/images/hero-solar-banner.jpg",
           checkpoints: [
             "Modules from 10W to 730W",
             "Up to ₹78,000 Govt Subsidy Guidance",
@@ -874,14 +874,14 @@ async function seedDemoData() {
         stats: [
           { label: "Rooftop Installations", value: "350+", suffix: "Confirmed Sites" },
           { label: "Clean Capacity Installed", value: "2.8+", suffix: "Megawatts" },
-          { label: "Primary Service Regions", value: "3", suffix: "Bihar, JH, UP" },
+          { label: "Service Coverage", value: "Pan India", suffix: "All States & UTs" },
           { label: "Engineering Experience", value: "8+", suffix: "Years Active" },
         ],
         whyUs: {
           badge: "Our Commitments",
           title: "Why Choose VIJOY POWER SOLUTION",
           subtitle:
-            "Solar is a 25-year investment. We combine robust civil-electrical engineering with dedicated local service across Bihar, Jharkhand, and Uttar Pradesh.",
+            "Solar is a 25-year investment. We combine robust civil-electrical engineering with dedicated local service and nationwide support across India.",
           pillars: [
             {
               title: "Site-Specific Engineering",
@@ -893,15 +893,15 @@ async function seedDemoData() {
             },
             {
               title: "Heavy-Duty Mounting Structures",
-              desc: "Engineered hot-dip galvanized steel structures capable of withstanding severe eastern Indian monsoon storm winds up to 150 km/h.",
+              desc: "Engineered hot-dip galvanized steel structures capable of withstanding severe monsoon storms and extreme wind speeds up to 150 km/h.",
             },
             {
               title: "Hassle-Free Net Metering Liaison",
-              desc: "Complete end-to-end liaison with SBPDCL, NBPDCL, JBVNL, and UPPCL for prompt bi-directional meter testing and grid connection.",
+              desc: "Complete end-to-end liaison with state electricity boards (DISCOMs) across India for prompt bi-directional meter testing and grid connection.",
             },
             {
-              title: "Regional Support in Bihar, JH & UP",
-              desc: "Dedicated field technicians based locally in Patna, Gaya, Ranchi, and Lucknow for swift on-site maintenance and troubleshooting.",
+              title: "Nationwide Technical Support",
+              desc: "Dedicated field engineers and rapid deployment crews backed by regional service hubs across India for reliable long-term maintenance.",
             },
             {
               title: "Strict Commercial Transparency",
@@ -948,7 +948,7 @@ async function seedDemoData() {
           ],
         },
         ctaBanner: {
-          badge: "Free Engineering Consultation Across Bihar, JH & UP",
+          badge: "Free Engineering Consultation Across India",
           title: "Ready to Switch to Solar?",
           description:
             "Take the first step towards clean, reliable power and drastically lower monthly electricity bills. Book an appointment with our solar engineering specialist today.",
@@ -966,19 +966,19 @@ async function seedDemoData() {
           badge: "Company Profile & Engineering Philosophy",
           title: "About VIJOY POWER SOLUTION",
           subtitle:
-            "Delivering clean, dependable solar rooftop engineering, ALMM-compliant panel supply, and seamless DISCOM net-metering across Eastern and Northern India.",
+            "Delivering clean, dependable solar rooftop engineering, ALMM-compliant panel supply, and seamless DISCOM net-metering across India.",
           imageUrl: "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=1000&q=85",
         },
         narrative: {
           badge: "Engineering Heritage",
-          headline: "Empowering Bihar, Jharkhand & UP with Reliable Renewable Energy",
+          headline: "Empowering India with Dependable Renewable Energy",
           paragraph1:
-            "VIJOY POWER SOLUTION was founded with a singular conviction: renewable energy must be engineered for real Indian operating conditions. Solar panels in Bihar and Uttar Pradesh face intense summer heat exceeding 45°C, high dust deposition, and severe monsoon winds.",
+            "VIJOY POWER SOLUTION was founded with a singular conviction: renewable energy must be engineered for real Indian operating conditions. Solar panels across Indian states face intense summer heat exceeding 45°C, high dust deposition, and severe monsoon winds.",
           paragraph2:
             "We bridge the gap between premium tier-1 equipment and flawless civil-electrical execution. From 10W specialized modules up to 730W high-efficiency Heterojunction and N-Type TOPCon bifacial arrays, every system is designed around the customer's exact roof geometry and energy consumption pattern.",
           missionTitle: "Our Mission",
           missionDesc:
-            "To make rooftop solar the most dependable, cost-effective power source for every home and enterprise in Eastern India.",
+            "To make rooftop solar the most dependable, cost-effective power source for every home and enterprise across India.",
           valuesTitle: "Our Core Value",
           valuesDesc:
             "Uncompromising engineering transparency: verified tier-1 equipment, zero fake pricing, and zero shortcuts on safety.",
@@ -994,16 +994,16 @@ async function seedDemoData() {
           },
           {
             title: "DISCOM Liaison Mastery",
-            desc: "End-to-end liaison with SBPDCL, NBPDCL, JBVNL, and UPPCL for rapid feasibility approval and bi-directional meter synchronization.",
+            desc: "End-to-end liaison with state electricity utility boards (DISCOMs) across India for rapid feasibility approval and net-meter synchronization.",
           },
           {
-            title: "Dedicated Local Field Support",
-            desc: "Trained resident technicians in Gaya, Patna, Ranchi, and Lucknow ensuring prompt routine maintenance and warranty service.",
+            title: "Nationwide Field Support",
+            desc: "Trained resident technicians and certified installation teams across India ensuring prompt routine maintenance and warranty service.",
           },
         ],
         leadership: {
           quote:
-            "Solar rooftop adoption is not just an equipment sale — it is a quarter-century engineering commitment to our clients in Bihar, Jharkhand, and UP.",
+            "Solar rooftop adoption is not just an equipment sale — it is a quarter-century engineering commitment to our clients across India.",
           author: "Eng. Vijay Kumar",
           designation: "Founder & Chief Technical Director",
         },
@@ -1018,7 +1018,7 @@ async function seedDemoData() {
           badge: "Direct Communication & Regional Desks",
           title: "Contact VIJOY POWER SOLUTION",
           subtitle:
-            "Reach out to our certified solar engineering and technical support teams. We are available Monday through Saturday across Bihar, Jharkhand, and Uttar Pradesh.",
+            "Reach out to our certified solar engineering and technical support teams. Serving customers across India with dedicated regional engineering and liaison desks.",
         },
         headquarters: {
           name: "Corporate Headquarters & Main Solar Yard",
@@ -1075,7 +1075,7 @@ async function seedDemoData() {
           badge: "Government Initiatives & Schemes",
           title: "PM Surya Ghar: Muft Bijli Yojana",
           subtitle:
-            "Educational guide to national financial assistance, eligibility guidelines, DISCOM technical requirements, and step-by-step application workflow for rooftop solar in Bihar, Jharkhand, and Uttar Pradesh.",
+            "Educational guide to national financial assistance, eligibility guidelines, DISCOM technical requirements, and step-by-step application workflow for rooftop solar across India.",
         },
         slabs: [
           {
@@ -1169,7 +1169,7 @@ async function seedDemoData() {
         noticeBar: {
           enabled: false,
           badge: "PM Surya Ghar 2026",
-          text: "Serving Bihar, Jharkhand & Uttar Pradesh | Solar Modules 10W to 730W | Subsidy up to ₹78,000 Guidance",
+          text: "Serving Customers Across India | Solar Modules 10W to 730W | Subsidy up to ₹78,000 Guidance",
           linkText: "Check Subsidy",
           linkUrl: "/subsidy-information",
         },
@@ -1180,17 +1180,17 @@ async function seedDemoData() {
         },
         footer: {
           companyName: "VIJOY POWER SOLUTION",
-          tagline: "Premier solar engineering, supply, and rooftop installation specialist empowering households, commercial enterprises, and agricultural farms across Bihar, Jharkhand, and Uttar Pradesh.",
+          tagline: "Premier solar engineering, supply, and rooftop installation specialist empowering households, commercial enterprises, and agricultural farms across India.",
           address: "Main Road, Near Power Grid Substation, Gaya, Bihar - 823001",
           phone: "+91 94310 00000",
           email: "contact@vijoypowersolution.com",
           workingHours: "Mon – Sat: 9:00 AM – 7:00 PM (Sunday Closed)",
-          copyright: "© 2026 VIJOY POWER SOLUTION (VPS SOLAR). All rights reserved. Registered EPC Contractor in Bihar, Jharkhand & UP.",
+          copyright: "© 2026 VIJOY POWER SOLUTION (VPS SOLAR). All rights reserved. Pan India Registered Solar EPC Contractor.",
         },
         badges: [
           "ALMM Listed Solar Modules (10W - 730W)",
           "MNRE Registered Channel Vendor",
-          "DISCOM Net-Metering Liaison (Bihar, JH, UP)",
+          "DISCOM Net-Metering Liaison Across India",
           "Strict Private Quotation Policy (Non-Ecommerce)",
         ],
       },

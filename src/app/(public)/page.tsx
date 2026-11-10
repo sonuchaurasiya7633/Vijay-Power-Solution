@@ -39,7 +39,7 @@ export default function HomePage() {
       {/* 9. Video Stories & Walkthroughs */}
       <VideoSection />
 
-      {/* 10. Service Coverage (Bihar, Jharkhand, UP) */}
+      {/* 10. Service Coverage (Pan India & Regional Hubs) */}
       <ServiceAreasSection />
 
       {/* 11. Customer Reviews (Strictly Consent-Backed) */}

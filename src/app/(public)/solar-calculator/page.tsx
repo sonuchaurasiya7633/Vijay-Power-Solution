@@ -4,9 +4,9 @@ import CtaBanner from "@/components/public/CtaBanner";
 import { ShieldAlert, Sun, Zap, Award } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Solar Savings Calculator | Rooftop Feasibility in Bihar, JH & UP",
+  title: "Solar Savings Calculator | Rooftop Feasibility Across India",
   description:
-    "Calculate your recommended rooftop solar system capacity, annual energy generation, and estimated electricity bill savings across Bihar, Jharkhand, and Uttar Pradesh.",
+    "Calculate your recommended rooftop solar system capacity, annual energy generation, and estimated electricity bill savings across India.",
 };
 
 export default function SolarCalculatorPage() {

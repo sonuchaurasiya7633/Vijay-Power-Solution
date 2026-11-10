@@ -17,20 +17,20 @@ const manrope = Manrope({
 
 export const metadata: Metadata = {
   title: {
-    default: "VIJOY POWER SOLUTION | Premier Solar Panel Installation & EPC in Bihar, Jharkhand & UP",
+    default: "VIJOY POWER SOLUTION | Premier Solar Panel Installation & EPC Across India",
     template: "%s | VIJOY POWER SOLUTION",
   },
   description:
-    "Turnkey solar power solutions, high-efficiency solar panels (10W-730W), PM Surya Ghar subsidy assistance, and DISCOM net-metering across Bihar, Jharkhand, and Uttar Pradesh.",
+    "Turnkey solar power solutions, high-efficiency solar panels (10W-730W), PM Surya Ghar subsidy assistance, and DISCOM net-metering across India.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://vijoypowersolution.com"),
   keywords: [
-    "Solar panel installation in Bihar",
+    "Solar panel installation in India",
+    "Pan India solar EPC contractor",
+    "Solar rooftop installation across India",
+    "Solar company in Bihar",
     "Solar company in Jharkhand",
-    "Solar rooftop installation in Uttar Pradesh",
-    "Solar panels Gaya",
-    "Solar installation Patna",
-    "PM Surya Ghar subsidy Bihar",
-    "Net metering SBPDCL",
+    "Solar company in Uttar Pradesh",
+    "PM Surya Ghar Muft Bijli Yojana",
     "Commercial solar installation",
     "10W to 730W solar panels",
   ],
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "VIJOY POWER SOLUTION — Renewable Solar Energy Engineering",
     description:
-      "Reliable solar panel solutions and professional rooftop installation across Bihar, Jharkhand, and Uttar Pradesh.",
+      "Reliable solar panel solutions and professional rooftop installation serving customers across India.",
     url: "https://vijoypowersolution.com",
     siteName: "VIJOY POWER SOLUTION",
     images: [
@@ -78,9 +78,9 @@ export default function RootLayout({
       postalCode: "823001",
       addressCountry: "IN",
     },
-    areaServed: ["Bihar", "Jharkhand", "Uttar Pradesh"],
+    areaServed: ["India", "Bihar", "Jharkhand", "Uttar Pradesh"],
     description:
-      "Solar EPC contractor providing rooftop solar installations, solar panels from 10W to 730W, and PM Surya Ghar subsidy assistance in Bihar, Jharkhand, and Uttar Pradesh.",
+      "Solar EPC contractor providing rooftop solar installations, solar panels from 10W to 730W, and PM Surya Ghar subsidy assistance across India.",
     priceRange: "Consultation-Based",
   };
 

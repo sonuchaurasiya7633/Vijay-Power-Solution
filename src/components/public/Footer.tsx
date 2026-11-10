@@ -43,7 +43,7 @@ export default async function Footer() {
   const cleanPhone = contact.phone ? contact.phone.replace(/[^0-9+]/g, "") : "+919431000000";
   const tagline =
     headerFooterCms?.footer?.tagline ||
-    "Premier solar engineering, supply, and rooftop installation specialist empowering households, commercial enterprises, and agricultural farms across Bihar, Jharkhand, and Uttar Pradesh.";
+    "Premier solar engineering, supply, and rooftop installation specialist empowering households, commercial enterprises, and agricultural farms across India.";
   const copyrightText =
     headerFooterCms?.footer?.copyright ||
     `© ${currentYear} VIJOY POWER SOLUTION. All rights reserved.`;
@@ -177,21 +177,26 @@ export default async function Footer() {
 
           {/* Col 4: Primary Coverage */}
           <div className="space-y-3">
-            <h4 className="text-sm font-bold uppercase tracking-wider text-white">Service Regions</h4>
+            <h4 className="text-sm font-bold uppercase tracking-wider text-white">Service Coverage</h4>
             <ul className="space-y-2 text-sm">
               <li>
+                <Link href="/service-areas" className="text-solar-yellow hover:text-white font-bold transition-colors">
+                  Serving Customers Across India →
+                </Link>
+              </li>
+              <li>
                 <Link href="/service-areas/bihar" className="hover:text-solar-green transition-colors">
-                  Solar in Bihar (Patna, Gaya, Muzaffarpur)
+                  Solar Hub: Bihar (Patna, Gaya, Muzaffarpur)
                 </Link>
               </li>
               <li>
                 <Link href="/service-areas/jharkhand" className="hover:text-solar-green transition-colors">
-                  Solar in Jharkhand (Ranchi, Jamshedpur)
+                  Solar Hub: Jharkhand (Ranchi, Jamshedpur)
                 </Link>
               </li>
               <li>
                 <Link href="/service-areas/uttar-pradesh" className="hover:text-solar-green transition-colors">
-                  Solar in UP (Lucknow, Varanasi, Prayagraj)
+                  Solar Hub: UP (Lucknow, Varanasi, Prayagraj)
                 </Link>
               </li>
               <li className="pt-2">
@@ -199,7 +204,7 @@ export default async function Footer() {
                   href="/request-site-survey"
                   className="inline-block py-2 px-3 text-xs font-semibold rounded-lg bg-navy-800 text-solar-yellow border border-navy-600 hover:bg-navy-700 transition-colors"
                 >
-                  Book Rooftop Feasibility Visit
+                  Book Pan India Feasibility Visit
                 </Link>
               </li>
             </ul>

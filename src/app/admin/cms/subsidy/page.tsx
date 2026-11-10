@@ -28,7 +28,7 @@ export default function AdminSubsidyCmsPage() {
       badge: "Government Initiatives & Schemes",
       title: "PM Surya Ghar: Muft Bijli Yojana",
       subtitle:
-        "Educational guide to national financial assistance, eligibility guidelines, DISCOM technical requirements, and step-by-step application workflow for rooftop solar in Bihar, Jharkhand, and Uttar Pradesh.",
+        "Educational guide to national financial assistance, eligibility guidelines, DISCOM technical requirements, and step-by-step application workflow for rooftop solar across India.",
     },
     slabs: [
       {
@@ -404,7 +404,7 @@ export default function AdminSubsidyCmsPage() {
         {activeTab === "states" && (
           <div className="space-y-5">
             <p className="text-xs text-slate-muted">
-              State-specific DISCOM net-metering provisions and state additional subsidies in Bihar, Jharkhand & UP.
+              State-specific DISCOM net-metering provisions and state incentives across India.
             </p>
 
             <div className="space-y-4">

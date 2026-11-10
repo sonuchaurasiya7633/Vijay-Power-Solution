@@ -31,7 +31,7 @@ export default function AdminContactCmsPage() {
       badge: "Direct Communication & Regional Desks",
       title: "Contact VIJOY POWER SOLUTION",
       subtitle:
-        "Reach out to our certified solar engineering and technical support teams. We are available Monday through Saturday across Bihar, Jharkhand, and Uttar Pradesh.",
+        "Reach out to our certified solar engineering and technical support teams. Serving customers across India with dedicated regional engineering and liaison desks.",
     },
     headquarters: {
       name: "Corporate Headquarters & Main Solar Yard",
@@ -372,7 +372,7 @@ export default function AdminContactCmsPage() {
           <div className="space-y-5">
             <div className="flex items-center justify-between">
               <p className="text-xs text-slate-muted">
-                Regional offices in Bihar, Jharkhand, and Uttar Pradesh displayed on the Contact directory.
+                Regional offices and liaison desks across India displayed on the Contact directory.
               </p>
               <button
                 type="button"

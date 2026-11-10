@@ -5,9 +5,9 @@ import toast from "@/lib/toast";
 import { Globe, CheckCircle2, Save, Loader2 } from "lucide-react";
 
 export default function AdminSeoPage() {
-  const [defaultTitle, setDefaultTitle] = useState("VIJOY POWER SOLUTION | Premier Solar Panel Installation & EPC in Bihar, Jharkhand & UP");
-  const [defaultDesc, setDefaultDesc] = useState("Turnkey solar power solutions, high-efficiency solar panels (10W-730W), PM Surya Ghar subsidy assistance, and DISCOM net-metering across Bihar, Jharkhand, and Uttar Pradesh.");
-  const [keywords, setKeywords] = useState("solar panels bihar, solar installation ranchi, solar patna, solar subsidy uttar pradesh, 550w solar module");
+  const [defaultTitle, setDefaultTitle] = useState("VIJOY POWER SOLUTION | Premier Solar Panel Installation & EPC Across India");
+  const [defaultDesc, setDefaultDesc] = useState("Turnkey solar power solutions, high-efficiency solar panels (10W-730W), PM Surya Ghar subsidy assistance, and DISCOM net-metering across India.");
+  const [keywords, setKeywords] = useState("solar panels india, solar installation nationwide, solar epc bihar, solar jharkhand, solar uttar pradesh, 550w solar module");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);

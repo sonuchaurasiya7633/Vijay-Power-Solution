@@ -29,7 +29,7 @@ export default function AdminHeaderFooterCmsPage() {
     noticeBar: {
       enabled: true,
       badge: "PM Surya Ghar 2026",
-      text: "Serving Bihar, Jharkhand & Uttar Pradesh | Solar Modules 10W to 730W | Subsidy up to ₹78,000 Guidance",
+      text: "Serving Customers Across India | Solar Modules 10W to 730W | Subsidy up to ₹78,000 Guidance",
       linkText: "Check Subsidy",
       linkUrl: "/subsidy-information",
     },
@@ -40,17 +40,17 @@ export default function AdminHeaderFooterCmsPage() {
     },
     footer: {
       companyName: "VIJOY POWER SOLUTION",
-      tagline: "Premier solar engineering, supply, and rooftop installation specialist empowering households, commercial enterprises, and agricultural farms across Bihar, Jharkhand, and Uttar Pradesh.",
+      tagline: "Premier solar engineering, supply, and rooftop installation specialist empowering households, commercial enterprises, and agricultural farms across India.",
       address: "Main Road, Near Power Grid Substation, Gaya, Bihar - 823001",
       phone: "+91 94310 00000",
       email: "contact@vijoypowersolution.com",
       workingHours: "Mon – Sat: 9:00 AM – 7:00 PM (Sunday Closed)",
-      copyright: "© 2026 VIJOY POWER SOLUTION (VPS SOLAR). All rights reserved. Registered EPC Contractor in Bihar, Jharkhand & UP.",
+      copyright: "© 2026 VIJOY POWER SOLUTION (VPS SOLAR). All rights reserved. Pan India Registered Solar EPC Contractor.",
     },
     badges: [
       "ALMM Listed Solar Modules (10W - 730W)",
       "MNRE Registered Channel Vendor",
-      "DISCOM Net-Metering Liaison (Bihar, JH, UP)",
+      "DISCOM Net-Metering Liaison Across India",
       "Strict Private Quotation Policy (Non-Ecommerce)",
     ],
   });

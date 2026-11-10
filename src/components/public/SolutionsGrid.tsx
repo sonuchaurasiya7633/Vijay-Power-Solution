@@ -81,7 +81,7 @@ export default function SolutionsGrid() {
             Tailored Solar Solutions
           </h2>
           <p className="text-sm sm:text-base text-slate-muted">
-            From urban rooftops to rural farmhouses and heavy industries, explore our customized clean energy architectures designed specifically for Bihar, Jharkhand, and Uttar Pradesh.
+            From urban rooftops to rural farmhouses and heavy industries, explore our customized clean energy architectures designed specifically for homes, businesses, and enterprises across India.
           </p>
         </div>
 

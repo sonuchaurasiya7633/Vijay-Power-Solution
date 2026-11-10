@@ -6,7 +6,7 @@ import { Phone } from "lucide-react";
 export default function FloatingWhatsApp({
   phone = "+91 94310 00000",
   whatsapp = "919431000000",
-  message = "Hello VIJOY POWER SOLUTION, I would like to enquire about rooftop solar installation in Bihar/Jharkhand/UP.",
+  message = "Hello VIJOY POWER SOLUTION, I would like to enquire about rooftop solar installation in India.",
 }: {
   phone?: string;
   whatsapp?: string;

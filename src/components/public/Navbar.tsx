@@ -13,7 +13,7 @@ export default function Navbar() {
     noticeBar: {
       enabled: false,
       badge: "PM Surya Ghar 2026",
-      text: "Serving Bihar, Jharkhand & Uttar Pradesh | Solar Modules 10W to 730W",
+      text: "Serving Customers Across India | Solar Modules 10W to 730W",
       linkText: "Check Subsidy",
       linkUrl: "/subsidy-information",
     },

@@ -10,7 +10,7 @@ import CtaBanner from "@/components/public/CtaBanner";
 export const metadata: Metadata = {
   title: "Solar Knowledge Hub & Blog | VIJOY POWER SOLUTION",
   description:
-    "Educational articles, technical solar guides, PM Surya Ghar updates, and rooftop maintenance tips for solar consumers in Bihar, Jharkhand, and UP.",
+    "Educational articles, technical solar guides, PM Surya Ghar updates, and rooftop maintenance tips for solar consumers across India.",
 };
 
 const defaultArticles = [

@@ -7,7 +7,7 @@ export default async function WhyChooseUs() {
     badge: "Our Commitments",
     title: "Why Choose VIJOY POWER SOLUTION",
     subtitle:
-      "Solar is a 25-year investment. We combine robust civil-electrical engineering with dedicated local service across Bihar, Jharkhand, and Uttar Pradesh.",
+      "Solar is a 25-year investment. We combine robust civil-electrical engineering with dedicated local service and nationwide support across India.",
     pillars: [
       {
         title: "Site-Specific Engineering",
@@ -19,15 +19,15 @@ export default async function WhyChooseUs() {
       },
       {
         title: "Heavy-Duty Mounting Structures",
-        desc: "Engineered hot-dip galvanized steel structures capable of withstanding severe eastern Indian monsoon storm winds up to 150 km/h.",
+        desc: "Engineered hot-dip galvanized steel structures capable of withstanding severe monsoon storms and extreme wind speeds up to 150 km/h.",
       },
       {
         title: "Hassle-Free Net Metering Liaison",
-        desc: "Complete end-to-end liaison with SBPDCL, NBPDCL, JBVNL, and UPPCL for prompt bi-directional meter testing and grid connection.",
+        desc: "Complete end-to-end liaison with state electricity boards (DISCOMs) across India for prompt bi-directional meter testing and grid connection.",
       },
       {
-        title: "Regional Support in Bihar, JH & UP",
-        desc: "Dedicated field technicians based locally in Patna, Gaya, Ranchi, and Lucknow for swift on-site maintenance and troubleshooting.",
+        title: "Nationwide Technical Support",
+        desc: "Dedicated field engineers and rapid-response technical teams backed by major operational hubs across India for reliable long-term maintenance.",
       },
       {
         title: "Strict Commercial Transparency",

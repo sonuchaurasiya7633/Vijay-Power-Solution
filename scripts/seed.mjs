@@ -856,14 +856,14 @@ async function seed() {
   await homeCol.insertMany([
     {
       sectionKey: "hero",
-      title: "Power Your Future with Solar Energy",
-      subtitle: "Reliable Solar Panel Solutions & Professional Installation Across Bihar, Jharkhand and Uttar Pradesh.",
+      title: "Professional Solar Panel Installation Services Across India",
+      subtitle: "Vijoy Power Solution delivers reliable solar panel supply and installation solutions for residential, commercial, industrial, and agricultural requirements across India.",
       content: {
         ctaPrimaryText: "Get Free Solar Consultation",
         ctaPrimaryLink: "/get-quote",
-        ctaSecondaryText: "Explore Our Projects",
+        ctaSecondaryText: "Explore Real Installations",
         ctaSecondaryLink: "/projects",
-        badgeText: "Clean Green Renewable Power",
+        badgeText: "Certified Solar EPC • Serving Customers Across India",
         bgImage: "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=1920&q=85",
       },
       isEnabled: true,
@@ -872,12 +872,12 @@ async function seed() {
     {
       sectionKey: "trust_stats",
       title: "Genuine Operational Milestones",
-      subtitle: "Verified statistics from our customer-confirmed installations across Eastern India.",
+      subtitle: "Verified statistics from our customer-confirmed installations across India.",
       content: {
         stats: [
           { label: "Completed Installations", value: "350+", suffix: "Sites" },
           { label: "Solar Capacity Installed", value: "2.8+", suffix: "Megawatts" },
-          { label: "States Covered", value: "3", suffix: "Bihar, JH, UP" },
+          { label: "Service Coverage", value: "Pan India", suffix: "All States & UTs" },
           { label: "Engineering Experience", value: "8+", suffix: "Years" },
         ],
       },
@@ -894,13 +894,13 @@ async function seed() {
       key: "general",
       value: {
         companyName: "VIJOY POWER SOLUTION",
-        tagline: "Empowering Bihar, Jharkhand & UP with Reliable Solar Energy",
+        tagline: "Empowering India with Dependable Solar Energy",
         phone: "+91 94310 00000",
         whatsapp: "919431000000",
         email: "contact@vijoypowersolution.com",
         address: "Main Road, Near Power Grid Substation, Gaya, Bihar - 823001",
         workingHours: "Monday – Saturday: 9:00 AM – 7:00 PM IST",
-        primaryStates: ["Bihar", "Jharkhand", "Uttar Pradesh"],
+        primaryStates: ["Pan India", "Bihar", "Jharkhand", "Uttar Pradesh"],
       },
     },
     {

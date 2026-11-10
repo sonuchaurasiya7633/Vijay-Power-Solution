@@ -8,9 +8,9 @@ import Page from "@/models/Page";
 import Setting from "@/models/Setting";
 
 export const metadata: Metadata = {
-  title: "PM Surya Ghar Subsidy Guide | Rooftop Solar in Bihar, JH & UP",
+  title: "PM Surya Ghar Subsidy Guide | Rooftop Solar Across India",
   description:
-    "Comprehensive educational guide on PM Surya Ghar: Muft Bijli Yojana subsidies (up to ₹78,000), DISCOM net metering requirements, eligibility, and application procedure in Bihar, Jharkhand, and UP.",
+    "Comprehensive educational guide on PM Surya Ghar: Muft Bijli Yojana subsidies (up to ₹78,000), DISCOM net metering requirements, eligibility, and application procedure across India.",
 };
 
 export const revalidate = 60;
@@ -38,7 +38,7 @@ export default async function SubsidyInformationPage() {
   const heroSubtitle =
     cmsSubsidy?.hero?.subtitle ||
     dynamicPage?.heroSubtitle ||
-    "Educational guide to national financial assistance, eligibility guidelines, DISCOM technical requirements, and step-by-step application workflow for rooftop solar in Bihar, Jharkhand, and Uttar Pradesh.";
+    "Educational guide to national financial assistance, eligibility guidelines, DISCOM technical requirements, and step-by-step application workflow for rooftop solar across India.";
 
   const slabs = cmsSubsidy?.slabs || [
     {

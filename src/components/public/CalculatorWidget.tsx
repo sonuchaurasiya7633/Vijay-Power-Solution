@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Sun, Zap, TrendingUp, Leaf, ShieldAlert, ArrowRight } from "lucide-react";
 import LeadCaptureForm from "@/components/forms/LeadCaptureForm";
+import { INDIAN_STATES_AND_UTS } from "@/lib/constants/states";
 
 export default function CalculatorWidget() {
   const [state, setState] = useState("Bihar");
@@ -44,25 +45,25 @@ export default function CalculatorWidget() {
         <div className="lg:col-span-7 space-y-6">
           {/* State */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wide text-navy-800 mb-2">
-              Select Installation State
-            </label>
-            <div className="grid grid-cols-3 gap-2">
-              {["Bihar", "Jharkhand", "Uttar Pradesh"].map((st) => (
-                <button
-                  key={st}
-                  type="button"
-                  onClick={() => setState(st)}
-                  className={`py-2.5 px-3 rounded-xl text-xs font-bold border transition-all ${
-                    state === st
-                      ? "bg-navy-800 text-white border-navy-800 shadow-sm"
-                      : "bg-slate-bg text-navy-800 border-slate-border hover:bg-slate-100"
-                  }`}
-                >
-                  {st}
-                </button>
-              ))}
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-xs font-bold uppercase tracking-wide text-navy-800">
+                Installation State / UT
+              </label>
+              <span className="text-[11px] font-semibold text-solar-green bg-solar-green-light px-2 py-0.5 rounded-full">
+                Pan India Coverage
+              </span>
             </div>
+            <select
+              value={state}
+              onChange={(e) => setState(e.target.value)}
+              className="w-full py-2.5 px-3 rounded-xl text-xs font-bold border border-slate-border bg-white text-navy-800 focus:border-solar-green focus:ring-2 focus:ring-solar-green/20 outline-none transition-all shadow-sm"
+            >
+              {INDIAN_STATES_AND_UTS.map((st) => (
+                <option key={st} value={st}>
+                  {st}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* Monthly Units Slider */}

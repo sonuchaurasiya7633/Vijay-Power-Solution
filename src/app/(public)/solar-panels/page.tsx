@@ -7,7 +7,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Solar Panel Catalogue (10W to 730W) | VIJOY POWER SOLUTION",
   description:
-    "Explore our complete range of certified solar panels from 10W up to 730W. Monocrystalline, Mono PERC, Bifacial, N-Type TOPCon, and Heterojunction modules for Bihar, Jharkhand, and UP.",
+    "Explore our complete range of certified solar panels from 10W up to 730W. Monocrystalline, Mono PERC, Bifacial, N-Type TOPCon, and Heterojunction modules delivered across India.",
 };
 
 export default function SolarPanelsPage() {

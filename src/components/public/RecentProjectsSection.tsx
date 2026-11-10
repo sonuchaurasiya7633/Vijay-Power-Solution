@@ -55,7 +55,7 @@ export default function RecentProjectsSection() {
               Customer-Confirmed Solar Projects
             </h2>
             <p className="text-sm text-slate-muted">
-              Explore real-world completed installations across Bihar and Jharkhand with confirmed customer consent and verifiable generation outcomes.
+              Explore real-world completed installations across India with confirmed customer consent and verifiable generation outcomes.
             </p>
           </div>
 

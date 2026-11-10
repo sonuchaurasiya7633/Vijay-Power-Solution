@@ -140,7 +140,7 @@ export default async function BlogPostPage({
               Ready to Plan Your Rooftop Solar Installation?
             </h3>
             <p className="text-xs text-slate-muted">
-              Connect with our certified solar engineers in Bihar, Jharkhand, and Uttar Pradesh.
+              Connect with our certified solar engineers for your rooftop consultation across India.
             </p>
           </div>
           <LeadCaptureForm compact buttonText="Schedule Free Solar Consultation" />

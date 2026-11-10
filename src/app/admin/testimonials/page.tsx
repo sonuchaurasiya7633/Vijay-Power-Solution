@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import toast from "@/lib/toast";
 import { Star, ShieldCheck, CheckCircle2, Plus, Trash2, Edit3, X, Loader2, Save } from "lucide-react";
+import { INDIAN_STATES_AND_UTS } from "@/lib/constants/states";
 
 export default function AdminTestimonialsPage() {
   const [reviews, setReviews] = useState<any[]>([]);
@@ -275,9 +276,11 @@ export default function AdminTestimonialsPage() {
                     onChange={(e) => setForm({ ...form, customerState: e.target.value })}
                     className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green"
                   >
-                    <option value="Bihar">Bihar</option>
-                    <option value="Jharkhand">Jharkhand</option>
-                    <option value="Uttar Pradesh">Uttar Pradesh</option>
+                    {INDIAN_STATES_AND_UTS.map((st) => (
+                      <option key={st} value={st}>
+                        {st}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div>

@@ -20,7 +20,7 @@ export async function generateMetadata({
 
   return {
     title: `${product.name} (${product.ratedPowerWp}Wp) | Specifications & Quote`,
-    description: `Technical specifications for ${product.name}. Rated at ${product.ratedPowerWp}Wp with ${product.moduleEfficiencyPercent || 'high'}% efficiency. Request a site survey and quotation in Bihar, Jharkhand, and UP.`,
+    description: `Technical specifications for ${product.name}. Rated at ${product.ratedPowerWp}Wp with ${product.moduleEfficiencyPercent || 'high'}% efficiency. Request a site survey and quotation across India.`,
   };
 }
 

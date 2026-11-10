@@ -27,10 +27,10 @@ export default function AdminHomeCmsPage() {
 
   // Form State
   const [hero, setHero] = useState({
-    badge: "Certified Solar EPC • Bihar | Jharkhand | Uttar Pradesh",
-    headline: "Power Your Future with Solar Energy",
+    badge: "Certified Solar EPC • Serving Customers Across India",
+    headline: "Professional Solar Panel Installation Services Across India",
     subheading:
-      "Reliable Solar Panel Solutions & Professional Installation Across Bihar, Jharkhand, and Uttar Pradesh. Complete engineering, DISCOM net metering liaison, and PM Surya Ghar subsidy guidance.",
+      "Vijoy Power Solution delivers reliable solar panel supply and installation solutions for residential, commercial, industrial, and agricultural requirements across India.",
     backgroundImage: "/images/hero-solar-rooftop.jpg",
     checkpoints: [
       "Modules from 10W to 730W",
@@ -49,7 +49,7 @@ export default function AdminHomeCmsPage() {
   const [stats, setStats] = useState([
     { label: "Rooftop Installations", value: "350+", suffix: "Confirmed Sites" },
     { label: "Clean Capacity Installed", value: "2.8+", suffix: "Megawatts" },
-    { label: "Primary Service Regions", value: "3", suffix: "Bihar, JH, UP" },
+    { label: "Service Coverage", value: "Pan India", suffix: "All States & UTs" },
     { label: "Engineering Experience", value: "8+", suffix: "Years Active" },
   ]);
 
@@ -57,7 +57,7 @@ export default function AdminHomeCmsPage() {
     badge: "Our Commitments",
     title: "Why Choose VIJOY POWER SOLUTION",
     subtitle:
-      "Solar is a 25-year investment. We combine robust civil-electrical engineering with dedicated local service across Bihar, Jharkhand, and Uttar Pradesh.",
+      "Solar is a 25-year investment. We combine robust civil-electrical engineering with dedicated local service and nationwide support across India.",
     pillars: [
       {
         title: "Site-Specific Engineering",
@@ -69,15 +69,15 @@ export default function AdminHomeCmsPage() {
       },
       {
         title: "Heavy-Duty Mounting Structures",
-        desc: "Engineered hot-dip galvanized steel structures capable of withstanding severe eastern Indian monsoon storm winds up to 150 km/h.",
+        desc: "Engineered hot-dip galvanized steel structures capable of withstanding severe monsoon storms and extreme wind speeds up to 150 km/h.",
       },
       {
         title: "Hassle-Free Net Metering Liaison",
-        desc: "Complete end-to-end liaison with SBPDCL, NBPDCL, JBVNL, and UPPCL for prompt bi-directional meter testing and grid connection.",
+        desc: "Complete end-to-end liaison with state electricity boards (DISCOMs) across India for prompt bi-directional meter testing and grid connection.",
       },
       {
-        title: "Regional Support in Bihar, JH & UP",
-        desc: "Dedicated field technicians based locally in Patna, Gaya, Ranchi, and Lucknow for swift on-site maintenance and troubleshooting.",
+        title: "Nationwide Technical Support",
+        desc: "Dedicated field engineers and rapid deployment crews backed by regional service hubs across India for reliable long-term maintenance.",
       },
       {
         title: "Strict Commercial Transparency",
@@ -127,7 +127,7 @@ export default function AdminHomeCmsPage() {
   });
 
   const [ctaBanner, setCtaBanner] = useState({
-    badge: "Free Engineering Consultation Across Bihar, JH & UP",
+    badge: "Free Engineering Consultation Across India",
     title: "Ready to Switch to Solar?",
     description:
       "Take the first step towards clean, reliable power and drastically lower monthly electricity bills. Book an appointment with our solar engineering specialist today.",

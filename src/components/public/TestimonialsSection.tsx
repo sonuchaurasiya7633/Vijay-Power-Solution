@@ -48,7 +48,7 @@ export default function TestimonialsSection() {
             Trusted by Homeowners & Businesses
           </h2>
           <p className="text-sm text-slate-muted">
-            Genuine customer-confirmed reviews from our completed installations across Bihar and Jharkhand.
+            Genuine customer-confirmed reviews from our completed installations across India.
           </p>
         </div>
 

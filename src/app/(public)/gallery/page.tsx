@@ -9,7 +9,7 @@ import CtaBanner from "@/components/public/CtaBanner";
 export const metadata: Metadata = {
   title: "Installation Photo Gallery | VIJOY POWER SOLUTION",
   description:
-    "Browse authentic rooftop solar installation photographs across Bihar, Jharkhand, and Uttar Pradesh. Verified installations with documented customer consent.",
+    "Browse authentic rooftop solar installation photographs across India. Verified installations with documented customer consent.",
 };
 
 export const dynamic = "force-dynamic";

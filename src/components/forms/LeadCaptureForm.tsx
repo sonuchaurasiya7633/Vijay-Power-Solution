@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { CheckCircle2, AlertCircle, ArrowRight, Loader2, Sparkles } from "lucide-react";
 import toast from "@/lib/toast";
+import { INDIAN_STATES_AND_UTS } from "@/lib/constants/states";
 
 interface LeadCaptureFormProps {
   defaultEnquiryType?: string;
@@ -212,10 +213,11 @@ export default function LeadCaptureForm({
             onChange={(e) => setFormData({ ...formData, state: e.target.value })}
             className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-border focus:border-solar-green focus:ring-2 focus:ring-solar-green/20 outline-none bg-white transition-all"
           >
-            <option value="Bihar">Bihar</option>
-            <option value="Jharkhand">Jharkhand</option>
-            <option value="Uttar Pradesh">Uttar Pradesh</option>
-            <option value="Other">Other Region</option>
+            {INDIAN_STATES_AND_UTS.map((st) => (
+              <option key={st} value={st}>
+                {st}
+              </option>
+            ))}
           </select>
         </div>
         <div>

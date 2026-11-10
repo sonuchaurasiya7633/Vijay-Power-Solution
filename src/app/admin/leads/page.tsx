@@ -17,6 +17,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { formatDateIST } from "@/lib/utils/formatters";
+import { INDIAN_STATES_AND_UTS } from "@/lib/constants/states";
 
 export default function LeadsCRMPage() {
   const [leads, setLeads] = useState<any[]>([]);
@@ -164,10 +165,12 @@ export default function LeadsCRMPage() {
             onChange={(e) => setStateFilter(e.target.value)}
             className="py-2 px-3 rounded-xl border border-slate-border bg-white text-navy-800 font-semibold outline-none"
           >
-            <option value="all">All States</option>
-            <option value="Bihar">Bihar</option>
-            <option value="Jharkhand">Jharkhand</option>
-            <option value="Uttar Pradesh">Uttar Pradesh</option>
+            <option value="all">All States & UTs</option>
+            {INDIAN_STATES_AND_UTS.map((st) => (
+              <option key={st} value={st}>
+                {st}
+              </option>
+            ))}
           </select>
         </div>
       </div>
