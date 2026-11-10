@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import toast from "@/lib/toast";
-import { HelpCircle, Plus, Trash2, Edit3, X, Loader2, Save } from "lucide-react";
+import { HelpCircle, Plus, Trash2, Edit3, X, Loader2, Save, Eye } from "lucide-react";
+import CmsLivePreviewModal from "@/components/admin/CmsLivePreviewModal";
 
 export default function AdminFaqsPage() {
   const [faqs, setFaqs] = useState<any[]>([]);
@@ -10,6 +11,7 @@ export default function AdminFaqsPage() {
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   const [form, setForm] = useState({
     question: "",
@@ -107,13 +109,24 @@ export default function AdminFaqsPage() {
           </p>
         </div>
 
-        <button
-          onClick={openCreateModal}
-          className="px-4 py-2 rounded-xl text-xs font-bold bg-solar-green text-white hover:bg-solar-green-hover flex items-center gap-1.5 transition-colors shadow-sm"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Add New FAQ</span>
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setPreviewOpen(true)}
+            className="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-navy-800 flex items-center gap-1.5 transition-colors"
+          >
+            <Eye className="w-4 h-4" />
+            <span>FAQs Preview</span>
+          </button>
+
+          <button
+            onClick={openCreateModal}
+            className="px-4 py-2 rounded-xl text-xs font-bold bg-solar-green text-white hover:bg-solar-green-hover flex items-center gap-1.5 transition-colors shadow-sm"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add New FAQ</span>
+          </button>
+        </div>
       </div>
 
       {loading ? (
@@ -247,6 +260,13 @@ export default function AdminFaqsPage() {
           </div>
         </div>
       )}
+      {/* Responsive Live Preview Modal */}
+      <CmsLivePreviewModal
+        isOpen={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+        url="/faqs"
+        pageTitle="FAQs Live Preview"
+      />
     </div>
   );
 }

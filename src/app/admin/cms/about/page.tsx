@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import toast from "@/lib/toast";
-import CmsImageUploader from "@/components/admin/CmsImageUploader";
 import {
   Building2,
   Save,
@@ -17,13 +16,18 @@ import {
   Award,
   Users,
   Sparkles,
+  Plus,
+  Trash2,
 } from "lucide-react";
+import CmsImageUploader from "@/components/admin/CmsImageUploader";
+import CmsLivePreviewModal from "@/components/admin/CmsLivePreviewModal";
 
 export default function AdminAboutCmsPage() {
   const [activeTab, setActiveTab] = useState<"hero" | "narrative" | "pillars" | "leadership">("hero");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   const [form, setForm] = useState({
     hero: {
@@ -127,6 +131,30 @@ export default function AdminAboutCmsPage() {
     setForm({ ...form, pillars: updated });
   };
 
+  const addPillar = () => {
+    setForm({
+      ...form,
+      pillars: [
+        ...form.pillars,
+        {
+          title: "New Quality Benchmark",
+          desc: "Description of the engineering standard or operational benchmark.",
+        },
+      ],
+    });
+  };
+
+  const removePillar = (idx: number) => {
+    if (form.pillars.length <= 1) {
+      toast.error("At least one quality pillar is required.");
+      return;
+    }
+    setForm({
+      ...form,
+      pillars: form.pillars.filter((_, i) => i !== idx),
+    });
+  };
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] text-slate-muted">
@@ -161,14 +189,22 @@ export default function AdminAboutCmsPage() {
         </div>
 
         <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setPreviewOpen(true)}
+            className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-navy-800 rounded-xl text-xs font-bold transition-all"
+          >
+            <Eye className="w-3.5 h-3.5" />
+            <span>Live Preview</span>
+          </button>
+
           <Link
             href="/about"
             target="_blank"
             className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-navy-800 rounded-xl text-xs font-bold transition-all"
           >
-            <Eye className="w-3.5 h-3.5" />
-            <span>View Public Page</span>
-            <ExternalLink className="w-3 h-3 text-slate-400" />
+            <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
+            <span className="hidden sm:inline">Open in New Tab</span>
           </Link>
 
           <button
@@ -273,15 +309,12 @@ export default function AdminAboutCmsPage() {
             </div>
 
             <CmsImageUploader
-              label="Hero Showcase Image"
+              label="Hero Showcase Image (Rooftop Showcase or Engineering Team)"
               value={form.hero.imageUrl}
-              onChange={(data: any) =>
-                setForm({ ...form, hero: { ...form.hero, imageUrl: data?.imageUrl || data } })
-              }
-              folder="about"
-              defaultFallback="https://images.unsplash.com/photo-1509391365360-2e959784a276?w=1000&q=85"
-              aspectRatioLabel="Landscape (16:9)"
-              hint="Shown on the About page hero section alongside company philosophy."
+              onChange={(url) => setForm({ ...form, hero: { ...form.hero, imageUrl: url } })}
+              folder="company"
+              aspectRatio="banner"
+              helpText="Upload a high-resolution banner photo for the About Us page header. Directly uploads and replaces on Cloudinary."
             />
           </div>
         )}
@@ -376,18 +409,40 @@ export default function AdminAboutCmsPage() {
 
         {activeTab === "pillars" && (
           <div className="space-y-4">
-            <p className="text-xs text-slate-muted">
-              These 4 core engineering benchmarks are prominently highlighted on the About page.
-            </p>
+            <div className="flex items-center justify-between">
+              <p className="text-xs text-slate-muted">
+                These core engineering benchmarks are prominently highlighted on the About page.
+              </p>
+              <button
+                type="button"
+                onClick={addPillar}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-solar-green-light text-solar-green rounded-xl text-xs font-bold hover:bg-solar-green/20 transition-all"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Add Quality Benchmark</span>
+              </button>
+            </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {form.pillars.map((pillar, idx) => (
-                <div key={idx} className="p-4 rounded-xl border border-slate-border bg-slate-50 space-y-3">
-                  <div className="flex items-center gap-2">
-                    <span className="w-6 h-6 rounded-lg bg-navy-800 text-white text-xs font-bold flex items-center justify-center">
-                      0{idx + 1}
-                    </span>
-                    <span className="text-xs font-bold text-navy-800">Quality Benchmark #{idx + 1}</span>
+                <div key={idx} className="p-4 rounded-xl border border-slate-border bg-slate-50 space-y-3 relative group">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="w-6 h-6 rounded-lg bg-navy-800 text-white text-xs font-bold flex items-center justify-center">
+                        0{idx + 1}
+                      </span>
+                      <span className="text-xs font-bold text-navy-800">Quality Benchmark #{idx + 1}</span>
+                    </div>
+                    {form.pillars.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removePillar(idx)}
+                        className="text-slate-400 hover:text-red-500 p-1 rounded-lg transition-colors"
+                        title="Delete this pillar"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
                   </div>
                   <div>
                     <label className="block text-[11px] font-bold text-slate-muted mb-1">Title</label>
@@ -469,6 +524,14 @@ export default function AdminAboutCmsPage() {
           </button>
         </div>
       </form>
+
+      {/* Live Preview Modal */}
+      <CmsLivePreviewModal
+        isOpen={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+        url="/about"
+        pageTitle="About Us Page Live Preview"
+      />
     </div>
   );
 }

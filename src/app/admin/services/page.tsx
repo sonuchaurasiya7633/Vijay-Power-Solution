@@ -3,7 +3,22 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import toast from "@/lib/toast";
-import { Wrench, CheckCircle2, Plus, Trash2, Edit3, X, Loader2, Save } from "lucide-react";
+import {
+  Wrench,
+  CheckCircle2,
+  Plus,
+  Trash2,
+  Edit3,
+  X,
+  Loader2,
+  Save,
+  Eye,
+  ExternalLink,
+  ImageIcon,
+  Sparkles,
+} from "lucide-react";
+import CmsImageUploader from "@/components/admin/CmsImageUploader";
+import CmsLivePreviewModal from "@/components/admin/CmsLivePreviewModal";
 
 export default function AdminServicesPage() {
   const [services, setServices] = useState<any[]>([]);
@@ -11,6 +26,8 @@ export default function AdminServicesPage() {
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState("/services");
 
   const [form, setForm] = useState({
     title: "",
@@ -18,11 +35,13 @@ export default function AdminServicesPage() {
     serviceType: "installation",
     shortDescription: "",
     fullDescription: "",
-    isPublished: true,
+    image: "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=800&q=80",
+    isAvailable: true,
+    isFeatured: false,
   });
 
   const fetchServices = () => {
-    fetch("/api/services")
+    fetch("/api/services?adminMode=true")
       .then((r) => r.json())
       .then((d) => setServices(d.services || []))
       .catch((e) => console.error(e))
@@ -41,7 +60,9 @@ export default function AdminServicesPage() {
       serviceType: "installation",
       shortDescription: "",
       fullDescription: "",
-      isPublished: true,
+      image: "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=800&q=80",
+      isAvailable: true,
+      isFeatured: false,
     });
     setShowModal(true);
   };
@@ -53,8 +74,10 @@ export default function AdminServicesPage() {
       slug: s.slug || "",
       serviceType: s.serviceType || "installation",
       shortDescription: s.shortDescription || "",
-      fullDescription: s.fullDescription || "",
-      isPublished: s.isPublished !== undefined ? s.isPublished : true,
+      fullDescription: s.fullDescription || s.shortDescription || "",
+      image: s.image || "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=800&q=80",
+      isAvailable: s.isAvailable !== undefined ? s.isAvailable : true,
+      isFeatured: Boolean(s.isFeatured),
     });
     setShowModal(true);
   };
@@ -99,6 +122,22 @@ export default function AdminServicesPage() {
     }
   };
 
+  const toggleAvailability = async (id: string, current: boolean) => {
+    try {
+      const res = await fetch(`/api/services/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isAvailable: !current }),
+      });
+      if (res.ok) {
+        toast.updated("Updated successfully!", `Service status changed.`);
+        fetchServices();
+      }
+    } catch (e: any) {
+      toast.error(e.message || "Failed to toggle status");
+    }
+  };
+
   const handleDelete = async (id: string, title: string) => {
     if (!confirm(`Are you sure you want to delete service "${title}"?`)) return;
     try {
@@ -124,17 +163,31 @@ export default function AdminServicesPage() {
             Installation & EPC Services
           </h1>
           <p className="text-xs text-slate-muted mt-0.5">
-            Turnkey services offered to clients (only published when active capability exists).
+            Turnkey solar EPC offerings. Manage service details, Cloudinary banners, and public visibility.
           </p>
         </div>
 
-        <button
-          onClick={openCreateModal}
-          className="px-4 py-2 rounded-xl text-xs font-bold bg-solar-green text-white hover:bg-solar-green-hover flex items-center gap-1.5 transition-colors shadow-sm"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Add Service</span>
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => {
+              setPreviewUrl("/services");
+              setPreviewOpen(true);
+            }}
+            className="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-navy-800 flex items-center gap-1.5 transition-colors"
+          >
+            <Eye className="w-4 h-4" />
+            <span>Services Preview</span>
+          </button>
+
+          <button
+            onClick={openCreateModal}
+            className="px-4 py-2 rounded-xl text-xs font-bold bg-solar-green text-white hover:bg-solar-green-hover flex items-center gap-1.5 transition-colors shadow-sm"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add Service</span>
+          </button>
+        </div>
       </div>
 
       {loading ? (
@@ -142,40 +195,105 @@ export default function AdminServicesPage() {
           <Loader2 className="w-5 h-5 animate-spin text-solar-green" />
           <span>Loading services...</span>
         </div>
+      ) : services.length === 0 ? (
+        <div className="p-16 bg-white rounded-2xl border border-slate-border text-center space-y-2">
+          <Wrench className="w-10 h-10 text-slate-300 mx-auto" />
+          <h3 className="text-sm font-bold text-navy-800">No services found</h3>
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((s) => (
-            <div key={s._id || s.slug} className="p-6 bg-white rounded-2xl border border-slate-border shadow-sm space-y-3 flex flex-col justify-between">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-navy-800 flex items-center gap-1.5">
-                    <Wrench className="w-4 h-4 text-solar-green" />
-                    <span>{s.title}</span>
-                  </span>
-                  <div className="flex items-center gap-1">
-                    <button
-                      onClick={() => openEditModal(s)}
-                      className="p-1 text-slate-400 hover:text-navy-800 rounded"
-                      title="Edit Service"
+            <div
+              key={s._id || s.slug}
+              className="bg-white rounded-2xl border border-slate-border shadow-sm overflow-hidden flex flex-col justify-between group hover:border-slate-300 transition-all"
+            >
+              <div>
+                <div className="relative h-44 w-full bg-slate-100 overflow-hidden">
+                  {s.image ? (
+                    <img
+                      src={s.image}
+                      alt={s.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-slate-400">
+                      <ImageIcon className="w-8 h-8" />
+                    </div>
+                  )}
+                  <div className="absolute top-3 left-3 flex gap-1.5">
+                    <span
+                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase shadow-sm ${
+                        s.isAvailable
+                          ? "bg-green-500 text-white"
+                          : "bg-slate-700 text-slate-200"
+                      }`}
                     >
-                      <Edit3 className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(s._id, s.title)}
-                      className="p-1 text-slate-400 hover:text-red-500 rounded"
-                      title="Delete Service"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
+                      {s.isAvailable ? "Active" : "Hidden"}
+                    </span>
+                    {s.isFeatured && (
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase bg-amber-500 text-white shadow-sm flex items-center gap-1">
+                        <Sparkles className="w-2.5 h-2.5" />
+                        Featured
+                      </span>
+                    )}
                   </div>
                 </div>
-                <p className="text-xs text-slate-muted line-clamp-2">{s.shortDescription}</p>
+
+                <div className="p-5 space-y-2">
+                  <div className="flex items-start justify-between gap-2">
+                    <h3 className="text-sm font-bold text-navy-800 line-clamp-1">{s.title}</h3>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button
+                        onClick={() => openEditModal(s)}
+                        className="p-1.5 text-slate-400 hover:text-navy-800 hover:bg-slate-100 rounded-lg transition-colors"
+                        title="Edit Service"
+                      >
+                        <Edit3 className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(s._id, s.title)}
+                        className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                        title="Delete Service"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                  <p className="text-xs text-slate-muted line-clamp-2 leading-relaxed">
+                    {s.shortDescription}
+                  </p>
+                </div>
               </div>
-              <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
-                <span className="text-[11px] text-slate-400">Type: {s.serviceType || "EPC"}</span>
-                <Link href={`/services/${s.slug}`} target="_blank" className="text-xs font-bold text-solar-green hover:underline">
-                  View Page
-                </Link>
+
+              <div className="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs">
+                <button
+                  type="button"
+                  onClick={() => toggleAvailability(s._id, s.isAvailable)}
+                  className="text-[11px] font-bold text-slate-600 hover:text-navy-800 hover:underline"
+                >
+                  {s.isAvailable ? "Hide from Public" : "Show on Public"}
+                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPreviewUrl(`/services/${s.slug}`);
+                      setPreviewOpen(true);
+                    }}
+                    className="font-bold text-navy-800 hover:underline flex items-center gap-1 text-[11px]"
+                  >
+                    <Eye className="w-3 h-3" />
+                    <span>Preview</span>
+                  </button>
+                  <Link
+                    href={`/services/${s.slug}`}
+                    target="_blank"
+                    className="text-slate-400 hover:text-navy-800"
+                    title="Open in new tab"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
               </div>
             </div>
           ))}
@@ -184,9 +302,9 @@ export default function AdminServicesPage() {
 
       {/* Add / Edit Service Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 bg-navy-950/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl border border-slate-border shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95">
-            <div className="p-5 border-b border-slate-border flex items-center justify-between">
+        <div className="fixed inset-0 z-50 bg-navy-950/50 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl border border-slate-border shadow-xl w-full max-w-xl max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 my-8">
+            <div className="p-5 border-b border-slate-border flex items-center justify-between sticky top-0 bg-white z-10">
               <h3 className="text-base font-bold text-navy-800">
                 {editingId ? "Edit Service Offering" : "Add Service Offering"}
               </h3>
@@ -200,12 +318,22 @@ export default function AdminServicesPage() {
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Turnkey EPC Installation"
+                  placeholder="e.g. Turnkey Commercial Solar EPC"
                   value={form.title}
                   onChange={(e) => handleTitleChange(e.target.value)}
                   className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green"
                 />
               </div>
+
+              {/* Service Cover Image */}
+              <CmsImageUploader
+                label="Service Showcase Banner Image"
+                value={form.image}
+                onChange={(url) => setForm({ ...form, image: url })}
+                folder="services"
+                aspectRatio="banner"
+                helpText="Upload an authentic solar installation photograph for this service. Directly saves to Cloudinary."
+              />
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -219,7 +347,7 @@ export default function AdminServicesPage() {
                   />
                 </div>
                 <div>
-                  <label className="font-bold text-navy-800 block mb-1">Service Type</label>
+                  <label className="font-bold text-navy-800 block mb-1">Service Category</label>
                   <select
                     value={form.serviceType}
                     onChange={(e) => setForm({ ...form, serviceType: e.target.value })}
@@ -228,23 +356,57 @@ export default function AdminServicesPage() {
                     <option value="installation">Installation</option>
                     <option value="survey">Site Survey & Feasibility</option>
                     <option value="maintenance">Maintenance / O&M</option>
-                    <option value="consultation">Consultation</option>
+                    <option value="consultation">Consultation & Net Metering</option>
                   </select>
                 </div>
               </div>
 
               <div>
-                <label className="font-bold text-navy-800 block mb-1">Short Description</label>
+                <label className="font-bold text-navy-800 block mb-1">Short Summary (Displayed on cards) *</label>
                 <textarea
-                  rows={3}
-                  placeholder="Summary of engineering deliverables..."
+                  rows={2}
+                  required
+                  placeholder="Brief summary of engineering deliverables..."
                   value={form.shortDescription}
                   onChange={(e) => setForm({ ...form, shortDescription: e.target.value })}
                   className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green"
                 />
               </div>
 
-              <div className="pt-2 flex justify-end gap-2">
+              <div>
+                <label className="font-bold text-navy-800 block mb-1">Full Detailed Narrative</label>
+                <textarea
+                  rows={4}
+                  placeholder="Comprehensive description of engineering scope, safety protocols, equipment, and utility liaison..."
+                  value={form.fullDescription}
+                  onChange={(e) => setForm({ ...form, fullDescription: e.target.value })}
+                  className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green"
+                />
+              </div>
+
+              <div className="flex items-center gap-6 pt-1">
+                <label className="flex items-center gap-2 cursor-pointer font-bold text-navy-800">
+                  <input
+                    type="checkbox"
+                    checked={form.isAvailable}
+                    onChange={(e) => setForm({ ...form, isAvailable: e.target.checked })}
+                    className="w-4 h-4 rounded text-solar-green focus:ring-solar-green"
+                  />
+                  <span>Show on public website</span>
+                </label>
+
+                <label className="flex items-center gap-2 cursor-pointer font-bold text-navy-800">
+                  <input
+                    type="checkbox"
+                    checked={form.isFeatured}
+                    onChange={(e) => setForm({ ...form, isFeatured: e.target.checked })}
+                    className="w-4 h-4 rounded text-solar-green focus:ring-solar-green"
+                  />
+                  <span>Feature on Homepage</span>
+                </label>
+              </div>
+
+              <div className="pt-2 flex justify-end gap-2 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
@@ -265,6 +427,14 @@ export default function AdminServicesPage() {
           </div>
         </div>
       )}
+
+      {/* Responsive Live Preview Modal */}
+      <CmsLivePreviewModal
+        isOpen={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+        url={previewUrl}
+        pageTitle="Services Live Preview"
+      />
     </div>
   );
 }

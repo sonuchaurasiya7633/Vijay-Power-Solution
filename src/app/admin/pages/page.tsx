@@ -17,7 +17,10 @@ import {
   Loader2,
   Sliders,
   Sparkles,
+  ExternalLink,
 } from "lucide-react";
+import CmsImageUploader from "@/components/admin/CmsImageUploader";
+import CmsLivePreviewModal from "@/components/admin/CmsLivePreviewModal";
 
 export default function AdminPagesManager() {
   const [pages, setPages] = useState<any[]>([]);
@@ -26,6 +29,8 @@ export default function AdminPagesManager() {
   const [showModal, setShowModal] = useState(false);
   const [editingPageId, setEditingPageId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState("/");
 
   const [form, setForm] = useState({
     title: "",
@@ -269,13 +274,24 @@ export default function AdminPagesManager() {
                         <Edit3 className="w-3.5 h-3.5" />
                         <span>Edit Content</span>
                       </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPreviewUrl(p.slug === "home" ? "/" : `/${p.slug}`);
+                          setPreviewOpen(true);
+                        }}
+                        className="p-1 rounded text-slate-400 hover:text-navy-800"
+                        title="Live Preview Modal"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                      </button>
                       <Link
                         href={p.slug === "home" ? "/" : `/${p.slug}`}
                         target="_blank"
                         className="p-1 rounded text-slate-400 hover:text-navy-800"
-                        title="Preview Public Page"
+                        title="Open in new tab"
                       >
-                        <Eye className="w-3.5 h-3.5" />
+                        <ExternalLink className="w-3.5 h-3.5" />
                       </Link>
                       {p.slug !== "home" && p.slug !== "about" && (
                         <button
@@ -360,16 +376,14 @@ export default function AdminPagesManager() {
                     className="w-full p-2.5 bg-white rounded-xl border border-slate-border outline-none focus:border-solar-green"
                   />
                 </div>
-                <div>
-                  <label className="font-bold text-navy-800 block mb-1">Hero Background Image URL (Cloudinary or Web)</label>
-                  <input
-                    type="url"
-                    placeholder="https://images.unsplash.com/... or Cloudinary URL"
-                    value={form.heroImage}
-                    onChange={(e) => setForm({ ...form, heroImage: e.target.value })}
-                    className="w-full p-2.5 bg-white rounded-xl border border-slate-border outline-none focus:border-solar-green"
-                  />
-                </div>
+                <CmsImageUploader
+                  label="Hero Background Banner"
+                  value={form.heroImage}
+                  onChange={(url) => setForm({ ...form, heroImage: url })}
+                  folder="pages"
+                  aspectRatio="banner"
+                  helpText="Upload a banner photo for the top of this page. Replaces existing image and saves to Cloudinary."
+                />
               </div>
 
               {/* Body Content / Markdown / HTML */}
@@ -445,6 +459,13 @@ export default function AdminPagesManager() {
           </div>
         </div>
       )}
+      {/* Responsive Live Preview Modal */}
+      <CmsLivePreviewModal
+        isOpen={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+        url={previewUrl}
+        pageTitle="Page Live Preview"
+      />
     </div>
   );
 }

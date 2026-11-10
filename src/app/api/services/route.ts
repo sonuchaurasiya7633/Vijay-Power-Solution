@@ -3,10 +3,13 @@ import connectDB from "@/lib/db/connection";
 import SolarService from "@/models/SolarService";
 import { getSession } from "@/lib/auth/session";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
     await connectDB();
-    const services = await SolarService.find({ isAvailable: true }).sort({ sortOrder: 1 }).lean();
+    const { searchParams } = new URL(req.url);
+    const adminMode = searchParams.get("adminMode") === "true";
+    const query = adminMode ? {} : { isAvailable: true };
+    const services = await SolarService.find(query).sort({ sortOrder: 1 }).lean();
     return NextResponse.json({ services });
   } catch (error) {
     console.error("[Get Services Error]", error);
@@ -20,6 +23,8 @@ export async function POST(req: NextRequest) {
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await req.json();
+    body.image = body.image || "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=800&q=80";
+    body.fullDescription = body.fullDescription || body.shortDescription;
     await connectDB();
     const service = await SolarService.create(body);
     return NextResponse.json({ success: true, service });

@@ -10,6 +10,7 @@ export default function Navbar() {
   const [solutionsDropdown, setSolutionsDropdown] = useState(false);
 
   const [headerCms, setHeaderCms] = useState({
+    logoUrl: "/images/logo.png",
     noticeBar: {
       enabled: false,
       badge: "PM Surya Ghar 2026",
@@ -30,6 +31,7 @@ export default function Navbar() {
       .then((d) => {
         if (d.setting && Object.keys(d.setting).length > 0) {
           setHeaderCms((prev) => ({
+            logoUrl: d.setting.logoUrl || prev.logoUrl,
             noticeBar: { ...prev.noticeBar, ...(d.setting.noticeBar || {}) },
             topBar: { ...prev.topBar, ...(d.setting.topBar || {}) },
           }));
@@ -50,7 +52,7 @@ export default function Navbar() {
           <Link href="/" className="flex items-center gap-3 group">
             <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-slate-border bg-navy-800 p-0.5 shadow-sm group-hover:scale-105 transition-transform">
               <Image
-                src="/images/logo.png"
+                src={headerCms.logoUrl || "/images/logo.png"}
                 alt="VIJOY POWER SOLUTION Logo"
                 fill
                 className="object-contain"

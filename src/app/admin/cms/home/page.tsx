@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import toast from "@/lib/toast";
-import CmsImageUploader from "@/components/admin/CmsImageUploader";
 import {
   Sliders,
   Save,
@@ -16,7 +15,13 @@ import {
   Video,
   ArrowRight,
   Sparkles,
+  Plus,
+  Trash2,
+  Eye,
+  RefreshCw,
 } from "lucide-react";
+import CmsImageUploader from "@/components/admin/CmsImageUploader";
+import CmsLivePreviewModal from "@/components/admin/CmsLivePreviewModal";
 
 export default function AdminHomeCmsPage() {
   const [activeTab, setActiveTab] = useState<
@@ -136,6 +141,87 @@ export default function AdminHomeCmsPage() {
     buttonLink: "/get-quote",
   });
 
+  const [previewOpen, setPreviewOpen] = useState(false);
+
+  const addCheckpoint = () => {
+    setHero((prev) => ({
+      ...prev,
+      checkpoints: [...prev.checkpoints, "New Guarantee or Feature"],
+    }));
+  };
+
+  const removeCheckpoint = (idx: number) => {
+    setHero((prev) => ({
+      ...prev,
+      checkpoints: prev.checkpoints.filter((_, i) => i !== idx),
+    }));
+  };
+
+  const addPillar = () => {
+    setWhyUs((prev) => ({
+      ...prev,
+      pillars: [
+        ...prev.pillars,
+        {
+          title: "New Engineering Commitment",
+          desc: "Description of the structural standard, warranty, or support policy.",
+        },
+      ],
+    }));
+  };
+
+  const removePillar = (idx: number) => {
+    setWhyUs((prev) => ({
+      ...prev,
+      pillars: prev.pillars.filter((_, i) => i !== idx),
+    }));
+  };
+
+  const addStep = () => {
+    const nextNum = String(process.steps.length + 1).padStart(2, "0");
+    setProcess((prev) => ({
+      ...prev,
+      steps: [
+        ...prev.steps,
+        {
+          step: nextNum,
+          title: "New Process Step",
+          desc: "Step description for the customer installation journey.",
+        },
+      ],
+    }));
+  };
+
+  const removeStep = (idx: number) => {
+    setProcess((prev) => ({
+      ...prev,
+      steps: prev.steps.filter((_, i) => i !== idx),
+    }));
+  };
+
+  const addVideo = () => {
+    setVideos((prev) => ({
+      ...prev,
+      items: [
+        ...prev.items,
+        {
+          title: "New Rooftop Solar Installation Walkthrough",
+          location: "Pan India Site",
+          duration: "1:30",
+          thumbnail: "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=800&q=80",
+          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+        },
+      ],
+    }));
+  };
+
+  const removeVideo = (idx: number) => {
+    setVideos((prev) => ({
+      ...prev,
+      items: prev.items.filter((_, i) => i !== idx),
+    }));
+  };
+
   // Fetch live settings on mount
   useEffect(() => {
     fetch("/api/settings?key=homepage")
@@ -215,15 +301,25 @@ export default function AdminHomeCmsPage() {
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={handleSave}
-          disabled={saving}
-          className="px-5 py-2.5 rounded-xl font-bold text-xs bg-solar-green text-white hover:bg-solar-green-hover flex items-center gap-2 shadow-sm transition-transform active:scale-95 disabled:opacity-50"
-        >
-          {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-          <span>Save All Changes</span>
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setPreviewOpen(true)}
+            className="px-4 py-2.5 rounded-xl font-bold text-xs bg-navy-800 text-white hover:bg-navy-900 flex items-center gap-2 shadow-sm transition-colors"
+          >
+            <Eye className="w-4 h-4 text-solar-yellow" />
+            <span>Live Preview</span>
+          </button>
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={saving}
+            className="px-5 py-2.5 rounded-xl font-bold text-xs bg-solar-green text-white hover:bg-solar-green-hover flex items-center gap-2 shadow-sm transition-transform active:scale-95 disabled:opacity-50"
+          >
+            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+            <span>Save All Changes</span>
+          </button>
+        </div>
       </div>
 
       {saved && (
@@ -368,21 +464,28 @@ export default function AdminHomeCmsPage() {
                 </div>
 
                 <CmsImageUploader
-                  label="Hero Background Collage Banner"
+                  label="Hero Background Banner (Collage or Rooftop Showcase)"
                   value={hero.backgroundImage || "/images/hero-solar-banner.jpg"}
-                  onChange={(data: any) =>
-                    setHero({ ...hero, backgroundImage: data?.imageUrl || data })
-                  }
-                  folder="homepage"
-                  defaultFallback="/images/hero-solar-banner.jpg"
-                  aspectRatioLabel="Landscape banner (16:9 or 21:9)"
-                  hint="Solar EPC collage banner representing Residential, Commercial, Agro pumping & Mill installations."
+                  onChange={(url) => setHero({ ...hero, backgroundImage: url })}
+                  folder="company"
+                  aspectRatio="banner"
+                  helpText="Upload a high-resolution solar installation banner. Replaces existing image and saves to Cloudinary."
                 />
 
                 <div className="pt-2">
-                  <label className="font-bold text-navy-800 block mb-2">
-                    Hero Trust Checkpoints (4 Key Selling Points)
-                  </label>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="font-bold text-navy-800 text-xs">
+                      Hero Trust Checkpoints ({hero.checkpoints.length})
+                    </label>
+                    <button
+                      type="button"
+                      onClick={addCheckpoint}
+                      className="inline-flex items-center gap-1 text-[11px] font-bold text-solar-green hover:underline"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Add Checkpoint</span>
+                    </button>
+                  </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {hero.checkpoints.map((cp, idx) => (
                       <div key={idx} className="flex items-center gap-2">
@@ -397,8 +500,17 @@ export default function AdminHomeCmsPage() {
                             updated[idx] = e.target.value;
                             setHero({ ...hero, checkpoints: updated });
                           }}
-                          className="w-full p-2 rounded-xl border border-slate-border outline-none focus:border-solar-green"
+                          className="flex-1 p-2 rounded-xl border border-slate-border outline-none focus:border-solar-green"
                         />
+                        {hero.checkpoints.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => removeCheckpoint(idx)}
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -565,24 +677,48 @@ export default function AdminHomeCmsPage() {
                 </div>
 
                 <div className="pt-2">
-                  <label className="font-bold text-navy-800 block mb-3 text-xs uppercase">6 Value Pillars</label>
+                  <div className="flex items-center justify-between mb-3">
+                    <label className="font-bold text-navy-800 text-xs uppercase">
+                      Value Pillars ({whyUs.pillars.length})
+                    </label>
+                    <button
+                      type="button"
+                      onClick={addPillar}
+                      className="inline-flex items-center gap-1 text-[11px] font-bold text-solar-green hover:underline"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Add Value Pillar</span>
+                    </button>
+                  </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {whyUs.pillars.map((p, idx) => (
-                      <div key={idx} className="p-4 rounded-xl border border-slate-border bg-slate-bg/30 space-y-2">
-                        <div className="flex items-center gap-2">
-                          <span className="w-5 h-5 rounded-full bg-navy-800 text-white font-bold text-[10px] flex items-center justify-center shrink-0">
-                            {idx + 1}
-                          </span>
-                          <input
-                            type="text"
-                            value={p.title}
-                            onChange={(e) => {
-                              const updated = [...whyUs.pillars];
-                              updated[idx] = { ...updated[idx], title: e.target.value };
-                              setWhyUs({ ...whyUs, pillars: updated });
-                            }}
-                            className="w-full p-1.5 rounded-lg border border-slate-border font-bold outline-none focus:border-solar-green"
-                          />
+                      <div key={idx} className="p-4 rounded-xl border border-slate-border bg-slate-bg/30 space-y-2 relative group">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2 flex-1">
+                            <span className="w-5 h-5 rounded-full bg-navy-800 text-white font-bold text-[10px] flex items-center justify-center shrink-0">
+                              {idx + 1}
+                            </span>
+                            <input
+                              type="text"
+                              value={p.title}
+                              onChange={(e) => {
+                                const updated = [...whyUs.pillars];
+                                updated[idx] = { ...updated[idx], title: e.target.value };
+                                setWhyUs({ ...whyUs, pillars: updated });
+                              }}
+                              className="w-full p-1.5 rounded-lg border border-slate-border font-bold outline-none focus:border-solar-green"
+                            />
+                          </div>
+                          {whyUs.pillars.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => removePillar(idx)}
+                              title="Delete pillar"
+                              className="p-1 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          )}
                         </div>
                         <textarea
                           rows={2}
@@ -645,13 +781,37 @@ export default function AdminHomeCmsPage() {
                 </div>
 
                 <div className="pt-2">
-                  <label className="font-bold text-navy-800 block mb-3 text-xs uppercase">8 Process Steps</label>
+                  <div className="flex items-center justify-between mb-3">
+                    <label className="font-bold text-navy-800 text-xs uppercase">
+                      Installation Steps ({process.steps.length})
+                    </label>
+                    <button
+                      type="button"
+                      onClick={addStep}
+                      className="inline-flex items-center gap-1 text-[11px] font-bold text-solar-green hover:underline"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Add Process Step</span>
+                    </button>
+                  </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     {process.steps.map((s, idx) => (
-                      <div key={idx} className="p-3.5 rounded-xl border border-slate-border bg-slate-bg/30 space-y-2">
-                        <span className="font-mono font-bold text-xs text-solar-green block">
-                          Step {s.step || `0${idx + 1}`}
-                        </span>
+                      <div key={idx} className="p-3.5 rounded-xl border border-slate-border bg-slate-bg/30 space-y-2 relative group">
+                        <div className="flex items-center justify-between">
+                          <span className="font-mono font-bold text-xs text-solar-green block">
+                            Step {s.step || `0${idx + 1}`}
+                          </span>
+                          {process.steps.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => removeStep(idx)}
+                              title="Delete step"
+                              className="p-1 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                          )}
+                        </div>
                         <input
                           type="text"
                           value={s.title}
@@ -723,12 +883,40 @@ export default function AdminHomeCmsPage() {
                 </div>
 
                 <div className="pt-2 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <label className="font-bold text-navy-800 text-xs uppercase">
+                      Video Stories ({videos.items.length})
+                    </label>
+                    <button
+                      type="button"
+                      onClick={addVideo}
+                      className="inline-flex items-center gap-1 text-[11px] font-bold text-solar-green hover:underline"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Add Video Story</span>
+                    </button>
+                  </div>
+
                   {videos.items.map((v, idx) => (
-                    <div key={idx} className="p-4 rounded-xl border border-slate-border bg-slate-bg/30 space-y-3">
-                      <span className="font-bold text-navy-800 text-xs uppercase">Video #{idx + 1}</span>
+                    <div key={idx} className="p-4 rounded-2xl border border-slate-border bg-slate-bg/30 space-y-4 relative group">
+                      <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+                        <span className="font-bold text-navy-800 text-xs uppercase">Video #{idx + 1}</span>
+                        {videos.items.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => removeVideo(idx)}
+                            title="Delete video"
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 flex items-center gap-1 text-xs"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>Remove</span>
+                          </button>
+                        )}
+                      </div>
+
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <div className="sm:col-span-2">
-                          <label className="text-slate-muted block mb-1 text-[11px]">Video Title</label>
+                          <label className="text-slate-muted block mb-1 text-[11px] font-bold">Video Title</label>
                           <input
                             type="text"
                             value={v.title}
@@ -741,7 +929,7 @@ export default function AdminHomeCmsPage() {
                           />
                         </div>
                         <div>
-                          <label className="text-slate-muted block mb-1 text-[11px]">Location</label>
+                          <label className="text-slate-muted block mb-1 text-[11px] font-bold">Location</label>
                           <input
                             type="text"
                             value={v.location}
@@ -755,37 +943,35 @@ export default function AdminHomeCmsPage() {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <div>
-                          <label className="text-slate-muted block mb-1 text-[11px]">Duration (e.g. 1:45)</label>
-                          <input
-                            type="text"
-                            value={v.duration}
-                            onChange={(e) => {
-                              const updated = [...videos.items];
-                              updated[idx] = { ...updated[idx], duration: e.target.value };
-                              setVideos({ ...videos, items: updated });
-                            }}
-                            className="w-full p-2 rounded-xl border border-slate-border font-mono outline-none focus:border-solar-green"
-                          />
-                        </div>
-                        <div className="sm:col-span-2">
-                          <label className="text-slate-muted block mb-1 text-[11px]">Thumbnail Image URL (Unsplash or Cloudinary)</label>
-                          <input
-                            type="text"
-                            value={v.thumbnail}
-                            onChange={(e) => {
-                              const updated = [...videos.items];
-                              updated[idx] = { ...updated[idx], thumbnail: e.target.value };
-                              setVideos({ ...videos, items: updated });
-                            }}
-                            className="w-full p-2 rounded-xl border border-slate-border font-mono text-xs outline-none focus:border-solar-green"
-                          />
-                        </div>
+                      <div>
+                        <label className="text-slate-muted block mb-1 text-[11px] font-bold">Duration (e.g. 1:45)</label>
+                        <input
+                          type="text"
+                          value={v.duration}
+                          onChange={(e) => {
+                            const updated = [...videos.items];
+                            updated[idx] = { ...updated[idx], duration: e.target.value };
+                            setVideos({ ...videos, items: updated });
+                          }}
+                          className="w-full max-w-xs p-2 rounded-xl border border-slate-border font-mono outline-none focus:border-solar-green"
+                        />
                       </div>
 
+                      <CmsImageUploader
+                        label={`Video #${idx + 1} Thumbnail Image`}
+                        value={v.thumbnail}
+                        onChange={(url) => {
+                          const updated = [...videos.items];
+                          updated[idx] = { ...updated[idx], thumbnail: url };
+                          setVideos({ ...videos, items: updated });
+                        }}
+                        folder="videos"
+                        aspectRatio="video"
+                        helpText="Upload a high-quality thumbnail image for the video player."
+                      />
+
                       <div>
-                        <label className="text-slate-muted block mb-1 text-[11px]">Video Stream / MP4 URL</label>
+                        <label className="text-slate-muted block mb-1 text-[11px] font-bold">Video Stream / MP4 URL</label>
                         <input
                           type="text"
                           value={v.videoUrl}
@@ -889,6 +1075,14 @@ export default function AdminHomeCmsPage() {
           </div>
         </form>
       )}
+
+      {/* Responsive Live Preview Modal */}
+      <CmsLivePreviewModal
+        isOpen={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+        url="/"
+        pageTitle="Homepage Live Preview"
+      />
     </div>
   );
 }

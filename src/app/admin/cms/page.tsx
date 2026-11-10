@@ -164,9 +164,9 @@ export default function AdminCmsHubPage() {
       icon: Wrench,
     },
     {
-      title: "Service Areas (Bihar, JH, UP)",
-      count: "15 Key Territories",
-      description: "Patna, Gaya, Muzaffarpur, Ranchi, Jamshedpur, Lucknow, Varanasi, and DISCOM associations.",
+      title: "Nationwide Service Coverage",
+      count: "Pan India",
+      description: "Service presence, DISCOM net metering liaisons, and certified installation coverage across India.",
       href: "/admin/service-areas",
       icon: MapPin,
     },
@@ -174,9 +174,16 @@ export default function AdminCmsHubPage() {
 
   const socialProofModules = [
     {
+      title: "Installation Customer Gallery",
+      count: "Cloudinary CDN",
+      description: "Authentic installation & customer photos, photo replacement, delete, hide/show, and lightbox display.",
+      href: "/admin/gallery",
+      icon: ImageIcon,
+    },
+    {
       title: "Portfolio Projects",
       count: `${stats.projects} Case Studies`,
-      description: "Verified customer installations across Bihar, JH & UP with signed customer consent flags.",
+      description: "Verified customer installations across India with signed customer consent flags.",
       href: "/admin/projects",
       icon: FolderGit2,
     },

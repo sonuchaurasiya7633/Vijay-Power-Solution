@@ -3,10 +3,13 @@ import connectDB from "@/lib/db/connection";
 import SolarSolution from "@/models/SolarSolution";
 import { getSession } from "@/lib/auth/session";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
     await connectDB();
-    const solutions = await SolarSolution.find({ isPublished: true }).sort({ sortOrder: 1 }).lean();
+    const { searchParams } = new URL(req.url);
+    const adminMode = searchParams.get("adminMode") === "true";
+    const query = adminMode ? {} : { isPublished: true };
+    const solutions = await SolarSolution.find(query).sort({ sortOrder: 1 }).lean();
     return NextResponse.json({ solutions });
   } catch (error) {
     console.error("[Get Solutions Error]", error);
@@ -20,6 +23,7 @@ export async function POST(req: NextRequest) {
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await req.json();
+    body.image = body.image || "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=800&q=80";
     await connectDB();
     const solution = await SolarSolution.create(body);
     return NextResponse.json({ success: true, solution });

@@ -2,86 +2,70 @@
 
 import { useState, useRef } from "react";
 import Image from "next/image";
-import { Upload, X, Loader2, RefreshCw, CheckCircle2, AlertCircle, Eye } from "lucide-react";
+import { Upload, X, Loader2, Image as ImageIcon, RefreshCw, Eye, CheckCircle2 } from "lucide-react";
 import toast from "@/lib/toast";
 
-export interface CmsImageUploaderProps {
+interface CmsImageUploaderProps {
   label?: string;
-  value?: string;
-  initialImageUrl?: string;
-  initialAltText?: string;
-  initialTitle?: string;
+  value: string;
+  onChange: (url: string, publicId?: string) => void;
   folder?: string;
-  defaultFallback?: string;
-  aspectRatio?: "square" | "video" | "banner" | "portrait" | "auto";
-  aspectRatioLabel?: string;
-  hint?: string;
-  onChange: (data: any) => void;
-  onRemove?: () => void;
+  altText?: string;
+  onAltChange?: (alt: string) => void;
+  aspectRatio?: "video" | "square" | "banner" | "portrait" | "auto";
+  helpText?: string;
+  previewHeightClass?: string;
 }
 
 export default function CmsImageUploader({
   label = "Upload or Replace Image",
   value,
-  initialImageUrl = "",
-  initialAltText = "",
-  initialTitle = "",
-  folder = "company",
-  defaultFallback,
-  aspectRatio = "auto",
-  aspectRatioLabel,
-  hint,
   onChange,
-  onRemove,
+  folder = "company",
+  altText,
+  onAltChange,
+  aspectRatio = "auto",
+  helpText = "Supports JPG, PNG, WEBP up to 10MB. Images are optimized and hosted on Cloudinary CDN.",
+  previewHeightClass = "h-40",
 }: CmsImageUploaderProps) {
-  const effectiveInitial = value || initialImageUrl || defaultFallback || "";
-  const [currentUrl, setCurrentUrl] = useState<string>(effectiveInitial);
-  const [originalUrl] = useState<string>(effectiveInitial);
-  const [altText, setAltText] = useState<string>(initialAltText);
-  const [title, setTitle] = useState<string>(initialTitle);
-  const [uploading, setUploading] = useState<boolean>(false);
-  const [previewModalOpen, setPreviewModalOpen] = useState<boolean>(false);
+  const [uploading, setUploading] = useState(false);
+  const [showUrlInput, setShowUrlInput] = useState(false);
+  const [manualUrl, setManualUrl] = useState(value || "");
+  const [previewModalOpen, setPreviewModalOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-  // Aspect ratio classes
-  const aspectClass =
-    aspectRatio === "square"
-      ? "aspect-square"
-      : aspectRatio === "video"
-      ? "aspect-video"
-      : aspectRatio === "banner"
-      ? "aspect-[21/9]"
-      : aspectRatio === "portrait"
-      ? "aspect-[3/4]"
-      : "aspect-video sm:aspect-[16/9]";
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || !e.target.files[0]) return;
     const file = e.target.files[0];
 
-    // File validation: JPG, JPEG, PNG, WebP up to 10MB
-    const validTypes = ["image/jpeg", "image/png", "image/webp", "image/jpg"];
-    if (!validTypes.includes(file.type)) {
-      toast.error("Invalid file format. Please upload JPG, PNG, or WebP.");
+    // Validate size (10MB max)
+    if (file.size > 10 * 1024 * 1024) {
+      toast.warning("File is larger than 10MB. Please choose an optimized image.");
       return;
     }
-    if (file.size > 10 * 1024 * 1024) {
-      toast.error("File is too large. Maximum allowed size is 10MB.");
+
+    // Validate format
+    const allowed = ["image/jpeg", "image/png", "image/webp", "image/jpg"];
+    if (!allowed.includes(file.type)) {
+      toast.warning("Unsupported file type. Please upload a JPG, PNG, or WebP image.");
       return;
     }
 
     setUploading(true);
     try {
-      // 1. Request signature from API
+      // 1. Request upload signature
       const signRes = await fetch("/api/media", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "sign", folder }),
       });
-      const signData = await signRes.json();
-      if (!signRes.ok) throw new Error(signData.error || "Failed to get upload credentials");
 
-      // 2. Direct upload to Cloudinary
+      const signData = await signRes.json();
+      if (!signRes.ok) {
+        throw new Error(signData.error || "Failed to get upload authorization");
+      }
+
+      // 2. Upload directly to Cloudinary
       const formData = new FormData();
       formData.append("file", file);
       formData.append("api_key", signData.apiKey);
@@ -96,206 +80,237 @@ export default function CmsImageUploader({
           body: formData,
         }
       );
-      const cloudData = await cloudRes.json();
 
-      if (cloudData.secure_url) {
-        setCurrentUrl(cloudData.secure_url);
-        const derivedTitle = title || file.name.replace(/\.[^/.]+$/, "").replace(/[-_]+/g, " ");
-        setTitle(derivedTitle);
-        onChange({
-          imageUrl: cloudData.secure_url,
-          publicId: cloudData.public_id,
-          altText: altText || derivedTitle,
-          title: derivedTitle,
-        });
-        toast.success("Image uploaded successfully! Remember to save your page changes.");
-      } else {
-        throw new Error(cloudData.error?.message || "Upload to CDN failed");
+      const cloudData = await cloudRes.json();
+      if (!cloudRes.ok || !cloudData.secure_url) {
+        throw new Error(cloudData.error?.message || "Cloudinary upload failed");
       }
+
+      // 3. Update state & notify
+      onChange(cloudData.secure_url, cloudData.public_id);
+      setManualUrl(cloudData.secure_url);
+      toast.success("Image uploaded & replaced successfully!");
     } catch (err: any) {
-      toast.error(err.message || "Image upload failed");
+      console.error("[CmsImageUploader Error]", err);
+      toast.error(err.message || "Failed to upload image. Please try again.");
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
 
-  const handleRevert = () => {
-    setCurrentUrl(originalUrl);
-    onChange({
-      imageUrl: originalUrl,
-      altText,
-      title,
-    });
-    toast.info("Image reverted to previous saved state.");
+  const handleApplyManualUrl = () => {
+    if (!manualUrl.trim()) return;
+    onChange(manualUrl.trim());
+    setShowUrlInput(false);
+    toast.success("Image URL updated!");
   };
 
-  const handleRemove = () => {
-    setCurrentUrl("");
-    if (onRemove) onRemove();
-    onChange({
-      imageUrl: "",
-      altText: "",
-      title: "",
-    });
-    toast.warning("Image cleared. Click save to confirm removal.");
+  const handleClearImage = () => {
+    onChange("");
+    setManualUrl("");
+    toast.info("Image cleared. Click Save to persist changes.");
+  };
+
+  // Aspect ratio helper
+  const getAspectClass = () => {
+    switch (aspectRatio) {
+      case "video":
+        return "aspect-video";
+      case "square":
+        return "aspect-square";
+      case "banner":
+        return "aspect-[21/9]";
+      case "portrait":
+        return "aspect-[3/4]";
+      default:
+        return previewHeightClass;
+    }
   };
 
   return (
-    <div className="space-y-3 p-4 rounded-2xl bg-slate-50 border border-slate-border text-xs">
-      <div className="flex items-center justify-between">
-        <label className="font-bold text-navy-800">{label}</label>
-        {currentUrl !== originalUrl && (
-          <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
-            Unsaved Changes
-          </span>
-        )}
-      </div>
-
-      {/* Image Preview & Replacement Box */}
-      <div className="flex flex-col sm:flex-row items-center gap-4">
-        {currentUrl ? (
-          <div
-            className={`relative ${aspectClass} w-full sm:w-48 rounded-xl overflow-hidden bg-navy-950 border border-slate-border shrink-0 group`}
-          >
-            <Image
-              src={currentUrl}
-              alt={altText || "Image Preview"}
-              fill
-              className="object-contain"
-            />
-            <div className="absolute inset-0 bg-navy-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+    <div className="space-y-2">
+      {label && (
+        <div className="flex items-center justify-between">
+          <label className="text-xs font-bold text-navy-800 flex items-center gap-1.5">
+            <ImageIcon className="w-3.5 h-3.5 text-solar-green" />
+            <span>{label}</span>
+          </label>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setShowUrlInput(!showUrlInput)}
+              className="text-[11px] font-semibold text-solar-green hover:underline"
+            >
+              {showUrlInput ? "Hide Direct URL" : "Enter Direct URL"}
+            </button>
+            {value && (
               <button
                 type="button"
-                onClick={() => setPreviewModalOpen(true)}
-                className="p-1.5 rounded-lg bg-white/20 hover:bg-white/40 text-white backdrop-blur-sm"
-                title="Full Preview"
+                onClick={handleClearImage}
+                className="text-[11px] font-semibold text-red-600 hover:underline"
               >
-                <Eye className="w-4 h-4" />
+                Clear
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Direct URL input accordion */}
+      {showUrlInput && (
+        <div className="flex items-center gap-2 p-2 bg-slate-50 border border-slate-border rounded-xl animate-fadeIn">
+          <input
+            type="text"
+            value={manualUrl}
+            onChange={(e) => setManualUrl(e.target.value)}
+            placeholder="https://... or /images/..."
+            className="flex-1 text-xs px-3 py-1.5 rounded-lg border border-slate-border bg-white outline-none focus:border-solar-green"
+          />
+          <button
+            type="button"
+            onClick={handleApplyManualUrl}
+            className="px-3 py-1.5 rounded-lg text-xs font-bold bg-navy-800 text-white hover:bg-navy-900"
+          >
+            Apply
+          </button>
+        </div>
+      )}
+
+      {/* Main Image Box & Controls */}
+      <div className="relative border-2 border-dashed border-slate-border hover:border-solar-green/50 rounded-2xl p-3 bg-slate-50/70 transition-colors">
+        {value ? (
+          <div className="space-y-3">
+            <div
+              className={`relative w-full ${getAspectClass()} rounded-xl overflow-hidden bg-navy-950 flex items-center justify-center group`}
+            >
+              <Image
+                src={value}
+                alt={altText || "CMS Image"}
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-contain"
+              />
+
+              {/* Hover overlay with action pills */}
+              <div className="absolute inset-0 bg-navy-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-4">
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                  className="px-3 py-1.5 rounded-lg bg-solar-green text-white text-xs font-bold shadow-md hover:bg-solar-green-hover flex items-center gap-1.5 transition-transform hover:scale-105"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" />
+                  <span>Replace Photo</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPreviewModalOpen(true)}
+                  className="px-3 py-1.5 rounded-lg bg-white/90 text-navy-800 text-xs font-bold shadow-md hover:bg-white flex items-center gap-1.5 transition-transform hover:scale-105"
+                >
+                  <Eye className="w-3.5 h-3.5" />
+                  <span>Full View</span>
+                </button>
+              </div>
+
+              {uploading && (
+                <div className="absolute inset-0 bg-navy-950/80 flex flex-col items-center justify-center gap-2 text-white">
+                  <Loader2 className="w-6 h-6 animate-spin text-solar-yellow" />
+                  <span className="text-xs font-semibold">Uploading to Cloudinary CDN...</span>
+                </div>
+              )}
+            </div>
+
+            {/* Quick action bar beneath preview */}
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-[11px] text-slate-muted">
+              <span className="truncate max-w-xs">{value}</span>
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+                className="font-bold text-solar-green hover:underline flex items-center gap-1"
+              >
+                <Upload className="w-3 h-3" />
+                <span>Replace with Local File</span>
               </button>
             </div>
           </div>
         ) : (
           <div
-            className={`w-full sm:w-48 ${aspectClass} rounded-xl border-2 border-dashed border-slate-300 bg-white flex flex-col items-center justify-center text-slate-400 p-4 text-center shrink-0`}
+            onClick={() => fileInputRef.current?.click()}
+            className="flex flex-col items-center justify-center py-8 px-4 text-center cursor-pointer hover:bg-white rounded-xl transition-colors"
           >
-            <Upload className="w-6 h-6 mb-1 text-slate-300" />
-            <span className="text-[11px] font-medium">No Image Uploaded</span>
+            {uploading ? (
+              <div className="flex flex-col items-center gap-2">
+                <Loader2 className="w-8 h-8 animate-spin text-solar-green" />
+                <p className="text-xs font-bold text-navy-800">Uploading to Cloudinary CDN...</p>
+              </div>
+            ) : (
+              <>
+                <div className="w-12 h-12 rounded-2xl bg-solar-green-light flex items-center justify-center text-solar-green mb-2">
+                  <Upload className="w-6 h-6" />
+                </div>
+                <p className="text-xs font-bold text-navy-800">
+                  Click to choose a file or drag & drop
+                </p>
+                <p className="text-[11px] text-slate-muted mt-0.5">{helpText}</p>
+              </>
+            )}
           </div>
         )}
 
-        <div className="space-y-2 w-full">
-          <p className="text-[11px] text-slate-muted break-all font-mono line-clamp-1">
-            {currentUrl || "No asset configured"}
-          </p>
-
-          <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              disabled={uploading}
-              onClick={() => fileInputRef.current?.click()}
-              className="px-3.5 py-1.5 rounded-xl font-bold bg-navy-800 text-white hover:bg-navy-900 transition-colors flex items-center gap-1.5 disabled:opacity-50"
-            >
-              {uploading ? (
-                <>
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  <span>Uploading to CDN...</span>
-                </>
-              ) : (
-                <>
-                  <RefreshCw className="w-3.5 h-3.5" />
-                  <span>{currentUrl ? "Replace Image" : "Upload Image"}</span>
-                </>
-              )}
-            </button>
-
-            {currentUrl !== originalUrl && (
-              <button
-                type="button"
-                onClick={handleRevert}
-                className="px-3 py-1.5 rounded-xl font-semibold bg-slate-200 hover:bg-slate-300 text-slate-700 transition-colors"
-              >
-                Revert to Original
-              </button>
-            )}
-
-            {currentUrl && (
-              <button
-                type="button"
-                onClick={handleRemove}
-                className="px-3 py-1.5 rounded-xl font-semibold text-red-600 hover:bg-red-50 transition-colors"
-              >
-                Remove
-              </button>
-            )}
-          </div>
-
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/jpeg,image/png,image/webp,image/jpg"
-            onChange={handleFileChange}
-            className="hidden"
-          />
-
-          <p className="text-[10px] text-slate-400">
-            Supports JPG, PNG, WebP (max 10MB). Automatically optimized via Cloudinary CDN.
-          </p>
-        </div>
+        {/* Hidden File Input */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/jpg"
+          onChange={handleFileChange}
+          className="hidden"
+        />
       </div>
 
-      {/* Alt Text & Caption */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-        <div>
-          <label className="text-[11px] font-bold text-slate-muted block mb-0.5">Image Alt Text (SEO)</label>
+      {/* Optional Alt Text Input */}
+      {onAltChange && (
+        <div className="pt-1">
+          <label className="text-[11px] font-semibold text-slate-muted block mb-0.5">
+            Accessibility / SEO Alt Text
+          </label>
           <input
             type="text"
-            value={altText}
-            onChange={(e) => {
-              setAltText(e.target.value);
-              onChange({ imageUrl: currentUrl, altText: e.target.value, title });
-            }}
-            placeholder="e.g. Solar rooftop panels installed on commercial building"
-            className="w-full p-2 rounded-lg border border-slate-border outline-none focus:border-solar-green text-xs bg-white"
+            value={altText || ""}
+            onChange={(e) => onAltChange(e.target.value)}
+            placeholder="Describe the image content for SEO and screen readers..."
+            className="w-full text-xs px-3 py-1.5 rounded-lg border border-slate-border bg-white outline-none focus:border-solar-green"
           />
         </div>
-        <div>
-          <label className="text-[11px] font-bold text-slate-muted block mb-0.5">Image Title / Caption</label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => {
-              setTitle(e.target.value);
-              onChange({ imageUrl: currentUrl, altText, title: e.target.value });
-            }}
-            placeholder="e.g. Turnkey 10kW Solar Array"
-            className="w-full p-2 rounded-lg border border-slate-border outline-none focus:border-solar-green text-xs bg-white"
-          />
-        </div>
-      </div>
+      )}
 
-      {/* Full Preview Modal */}
-      {previewModalOpen && currentUrl && (
+      {/* Lightbox Preview Modal */}
+      {previewModalOpen && value && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/80 backdrop-blur-sm"
           onClick={() => setPreviewModalOpen(false)}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/85 backdrop-blur-sm animate-fadeIn"
         >
           <div
-            className="bg-navy-950 rounded-2xl max-w-4xl w-full p-4 border border-white/20 shadow-2xl relative"
             onClick={(e) => e.stopPropagation()}
+            className="relative max-w-4xl w-full max-h-[85vh] bg-navy-900 rounded-3xl p-4 border border-navy-700 shadow-2xl flex flex-col items-center"
           >
             <button
               onClick={() => setPreviewModalOpen(false)}
-              className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-white/20 text-white flex items-center justify-center hover:bg-white/40"
+              className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-white/15 hover:bg-white/30 text-white flex items-center justify-center transition-colors"
             >
-              <X className="w-4 h-4" />
+              <X className="w-5 h-5" />
             </button>
-            <div className="relative aspect-video w-full max-h-[75vh]">
-              <Image src={currentUrl} alt={altText || "Preview"} fill className="object-contain" />
+            <div className="relative w-full h-[70vh] flex items-center justify-center">
+              <Image
+                src={value}
+                alt="Full View Preview"
+                fill
+                className="object-contain"
+              />
             </div>
-            <div className="pt-3 text-center text-slate-300 text-xs">
-              <p className="font-bold text-white">{title || "Image Preview"}</p>
-              <p className="text-[11px] text-slate-400 break-all">{currentUrl}</p>
+            <div className="w-full text-center text-xs text-slate-300 pt-3 border-t border-navy-700 truncate">
+              {value}
             </div>
           </div>
         </div>

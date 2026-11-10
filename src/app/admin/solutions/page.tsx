@@ -3,7 +3,21 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import toast from "@/lib/toast";
-import { Sparkles, ArrowRight, Loader2, Plus, Trash2, Edit3, X, Save } from "lucide-react";
+import {
+  Sparkles,
+  ArrowRight,
+  Loader2,
+  Plus,
+  Trash2,
+  Edit3,
+  X,
+  Save,
+  Eye,
+  ExternalLink,
+  ImageIcon,
+} from "lucide-react";
+import CmsImageUploader from "@/components/admin/CmsImageUploader";
+import CmsLivePreviewModal from "@/components/admin/CmsLivePreviewModal";
 
 export default function AdminSolutionsPage() {
   const [solutions, setSolutions] = useState<any[]>([]);
@@ -11,6 +25,8 @@ export default function AdminSolutionsPage() {
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState("/solutions");
 
   const [form, setForm] = useState({
     title: "",
@@ -19,11 +35,12 @@ export default function AdminSolutionsPage() {
     tagline: "",
     typicalCapacityRange: "3kW - 10kW",
     description: "",
+    image: "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=800&q=80",
     isPublished: true,
   });
 
   const fetchSolutions = () => {
-    fetch("/api/solutions")
+    fetch("/api/solutions?adminMode=true")
       .then((r) => r.json())
       .then((d) => setSolutions(d.solutions || []))
       .catch((e) => console.error(e))
@@ -43,6 +60,7 @@ export default function AdminSolutionsPage() {
       tagline: "",
       typicalCapacityRange: "3kW - 10kW",
       description: "",
+      image: "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=800&q=80",
       isPublished: true,
     });
     setShowModal(true);
@@ -57,6 +75,7 @@ export default function AdminSolutionsPage() {
       tagline: s.tagline || "",
       typicalCapacityRange: s.typicalCapacityRange || "3kW - 10kW",
       description: s.description || "",
+      image: s.image || "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=800&q=80",
       isPublished: s.isPublished !== undefined ? s.isPublished : true,
     });
     setShowModal(true);
@@ -102,6 +121,22 @@ export default function AdminSolutionsPage() {
     }
   };
 
+  const togglePublish = async (id: string, current: boolean) => {
+    try {
+      const res = await fetch(`/api/solutions/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isPublished: !current }),
+      });
+      if (res.ok) {
+        toast.updated("Updated successfully!", `Solution visibility updated.`);
+        fetchSolutions();
+      }
+    } catch (e: any) {
+      toast.error(e.message || "Failed to toggle visibility");
+    }
+  };
+
   const handleDelete = async (id: string, title: string) => {
     if (!confirm(`Are you sure you want to delete solution "${title}"?`)) return;
     try {
@@ -127,17 +162,31 @@ export default function AdminSolutionsPage() {
             Solar Solutions Architecture
           </h1>
           <p className="text-xs text-slate-muted mt-0.5">
-            Residential, Commercial, Industrial, Agricultural, On-Grid, and Hybrid power packages.
+            Engineered setups across Residential, Commercial, Industrial, and Agricultural sectors.
           </p>
         </div>
 
-        <button
-          onClick={openCreateModal}
-          className="px-4 py-2 rounded-xl text-xs font-bold bg-solar-green text-white hover:bg-solar-green-hover flex items-center gap-1.5 transition-colors shadow-sm"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Add Solution</span>
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => {
+              setPreviewUrl("/solutions");
+              setPreviewOpen(true);
+            }}
+            className="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-navy-800 flex items-center gap-1.5 transition-colors"
+          >
+            <Eye className="w-4 h-4" />
+            <span>Solutions Preview</span>
+          </button>
+
+          <button
+            onClick={openCreateModal}
+            className="px-4 py-2 rounded-xl text-xs font-bold bg-solar-green text-white hover:bg-solar-green-hover flex items-center gap-1.5 transition-colors shadow-sm"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add Solution</span>
+          </button>
+        </div>
       </div>
 
       {loading ? (
@@ -145,40 +194,99 @@ export default function AdminSolutionsPage() {
           <Loader2 className="w-5 h-5 animate-spin text-solar-green" />
           <span>Loading solutions...</span>
         </div>
+      ) : solutions.length === 0 ? (
+        <div className="p-16 bg-white rounded-2xl border border-slate-border text-center space-y-2">
+          <Sparkles className="w-10 h-10 text-slate-300 mx-auto" />
+          <h3 className="text-sm font-bold text-navy-800">No solutions found</h3>
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {solutions.map((s) => (
-            <div key={s._id || s.slug} className="p-6 bg-white rounded-2xl border border-slate-border shadow-sm space-y-3 flex flex-col justify-between">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold text-solar-green uppercase bg-solar-green-light px-2 py-0.5 rounded">
-                    {s.category}
-                  </span>
-                  <div className="flex items-center gap-1">
-                    <button
-                      onClick={() => openEditModal(s)}
-                      className="p-1 text-slate-400 hover:text-navy-800 rounded"
-                      title="Edit Solution"
+            <div
+              key={s._id || s.slug}
+              className="bg-white rounded-2xl border border-slate-border shadow-sm overflow-hidden flex flex-col justify-between group hover:border-slate-300 transition-all"
+            >
+              <div>
+                <div className="relative h-44 w-full bg-slate-100 overflow-hidden">
+                  {s.image ? (
+                    <img
+                      src={s.image}
+                      alt={s.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-slate-400">
+                      <ImageIcon className="w-8 h-8" />
+                    </div>
+                  )}
+                  <div className="absolute top-3 left-3">
+                    <span
+                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase shadow-sm ${
+                        s.isPublished
+                          ? "bg-green-500 text-white"
+                          : "bg-slate-700 text-slate-200"
+                      }`}
                     >
-                      <Edit3 className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(s._id, s.title)}
-                      className="p-1 text-slate-400 hover:text-red-500 rounded"
-                      title="Delete Solution"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
+                      {s.isPublished ? "Published" : "Draft"}
+                    </span>
                   </div>
                 </div>
-                <h3 className="text-base font-bold text-navy-800">{s.title}</h3>
-                <p className="text-xs text-slate-muted line-clamp-2">{s.tagline}</p>
+
+                <div className="p-5 space-y-2">
+                  <div className="flex items-start justify-between gap-2">
+                    <h3 className="text-sm font-bold text-navy-800 line-clamp-1">{s.title}</h3>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button
+                        onClick={() => openEditModal(s)}
+                        className="p-1.5 text-slate-400 hover:text-navy-800 hover:bg-slate-100 rounded-lg transition-colors"
+                        title="Edit Solution"
+                      >
+                        <Edit3 className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(s._id, s.title)}
+                        className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                        title="Delete Solution"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                  <p className="text-xs text-slate-muted line-clamp-2 leading-relaxed">
+                    {s.description || s.tagline}
+                  </p>
+                </div>
               </div>
-              <div className="pt-2 flex items-center justify-between border-t border-slate-100">
-                <span className="text-xs font-bold text-navy-800">Range: {s.typicalCapacityRange}</span>
-                <Link href={`/solar-solutions/${s.slug}`} target="_blank" className="text-xs font-bold text-solar-green hover:underline">
-                  View Page
-                </Link>
+
+              <div className="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs">
+                <button
+                  type="button"
+                  onClick={() => togglePublish(s._id, s.isPublished)}
+                  className="text-[11px] font-bold text-slate-600 hover:text-navy-800 hover:underline"
+                >
+                  {s.isPublished ? "Unpublish" : "Publish"}
+                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPreviewUrl(`/solutions/${s.slug}`);
+                      setPreviewOpen(true);
+                    }}
+                    className="font-bold text-navy-800 hover:underline flex items-center gap-1 text-[11px]"
+                  >
+                    <Eye className="w-3 h-3" />
+                    <span>Preview</span>
+                  </button>
+                  <Link
+                    href={`/solutions/${s.slug}`}
+                    target="_blank"
+                    className="text-slate-400 hover:text-navy-800"
+                    title="Open in new tab"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
               </div>
             </div>
           ))}
@@ -187,11 +295,11 @@ export default function AdminSolutionsPage() {
 
       {/* Add / Edit Solution Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 bg-navy-950/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl border border-slate-border shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95">
-            <div className="p-5 border-b border-slate-border flex items-center justify-between">
+        <div className="fixed inset-0 z-50 bg-navy-950/50 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl border border-slate-border shadow-xl w-full max-w-xl max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 my-8">
+            <div className="p-5 border-b border-slate-border flex items-center justify-between sticky top-0 bg-white z-10">
               <h3 className="text-base font-bold text-navy-800">
-                {editingId ? "Edit Solar Solution" : "Add Solar Solution Package"}
+                {editingId ? "Edit Solar Solution" : "Add Solar Solution"}
               </h3>
               <button onClick={() => setShowModal(false)} className="p-1 text-slate-400 hover:text-navy-800">
                 <X className="w-4 h-4" />
@@ -203,12 +311,22 @@ export default function AdminSolutionsPage() {
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Residential Rooftop Solar"
+                  placeholder="e.g. Residential Rooftop Solar Solutions"
                   value={form.title}
                   onChange={(e) => handleTitleChange(e.target.value)}
                   className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green"
                 />
               </div>
+
+              {/* Cover Image Upload / Replace */}
+              <CmsImageUploader
+                label="Solution Banner Image"
+                value={form.image}
+                onChange={(url) => setForm({ ...form, image: url })}
+                folder="solutions"
+                aspectRatio="banner"
+                helpText="Upload a high-quality solar solution photograph. Replaces existing image on Cloudinary."
+              />
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -222,7 +340,7 @@ export default function AdminSolutionsPage() {
                   />
                 </div>
                 <div>
-                  <label className="font-bold text-navy-800 block mb-1">Category</label>
+                  <label className="font-bold text-navy-800 block mb-1">Sector Category</label>
                   <select
                     value={form.category}
                     onChange={(e) => setForm({ ...form, category: e.target.value })}
@@ -232,34 +350,60 @@ export default function AdminSolutionsPage() {
                     <option value="commercial">Commercial</option>
                     <option value="industrial">Industrial</option>
                     <option value="agricultural">Agricultural</option>
-                    <option value="institutional">Institutional</option>
+                    <option value="off-grid">Off-Grid</option>
+                    <option value="hybrid">Hybrid</option>
                   </select>
                 </div>
               </div>
 
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-bold text-navy-800 block mb-1">Tagline</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Cut monthly electricity bills by up to 90%"
+                    value={form.tagline}
+                    onChange={(e) => setForm({ ...form, tagline: e.target.value })}
+                    className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green"
+                  />
+                </div>
+                <div>
+                  <label className="font-bold text-navy-800 block mb-1">Capacity Range</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. 1kW - 10kW"
+                    value={form.typicalCapacityRange}
+                    onChange={(e) => setForm({ ...form, typicalCapacityRange: e.target.value })}
+                    className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green"
+                  />
+                </div>
+              </div>
+
               <div>
-                <label className="font-bold text-navy-800 block mb-1">Tagline</label>
-                <input
-                  type="text"
-                  placeholder="Zero electricity bills with government subsidy"
-                  value={form.tagline}
-                  onChange={(e) => setForm({ ...form, tagline: e.target.value })}
+                <label className="font-bold text-navy-800 block mb-1">Detailed Description</label>
+                <textarea
+                  rows={4}
+                  placeholder="Engineering architecture, inverter configurations, and net-metering advantages..."
+                  value={form.description}
+                  onChange={(e) => setForm({ ...form, description: e.target.value })}
                   className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green"
                 />
               </div>
 
-              <div>
-                <label className="font-bold text-navy-800 block mb-1">Typical Capacity Range</label>
+              <div className="flex items-center gap-2 pt-1">
                 <input
-                  type="text"
-                  placeholder="e.g. 1kW - 10kW"
-                  value={form.typicalCapacityRange}
-                  onChange={(e) => setForm({ ...form, typicalCapacityRange: e.target.value })}
-                  className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green"
+                  type="checkbox"
+                  id="sol-published"
+                  checked={form.isPublished}
+                  onChange={(e) => setForm({ ...form, isPublished: e.target.checked })}
+                  className="w-4 h-4 rounded text-solar-green focus:ring-solar-green"
                 />
+                <label htmlFor="sol-published" className="font-bold text-navy-800 cursor-pointer">
+                  Publish solution to public website immediately
+                </label>
               </div>
 
-              <div className="pt-2 flex justify-end gap-2">
+              <div className="pt-2 flex justify-end gap-2 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
@@ -280,6 +424,14 @@ export default function AdminSolutionsPage() {
           </div>
         </div>
       )}
+
+      {/* Responsive Live Preview Modal */}
+      <CmsLivePreviewModal
+        isOpen={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+        url={previewUrl}
+        pageTitle="Solutions Live Preview"
+      />
     </div>
   );
 }

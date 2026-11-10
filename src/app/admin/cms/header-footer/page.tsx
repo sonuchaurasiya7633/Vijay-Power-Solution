@@ -17,15 +17,20 @@ import {
   ShieldCheck,
   Globe,
   Sliders,
+  ImageIcon,
 } from "lucide-react";
+import CmsImageUploader from "@/components/admin/CmsImageUploader";
+import CmsLivePreviewModal from "@/components/admin/CmsLivePreviewModal";
 
 export default function AdminHeaderFooterCmsPage() {
   const [activeTab, setActiveTab] = useState<"notice" | "header" | "footer" | "badges">("notice");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   const [form, setForm] = useState({
+    logoUrl: "/images/logo.png",
     noticeBar: {
       enabled: true,
       badge: "PM Surya Ghar 2026",
@@ -63,6 +68,7 @@ export default function AdminHeaderFooterCmsPage() {
           setForm((prev) => ({
             ...prev,
             ...d.setting,
+            logoUrl: d.setting.logoUrl || prev.logoUrl,
             noticeBar: { ...prev.noticeBar, ...(d.setting.noticeBar || {}) },
             topBar: { ...prev.topBar, ...(d.setting.topBar || {}) },
             footer: { ...prev.footer, ...(d.setting.footer || {}) },
@@ -154,14 +160,22 @@ export default function AdminHeaderFooterCmsPage() {
         </div>
 
         <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setPreviewOpen(true)}
+            className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-navy-800 rounded-xl text-xs font-bold transition-all"
+          >
+            <Eye className="w-3.5 h-3.5" />
+            <span>Live Preview</span>
+          </button>
+
           <Link
             href="/"
             target="_blank"
             className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-navy-800 rounded-xl text-xs font-bold transition-all"
           >
-            <Eye className="w-3.5 h-3.5" />
-            <span>View Public Site</span>
-            <ExternalLink className="w-3 h-3 text-slate-400" />
+            <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
+            <span className="hidden sm:inline">Open in Tab</span>
           </Link>
 
           <button
@@ -313,6 +327,16 @@ export default function AdminHeaderFooterCmsPage() {
 
         {activeTab === "header" && (
           <div className="space-y-5">
+            {/* Logo Image Upload / Replace */}
+            <CmsImageUploader
+              label="Company Brand Logo (Header & Footer)"
+              value={form.logoUrl}
+              onChange={(url) => setForm({ ...form, logoUrl: url })}
+              folder="branding"
+              aspectRatio="square"
+              helpText="Upload or replace the official VPS Solar company logo. Displays across public header and footer."
+            />
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-muted mb-1.5">
@@ -457,6 +481,14 @@ export default function AdminHeaderFooterCmsPage() {
           </button>
         </div>
       </form>
+
+      {/* Live Preview Modal */}
+      <CmsLivePreviewModal
+        isOpen={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+        url="/"
+        pageTitle="Website Shell Live Preview"
+      />
     </div>
   );
 }

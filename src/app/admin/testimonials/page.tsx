@@ -1,9 +1,25 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import toast from "@/lib/toast";
-import { Star, ShieldCheck, CheckCircle2, Plus, Trash2, Edit3, X, Loader2, Save } from "lucide-react";
+import {
+  Star,
+  ShieldCheck,
+  CheckCircle2,
+  Plus,
+  Trash2,
+  Edit3,
+  X,
+  Loader2,
+  Save,
+  Eye,
+  ExternalLink,
+  User,
+} from "lucide-react";
 import { INDIAN_STATES_AND_UTS } from "@/lib/constants/states";
+import CmsImageUploader from "@/components/admin/CmsImageUploader";
+import CmsLivePreviewModal from "@/components/admin/CmsLivePreviewModal";
 
 export default function AdminTestimonialsPage() {
   const [reviews, setReviews] = useState<any[]>([]);
@@ -11,6 +27,7 @@ export default function AdminTestimonialsPage() {
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   const [form, setForm] = useState({
     customerName: "",
@@ -19,6 +36,7 @@ export default function AdminTestimonialsPage() {
     systemCapacityKw: 5,
     rating: 5,
     reviewText: "",
+    photoUrl: "",
     hasConsentToPublish: true,
     isApproved: true,
   });
@@ -44,6 +62,7 @@ export default function AdminTestimonialsPage() {
       systemCapacityKw: 5,
       rating: 5,
       reviewText: "",
+      photoUrl: "",
       hasConsentToPublish: true,
       isApproved: true,
     });
@@ -59,6 +78,7 @@ export default function AdminTestimonialsPage() {
       systemCapacityKw: t.systemCapacityKw || 5,
       rating: t.rating || 5,
       reviewText: t.reviewText || "",
+      photoUrl: t.photoUrl || "",
       hasConsentToPublish: t.hasConsentToPublish !== undefined ? t.hasConsentToPublish : true,
       isApproved: t.isApproved !== undefined ? t.isApproved : true,
     });
@@ -104,19 +124,16 @@ export default function AdminTestimonialsPage() {
         body: JSON.stringify({ isApproved: !currentStatus }),
       });
       if (res.ok) {
-        toast.updated("Updated successfully!", `Review ${!currentStatus ? "Approved" : "Unapproved"}.`);
+        toast.updated("Updated successfully!", `Review approval status changed.`);
         fetchReviews();
-      } else {
-        const d = await res.json().catch(() => ({}));
-        toast.error(d.error || "Failed to update review status");
       }
-    } catch (err: any) {
-      toast.error(err.message || "Failed to update review status");
+    } catch (e: any) {
+      toast.error(e.message || "Failed to update review status");
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to remove this customer review?")) return;
+    if (!confirm("Are you sure you want to permanently delete this customer testimonial?")) return;
     try {
       const res = await fetch(`/api/testimonials/${id}`, { method: "DELETE" });
       if (res.ok) {
@@ -144,13 +161,24 @@ export default function AdminTestimonialsPage() {
           </p>
         </div>
 
-        <button
-          onClick={openCreateModal}
-          className="px-4 py-2 rounded-xl text-xs font-bold bg-solar-green text-white hover:bg-solar-green-hover flex items-center gap-1.5 transition-colors shadow-sm"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Add Testimonial</span>
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setPreviewOpen(true)}
+            className="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-navy-800 flex items-center gap-1.5 transition-colors"
+          >
+            <Eye className="w-4 h-4" />
+            <span>Reviews Preview</span>
+          </button>
+
+          <button
+            onClick={openCreateModal}
+            className="px-4 py-2 rounded-xl text-xs font-bold bg-solar-green text-white hover:bg-solar-green-hover flex items-center gap-1.5 transition-colors shadow-sm"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add Testimonial</span>
+          </button>
+        </div>
       </div>
 
       {loading ? (
@@ -168,7 +196,7 @@ export default function AdminTestimonialsPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {reviews.map((t) => (
             <div key={t._id} className="p-6 bg-white rounded-2xl border border-slate-border shadow-sm space-y-4 flex flex-col justify-between">
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1">
                     {[...Array(t.rating || 5)].map((_, i) => (
@@ -198,9 +226,20 @@ export default function AdminTestimonialsPage() {
               </div>
 
               <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
-                <div>
-                  <h4 className="text-xs font-bold text-navy-800">{t.customerName}</h4>
-                  <p className="text-[10px] text-slate-muted">{t.customerCity}, {t.customerState} ({t.systemCapacityKw}kW)</p>
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
+                    {t.photoUrl ? (
+                      <img src={t.photoUrl} alt={t.customerName} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-slate-400">
+                        <User className="w-4 h-4" />
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-navy-800">{t.customerName}</h4>
+                    <p className="text-[10px] text-slate-muted">{t.customerCity}, {t.customerState} ({t.systemCapacityKw}kW)</p>
+                  </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
@@ -220,9 +259,9 @@ export default function AdminTestimonialsPage() {
 
       {/* Add / Edit Testimonial Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 bg-navy-950/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl border border-slate-border shadow-xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95">
-            <div className="p-5 border-b border-slate-border flex items-center justify-between">
+        <div className="fixed inset-0 z-50 bg-navy-950/50 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl border border-slate-border shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 my-8">
+            <div className="p-5 border-b border-slate-border flex items-center justify-between sticky top-0 bg-white z-10">
               <h3 className="text-base font-bold text-navy-800">
                 {editingId ? "Edit Customer Review" : "Add Customer Review"}
               </h3>
@@ -256,6 +295,16 @@ export default function AdminTestimonialsPage() {
                   </select>
                 </div>
               </div>
+
+              {/* Customer Photo Upload */}
+              <CmsImageUploader
+                label="Customer Photo (Optional)"
+                value={form.photoUrl}
+                onChange={(url) => setForm({ ...form, photoUrl: url })}
+                folder="testimonials"
+                aspectRatio="square"
+                helpText="Upload a customer portrait photo or leave blank for a default avatar icon."
+              />
 
               <div className="grid grid-cols-3 gap-3">
                 <div>
@@ -319,7 +368,7 @@ export default function AdminTestimonialsPage() {
                 </label>
               </div>
 
-              <div className="pt-2 flex justify-end gap-2">
+              <div className="pt-2 flex justify-end gap-2 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
@@ -340,6 +389,14 @@ export default function AdminTestimonialsPage() {
           </div>
         </div>
       )}
+
+      {/* Responsive Live Preview Modal */}
+      <CmsLivePreviewModal
+        isOpen={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+        url="/"
+        pageTitle="Customer Reviews Live Preview"
+      />
     </div>
   );
 }

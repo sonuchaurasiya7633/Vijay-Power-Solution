@@ -197,7 +197,7 @@ async function seedDemoData() {
       "Optimized for high-temperature Eastern India operating environments"
     ],
     typicalApplications: [p.app, "Eligible for PM Surya Ghar rooftop solar projects"],
-    description: `Engineered ${p.watt}W solar panel offering ${p.eff}% module efficiency. Designed for residential, commercial, and utility installations across India.`,
+    description: `Engineered ${p.watt}W solar panel offering ${p.eff}% module efficiency. Designed for residential, commercial, and utility installations across Bihar, Jharkhand, and Uttar Pradesh.`,
     availabilityStatus: "in_stock",
     isFeatured: [10, 100, 335, 540, 550, 580, 700, 730].includes(p.watt),
     isPublished: true,
@@ -238,7 +238,7 @@ async function seedDemoData() {
       { stepNumber: 3, title: "Engineering & Procurement", description: "Tier-1 ALMM equipment dispatch" },
       { stepNumber: 4, title: "Installation & Commissioning", description: "Safe execution & DISCOM net-meter sync" },
     ],
-    serviceableStates: ["Pan India", "Bihar", "Jharkhand", "Uttar Pradesh", "West Bengal", "Odisha", "Delhi NCR", "Rajasthan", "Maharashtra", "All States & UTs"],
+    serviceableStates: ["Bihar", "Jharkhand", "Uttar Pradesh"],
     image: "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=1200&q=80",
     isAvailable: true,
     isFeatured: s.sortOrder <= 6,
@@ -268,7 +268,7 @@ async function seedDemoData() {
 
   await solCol.insertMany(demoSolutions.map(s => ({
     ...s,
-    description: `Comprehensive solar engineering solution tailored for ${s.category.toLowerCase()} applications across India.`,
+    description: `Comprehensive solar engineering solution tailored for ${s.category.toLowerCase()} applications in Bihar, Jharkhand, and Uttar Pradesh.`,
     keyBenefits: ["Save 70-90% on electricity expenses", "Tier-1 ALMM compliant equipment", "Full DISCOM net-metering approvals", "25-year performance warranty"],
     suitableFor: ["Independent buildings", "Commercial units", "Farms & enterprises"],
     image: "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=1200&q=80",
@@ -453,15 +453,15 @@ async function seedDemoData() {
     {
       title: "VIJOY POWER SOLUTION — Premier Solar EPC",
       slug: "home",
-      heroHeading: "Professional Solar Panel Installation Services Across India",
-      heroSubtitle: "Vijoy Power Solution delivers reliable solar panel supply and installation solutions for residential, commercial, industrial, and agricultural requirements across India.",
+      heroHeading: "Power Your Future with Solar Energy",
+      heroSubtitle: "Reliable Solar Panel Solutions & Professional Installation Across Bihar, Jharkhand, and Uttar Pradesh. Complete engineering, DISCOM net metering liaison, and PM Surya Ghar subsidy guidance.",
       isPublished: true,
       sections: [
         {
           sectionId: "home-hero",
           sectionType: "hero",
-          title: "Professional Solar Panel Installation Services Across India",
-          badgeText: "Certified Solar EPC • Serving Customers Across India",
+          title: "Power Your Future with Solar Energy",
+          badgeText: "Certified Solar EPC • Bihar | Jharkhand | Uttar Pradesh",
           isVisible: true,
           sortOrder: 1,
         }
@@ -471,8 +471,8 @@ async function seedDemoData() {
       title: "About VIJOY POWER SOLUTION",
       slug: "about",
       heroHeading: "About VIJOY POWER SOLUTION",
-      heroSubtitle: "Delivering clean, dependable solar rooftop engineering, ALMM-compliant panel supply, and seamless DISCOM net-metering across India.",
-      contentHtml: "<p>VIJOY POWER SOLUTION was founded with a singular conviction: renewable energy must be engineered for real Indian operating conditions. Solar panels across Indian states face intense summer heat exceeding 45°C, high dust deposition, and severe monsoon winds.</p><p>We bridge the gap between premium tier-1 equipment and flawless civil-electrical execution. From 10W specialized modules up to 730W high-efficiency Heterojunction and N-Type TOPCon bifacial arrays, every system is designed around the customer's exact roof geometry and energy consumption pattern.</p>",
+      heroSubtitle: "Delivering clean, dependable solar rooftop engineering, ALMM-compliant panel supply, and seamless DISCOM net-metering across Eastern and Northern India.",
+      contentHtml: "<p>VIJOY POWER SOLUTION was founded with a singular conviction: renewable energy must be engineered for real Indian operating conditions. Solar panels in Bihar and Uttar Pradesh face intense summer heat exceeding 45°C, high dust deposition, and severe monsoon winds.</p><p>We bridge the gap between premium tier-1 equipment and flawless civil-electrical execution. From 10W specialized modules up to 730W high-efficiency Heterojunction and N-Type TOPCon bifacial arrays, every system is designed around the customer's exact roof geometry and energy consumption pattern.</p>",
       isPublished: true,
       sections: [
         {
@@ -494,7 +494,7 @@ async function seedDemoData() {
       title: "Contact VIJOY POWER SOLUTION",
       slug: "contact",
       heroHeading: "Contact VIJOY POWER SOLUTION",
-      heroSubtitle: "Reach out to our certified solar engineering and technical support teams. We are available Monday through Saturday across India.",
+      heroSubtitle: "Reach out to our certified solar engineering and technical support teams. We are available Monday through Saturday across Bihar, Jharkhand, and Uttar Pradesh.",
       isPublished: true,
       sections: []
     },
@@ -502,7 +502,7 @@ async function seedDemoData() {
       title: "PM Surya Ghar: Muft Bijli Yojana",
       slug: "subsidy-information",
       heroHeading: "PM Surya Ghar: Muft Bijli Yojana",
-      heroSubtitle: "Educational guide to national financial assistance, eligibility guidelines, DISCOM technical requirements, and step-by-step application workflow for rooftop solar across India.",
+      heroSubtitle: "Educational guide to national financial assistance, eligibility guidelines, DISCOM technical requirements, and step-by-step application workflow for rooftop solar in Bihar, Jharkhand, and Uttar Pradesh.",
       isPublished: true,
       sections: []
     },

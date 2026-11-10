@@ -3,9 +3,11 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import toast from "@/lib/toast";
-import { FolderGit2, Plus, CheckCircle2, Eye, EyeOff, Loader2, Trash2, Edit3, X, Save } from "lucide-react";
+import { FolderGit2, Plus, CheckCircle2, Eye, EyeOff, Loader2, Trash2, Edit3, X, Save, ExternalLink } from "lucide-react";
 import { formatDateIST } from "@/lib/utils/formatters";
 import { INDIAN_STATES_AND_UTS } from "@/lib/constants/states";
+import CmsImageUploader from "@/components/admin/CmsImageUploader";
+import CmsLivePreviewModal from "@/components/admin/CmsLivePreviewModal";
 
 export default function AdminProjectsPage() {
   const [projects, setProjects] = useState<any[]>([]);
@@ -13,6 +15,8 @@ export default function AdminProjectsPage() {
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState("/projects");
 
   const [form, setForm] = useState({
     title: "",
@@ -181,13 +185,27 @@ export default function AdminProjectsPage() {
           </p>
         </div>
 
-        <button
-          onClick={openCreateModal}
-          className="px-4 py-2 rounded-xl text-xs font-bold bg-solar-green text-white hover:bg-solar-green-hover flex items-center gap-1.5 transition-colors shadow-sm"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Add Case Study</span>
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => {
+              setPreviewUrl("/projects");
+              setPreviewOpen(true);
+            }}
+            className="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-navy-800 flex items-center gap-1.5 transition-colors"
+          >
+            <Eye className="w-4 h-4" />
+            <span>Projects Preview</span>
+          </button>
+
+          <button
+            onClick={openCreateModal}
+            className="px-4 py-2 rounded-xl text-xs font-bold bg-solar-green text-white hover:bg-solar-green-hover flex items-center gap-1.5 transition-colors shadow-sm"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add Case Study</span>
+          </button>
+        </div>
       </div>
 
       <div className="bg-white rounded-2xl border border-slate-border shadow-sm overflow-hidden">
@@ -396,16 +414,14 @@ export default function AdminProjectsPage() {
                 </div>
               </div>
 
-              <div>
-                <label className="font-bold text-navy-800 block mb-1">Cover Image URL (Cloudinary or Web)</label>
-                <input
-                  type="url"
-                  required
-                  value={form.coverImageUrl}
-                  onChange={(e) => setForm({ ...form, coverImageUrl: e.target.value })}
-                  className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green"
-                />
-              </div>
+              <CmsImageUploader
+                label="Installation Cover Photo"
+                value={form.coverImageUrl}
+                onChange={(url) => setForm({ ...form, coverImageUrl: url })}
+                folder="projects"
+                aspectRatio="banner"
+                helpText="Upload a high-quality photograph of this completed rooftop installation. Directly saves to Cloudinary."
+              />
 
               <div className="flex items-center gap-2">
                 <input
@@ -441,6 +457,13 @@ export default function AdminProjectsPage() {
           </div>
         </div>
       )}
+      {/* Responsive Live Preview Modal */}
+      <CmsLivePreviewModal
+        isOpen={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+        url={previewUrl}
+        pageTitle="Installation Projects Live Preview"
+      />
     </div>
   );
 }

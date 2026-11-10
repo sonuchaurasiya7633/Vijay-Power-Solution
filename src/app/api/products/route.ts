@@ -105,9 +105,11 @@ export async function POST(req: NextRequest) {
       seoDescription,
     } = body;
 
-    if (!name || !slug || !brand || !ratedPowerWp || !coverImage || !description) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    if (!name || !slug || !brand || !ratedPowerWp || !description) {
+      return NextResponse.json({ error: "Missing required fields (name, slug, brand, ratedPowerWp, description)" }, { status: 400 });
     }
+
+    const finalCoverImage = coverImage && coverImage.trim() !== "" ? coverImage : "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=800&q=80";
 
     await connectDB();
     const count = await SolarProduct.countDocuments();
@@ -151,7 +153,7 @@ export async function POST(req: NextRequest) {
       productWarrantyYears: productWarrantyYears ? Number(productWarrantyYears) : undefined,
       performanceWarrantyYears: performanceWarrantyYears ? Number(performanceWarrantyYears) : undefined,
       datasheetUrl,
-      coverImage,
+      coverImage: finalCoverImage,
       galleryImages,
       keyFeatures,
       typicalApplications,
