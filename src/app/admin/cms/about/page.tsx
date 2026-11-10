@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import toast from "@/lib/toast";
 import {
   Building2,
   Save,
@@ -106,12 +107,14 @@ export default function AdminAboutCmsPage() {
       if (res.ok) {
         setSaved(true);
         setTimeout(() => setSaved(false), 3500);
+        toast.saved("Saved successfully!", "About Us story and pillars have been updated.");
       } else {
-        alert("Failed to save settings. Please verify you have admin/editor permissions.");
+        const data = await res.json().catch(() => ({}));
+        toast.error(data.error || "Failed to save settings. Please verify you have admin/editor permissions.");
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert("Error saving settings.");
+      toast.error(err?.message || "Error saving settings.");
     } finally {
       setSaving(false);
     }

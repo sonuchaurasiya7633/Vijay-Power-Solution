@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import toast from "@/lib/toast";
 import {
   Landmark,
   Save,
@@ -143,12 +144,14 @@ export default function AdminSubsidyCmsPage() {
       if (res.ok) {
         setSaved(true);
         setTimeout(() => setSaved(false), 3500);
+        toast.saved("Saved successfully!", "PM Surya Ghar subsidy guide and slab policy updated.");
       } else {
-        alert("Failed to save subsidy CMS.");
+        const data = await res.json().catch(() => ({}));
+        toast.error(data.error || "Failed to save subsidy CMS.");
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert("Error saving subsidy CMS.");
+      toast.error(err?.message || "Error saving subsidy CMS.");
     } finally {
       setSaving(false);
     }

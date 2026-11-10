@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import toast from "@/lib/toast";
 import { ClipboardCheck, MapPin, Calendar, CheckCircle2, Plus, Loader2 } from "lucide-react";
 import { formatDateIST } from "@/lib/utils/formatters";
 
@@ -32,16 +33,26 @@ export default function SurveysPage() {
     if (!kwStr) return;
     const kw = Number(kwStr);
 
-    await fetch(`/api/surveys/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        status: "completed",
-        feasibilityStatus: "feasible",
-        suggestedSystemCapacityKw: kw,
-      }),
-    });
-    fetchSurveys();
+    try {
+      const res = await fetch(`/api/surveys/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          status: "completed",
+          feasibilityStatus: "feasible",
+          suggestedSystemCapacityKw: kw,
+        }),
+      });
+      if (res.ok) {
+        toast.updated("Updated successfully!", `Survey marked completed with suggested capacity: ${kw} kW.`);
+        fetchSurveys();
+      } else {
+        const d = await res.json().catch(() => ({}));
+        toast.error(d.error || "Failed to update survey");
+      }
+    } catch (e: any) {
+      toast.error(e.message || "Failed to update survey");
+    }
   };
 
   return (

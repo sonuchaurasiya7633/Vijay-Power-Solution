@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import toast from "@/lib/toast";
 import { Star, ShieldCheck, CheckCircle2, Plus, Trash2, Edit3, X, Loader2, Save } from "lucide-react";
 
 export default function AdminTestimonialsPage() {
@@ -76,14 +77,19 @@ export default function AdminTestimonialsPage() {
         body: JSON.stringify(form),
       });
       if (res.ok) {
+        if (editingId) {
+          toast.updated("Updated successfully!", `Review by ${form.customerName} updated.`);
+        } else {
+          toast.created("Created successfully!", `Review by ${form.customerName} added.`);
+        }
         setShowModal(false);
         fetchReviews();
       } else {
         const d = await res.json();
-        alert(d.error || "Failed to save testimonial");
+        toast.error(d.error || "Failed to save testimonial");
       }
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message || "Failed to save testimonial");
     } finally {
       setSaving(false);
     }
@@ -97,10 +103,14 @@ export default function AdminTestimonialsPage() {
         body: JSON.stringify({ isApproved: !currentStatus }),
       });
       if (res.ok) {
+        toast.updated("Updated successfully!", `Review ${!currentStatus ? "Approved" : "Unapproved"}.`);
         fetchReviews();
+      } else {
+        const d = await res.json().catch(() => ({}));
+        toast.error(d.error || "Failed to update review status");
       }
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message || "Failed to update review status");
     }
   };
 
@@ -109,12 +119,14 @@ export default function AdminTestimonialsPage() {
     try {
       const res = await fetch(`/api/testimonials/${id}`, { method: "DELETE" });
       if (res.ok) {
+        toast.deleted("Deleted successfully!", "Customer review deleted.");
         fetchReviews();
       } else {
-        alert("Failed to delete review");
+        const d = await res.json().catch(() => ({}));
+        toast.error(d.error || "Failed to delete review");
       }
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message || "Failed to delete review");
     }
   };
 

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import toast from "@/lib/toast";
 import { FileSpreadsheet, Plus, CheckCircle2, Send, Download, Loader2 } from "lucide-react";
 import { formatCurrencyINR, formatDateIST } from "@/lib/utils/formatters";
 
@@ -28,12 +29,22 @@ export default function QuotationsPage() {
   }, []);
 
   const updateStatus = async (id: string, newStatus: string) => {
-    await fetch(`/api/quotations/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: newStatus }),
-    });
-    fetchQuotations();
+    try {
+      const res = await fetch(`/api/quotations/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (res.ok) {
+        toast.updated("Updated successfully!", `Quotation marked as "${newStatus.replace(/_/g, " ")}".`);
+        fetchQuotations();
+      } else {
+        const d = await res.json().catch(() => ({}));
+        toast.error(d.error || "Failed to update quotation");
+      }
+    } catch (e: any) {
+      toast.error(e.message || "Failed to update quotation");
+    }
   };
 
   return (

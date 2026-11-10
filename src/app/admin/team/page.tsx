@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import toast from "@/lib/toast";
 import { ShieldCheck, User, Plus, CheckCircle2, Loader2, Trash2, X, AlertCircle, Edit2 } from "lucide-react";
 
 export default function AdminTeamPage() {
@@ -76,13 +77,14 @@ export default function AdminTeamPage() {
       });
       const data = await res.json();
       if (res.ok) {
+        toast.updated("Updated successfully!", `Staff member "${editForm.name}" updated.`);
         setEditingUser(null);
         fetchTeam();
       } else {
-        alert(data.error || "Failed to update staff member");
+        toast.error(data.error || "Failed to update staff member");
       }
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message || "Failed to update staff member");
     } finally {
       setSaving(false);
     }
@@ -99,14 +101,15 @@ export default function AdminTeamPage() {
       });
       const data = await res.json();
       if (res.ok) {
+        toast.created("Created successfully!", `Staff account for "${form.name}" created.`);
         setShowAddModal(false);
         setForm({ name: "", email: "", password: "", phone: "", role: "sales_executive" });
         fetchTeam();
       } else {
-        alert(data.error || "Failed to create staff account");
+        toast.error(data.error || "Failed to create staff account");
       }
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message || "Failed to create staff account");
     } finally {
       setSaving(false);
     }
@@ -120,13 +123,14 @@ export default function AdminTeamPage() {
         body: JSON.stringify({ isActive: !current }),
       });
       if (res.ok) {
+        toast.updated("Updated successfully!", `User status changed to ${!current ? "Active" : "Inactive"}.`);
         fetchTeam();
       } else {
         const data = await res.json();
-        alert(data.error || "Failed to update user status");
+        toast.error(data.error || "Failed to update user status");
       }
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message || "Failed to update user status");
     }
   };
 
@@ -135,13 +139,14 @@ export default function AdminTeamPage() {
     try {
       const res = await fetch(`/api/team/${id}`, { method: "DELETE" });
       if (res.ok) {
+        toast.deleted("Deleted successfully!", `User "${email}" deleted.`);
         fetchTeam();
       } else {
         const data = await res.json();
-        alert(data.error || "Failed to delete user");
+        toast.error(data.error || "Failed to delete user");
       }
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message || "Failed to delete user");
     }
   };
 

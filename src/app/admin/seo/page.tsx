@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import toast from "@/lib/toast";
 import { Globe, CheckCircle2, Save, Loader2 } from "lucide-react";
 
 export default function AdminSeoPage() {
@@ -40,11 +41,13 @@ export default function AdminSeoPage() {
       if (res.ok) {
         setSaved(true);
         setTimeout(() => setSaved(false), 3000);
+        toast.saved("Saved successfully!", "Global meta title, description, and keywords updated.");
       } else {
-        alert("Failed to save SEO settings");
+        const d = await res.json().catch(() => ({}));
+        toast.error(d.error || "Failed to save SEO settings");
       }
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message || "Failed to save SEO settings");
     } finally {
       setSaving(false);
     }

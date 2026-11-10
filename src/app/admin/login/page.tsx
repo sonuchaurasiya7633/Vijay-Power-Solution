@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Lock, Mail, ArrowRight, Loader2, ShieldCheck, AlertCircle } from "lucide-react";
+import toast from "@/lib/toast";
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState("admin@vijoypowersolution.com");
@@ -27,13 +28,12 @@ export default function AdminLoginPage() {
         throw new Error(data.error || "Authentication failed");
       }
 
+      toast.success("Welcome back! Signed in successfully.");
       window.location.href = "/admin/dashboard";
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        setErrorMsg(err.message);
-      } else {
-        setErrorMsg("Failed to sign in. Please verify your credentials.");
-      }
+      const msg = err instanceof Error ? err.message : "Failed to sign in. Please verify your credentials.";
+      setErrorMsg(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }

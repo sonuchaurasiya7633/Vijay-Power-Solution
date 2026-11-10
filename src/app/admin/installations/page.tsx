@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import toast from "@/lib/toast";
 import { HardHat, CheckCircle2, ShieldCheck, ArrowRight, Loader2, Plus } from "lucide-react";
 import { formatDateIST } from "@/lib/utils/formatters";
 
@@ -28,33 +29,47 @@ export default function InstallationsPage() {
   }, []);
 
   const updateStage = async (id: string, newStage: string) => {
-    await fetch(`/api/installations/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ stage: newStage }),
-    });
-    fetchJobs();
+    try {
+      const res = await fetch(`/api/installations/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ stage: newStage }),
+      });
+      if (res.ok) {
+        toast.updated("Updated successfully!", `Installation stage updated to "${newStage.replace(/_/g, " ")}".`);
+        fetchJobs();
+      } else {
+        const d = await res.json().catch(() => ({}));
+        toast.error(d.error || "Failed to update installation stage");
+      }
+    } catch (e: any) {
+      toast.error(e.message || "Failed to update installation stage");
+    }
   };
 
   const convertToPortfolio = async (id: string) => {
     const consent = confirm("Confirm: Has the customer provided explicit written/digital consent to publish this installation project to the public portfolio?");
     if (!consent) return;
 
-    const res = await fetch(`/api/installations/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        hasCustomerConsentForPortfolio: true,
-        convertToPortfolio: true,
-      }),
-    });
+    try {
+      const res = await fetch(`/api/installations/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          hasCustomerConsentForPortfolio: true,
+          convertToPortfolio: true,
+        }),
+      });
 
-    const data = await res.json();
-    if (res.ok) {
-      alert("Successfully created an unpublished draft project in Portfolio Projects. Review and publish when ready.");
-      fetchJobs();
-    } else {
-      alert(data.error || "Failed to convert project");
+      const data = await res.json();
+      if (res.ok) {
+        toast.created("Created successfully!", "Unpublished draft project created in Portfolio Projects.");
+        fetchJobs();
+      } else {
+        toast.error(data.error || "Failed to convert project");
+      }
+    } catch (e: any) {
+      toast.error(e.message || "Failed to convert project");
     }
   };
 

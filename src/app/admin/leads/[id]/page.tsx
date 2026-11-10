@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import toast from "@/lib/toast";
 import {
   User,
   Phone,
@@ -56,10 +57,15 @@ export default function LeadDetailPage() {
         body: JSON.stringify({ stage: newStage }),
       });
       if (res.ok) {
+        toast.updated("Updated successfully!", `Pipeline stage moved to "${newStage.replace(/_/g, " ")}".`);
         fetchDetail();
+      } else {
+        const d = await res.json().catch(() => ({}));
+        toast.error(d.error || "Failed to update pipeline stage");
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Update stage error:", err);
+      toast.error(err.message || "Failed to update pipeline stage");
     } finally {
       setUpdatingStage(false);
     }
@@ -67,14 +73,21 @@ export default function LeadDetailPage() {
 
   const handlePriorityChange = async (newPriority: string) => {
     try {
-      await fetch(`/api/leads/${id}`, {
+      const res = await fetch(`/api/leads/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ priority: newPriority }),
       });
-      fetchDetail();
-    } catch (err) {
+      if (res.ok) {
+        toast.updated("Updated successfully!", `Lead priority set to "${newPriority.toUpperCase()}".`);
+        fetchDetail();
+      } else {
+        const d = await res.json().catch(() => ({}));
+        toast.error(d.error || "Failed to update priority");
+      }
+    } catch (err: any) {
       console.error("Update priority error:", err);
+      toast.error(err.message || "Failed to update priority");
     }
   };
 
@@ -93,11 +106,16 @@ export default function LeadDetailPage() {
         }),
       });
       if (res.ok) {
+        toast.saved("Saved successfully!", "Internal note attached to lead.");
         setNoteText("");
         fetchDetail();
+      } else {
+        const d = await res.json().catch(() => ({}));
+        toast.error(d.error || "Failed to add internal note");
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Add note error:", err);
+      toast.error(err.message || "Failed to add note");
     } finally {
       setSubmittingNote(false);
     }
@@ -107,16 +125,26 @@ export default function LeadDetailPage() {
     const outcome = prompt("Enter call summary / outcome (e.g. Discussed 5kW system, customer interested in site survey):");
     if (!outcome) return;
 
-    await fetch(`/api/leads/${id}/activity`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        activityType: "call_logged",
-        title: "Phone Call Completed",
-        description: outcome,
-      }),
-    });
-    fetchDetail();
+    try {
+      const res = await fetch(`/api/leads/${id}/activity`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          activityType: "call_logged",
+          title: "Phone Call Completed",
+          description: outcome,
+        }),
+      });
+      if (res.ok) {
+        toast.saved("Saved successfully!", "Call log recorded in lead history.");
+        fetchDetail();
+      } else {
+        const d = await res.json().catch(() => ({}));
+        toast.error(d.error || "Failed to record call log");
+      }
+    } catch (e: any) {
+      toast.error(e.message || "Failed to record call log");
+    }
   };
 
   if (loading) {

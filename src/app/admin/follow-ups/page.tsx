@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import toast from "@/lib/toast";
 import { Clock, CheckCircle2, AlertCircle, Phone, MessageCircle, Calendar, Loader2 } from "lucide-react";
 import { formatDateIST, formatDateTimeIST } from "@/lib/utils/formatters";
 
@@ -33,12 +34,22 @@ export default function FollowUpsPage() {
     const outcome = prompt("Enter follow-up outcome notes:");
     if (!outcome) return;
 
-    await fetch(`/api/follow-ups/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: "completed", outcome }),
-    });
-    fetchFollowUps();
+    try {
+      const res = await fetch(`/api/follow-ups/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "completed", outcome }),
+      });
+      if (res.ok) {
+        toast.updated("Updated successfully!", "Follow-up task marked completed.");
+        fetchFollowUps();
+      } else {
+        const d = await res.json().catch(() => ({}));
+        toast.error(d.error || "Failed to update follow-up");
+      }
+    } catch (e: any) {
+      toast.error(e.message || "Failed to update follow-up");
+    }
   };
 
   return (

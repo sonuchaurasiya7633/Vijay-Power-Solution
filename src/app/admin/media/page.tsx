@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import toast from "@/lib/toast";
 import { Image as ImageIcon, Upload, Trash2, Folder, ShieldAlert, CheckCircle2, Loader2 } from "lucide-react";
 
 export default function AdminMediaPage() {
@@ -81,14 +82,33 @@ export default function AdminMediaPage() {
       });
 
       setUploadMsg("Upload successful!");
+      toast.uploaded("Uploaded successfully!", `${file.name} uploaded to ${targetFolder}.`);
       loadAssets();
       setTimeout(() => setUploadMsg(""), 3000);
     } catch (err: any) {
       console.error(err);
-      setUploadMsg(`Error: ${err.message}`);
+      const msg = err.message || "Failed to upload asset";
+      setUploadMsg(`Error: ${msg}`);
+      toast.error(msg);
     } finally {
       setUploading(false);
       e.target.value = "";
+    }
+  };
+
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`Are you sure you want to delete asset "${name}"?`)) return;
+    try {
+      const res = await fetch(`/api/media?id=${id}`, { method: "DELETE" });
+      const data = await res.json();
+      if (res.ok) {
+        toast.deleted("Deleted successfully!", `Asset "${name}" removed.`);
+        loadAssets();
+      } else {
+        toast.error(data.error || "Failed to delete asset");
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Failed to delete asset");
     }
   };
 
@@ -171,9 +191,18 @@ export default function AdminMediaPage() {
               />
             </div>
             <p className="text-[11px] font-bold text-navy-800 truncate">{a.name}</p>
-            <span className="text-[10px] text-slate-muted uppercase block">
-              {a.folder} • {a.bytes ? `${Math.round(a.bytes / 1024)} KB` : "Asset"}
-            </span>
+            <div className="flex items-center justify-between pt-1">
+              <span className="text-[10px] text-slate-muted uppercase block">
+                {a.folder} • {a.bytes ? `${Math.round(a.bytes / 1024)} KB` : "Asset"}
+              </span>
+              <button
+                onClick={() => handleDelete(a._id, a.name)}
+                title="Delete asset"
+                className="text-slate-400 hover:text-red-500 p-1 rounded-md transition-colors"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
         ))}
 

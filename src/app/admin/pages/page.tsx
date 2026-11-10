@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import toast from "@/lib/toast";
 import {
   FileCode2,
   Plus,
@@ -105,14 +106,19 @@ export default function AdminPagesManager() {
       });
 
       if (res.ok) {
+        if (editingPageId) {
+          toast.updated("Updated successfully!", `Page "${form.title}" updated.`);
+        } else {
+          toast.created("Created successfully!", `Page "${form.title}" created.`);
+        }
         setShowModal(false);
         fetchPages();
       } else {
         const d = await res.json();
-        alert(d.error || "Failed to save page");
+        toast.error(d.error || "Failed to save page");
       }
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message || "Failed to save page");
     } finally {
       setSaving(false);
     }
@@ -125,9 +131,15 @@ export default function AdminPagesManager() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isPublished: !current }),
       });
-      if (res.ok) fetchPages();
+      if (res.ok) {
+        toast.updated("Updated successfully!", `Page visibility set to ${!current ? "Published" : "Draft"}.`);
+        fetchPages();
+      } else {
+        const d = await res.json().catch(() => ({}));
+        toast.error(d.error || "Failed to update page status");
+      }
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message || "Failed to update page status");
     }
   };
 
@@ -135,10 +147,15 @@ export default function AdminPagesManager() {
     if (!confirm(`Are you sure you want to delete the page "${title}"?`)) return;
     try {
       const res = await fetch(`/api/pages/${id}`, { method: "DELETE" });
-      if (res.ok) fetchPages();
-      else alert("Failed to delete page");
+      if (res.ok) {
+        toast.deleted("Deleted successfully!", `Page "${title}" deleted.`);
+        fetchPages();
+      } else {
+        const d = await res.json().catch(() => ({}));
+        toast.error(d.error || "Failed to delete page");
+      }
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message || "Failed to delete page");
     }
   };
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import toast from "@/lib/toast";
 import { Layers, Plus, CheckCircle2, Loader2, Trash2, Edit3, X, Save } from "lucide-react";
 
 export default function AdminCategoriesPage() {
@@ -64,7 +65,10 @@ export default function AdminCategoriesPage() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name || !form.slug) return alert("Please fill name and slug");
+    if (!form.name || !form.slug) {
+      toast.warning("Please fill category name and slug");
+      return;
+    }
     setSaving(true);
     try {
       const url = editingId ? `/api/categories/${editingId}` : "/api/categories";
@@ -77,13 +81,18 @@ export default function AdminCategoriesPage() {
       });
       const data = await res.json();
       if (res.ok) {
+        if (editingId) {
+          toast.updated("Updated successfully!", `Category "${form.name}" updated.`);
+        } else {
+          toast.created("Created successfully!", `Category "${form.name}" created.`);
+        }
         setShowModal(false);
         fetchCats();
       } else {
-        alert(data.error || "Failed to save category");
+        toast.error(data.error || "Failed to save category");
       }
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message || "Failed to save category");
     } finally {
       setSaving(false);
     }
@@ -94,12 +103,14 @@ export default function AdminCategoriesPage() {
     try {
       const res = await fetch(`/api/categories/${id}`, { method: "DELETE" });
       if (res.ok) {
+        toast.deleted("Deleted successfully!", `Category "${name}" deleted.`);
         fetchCats();
       } else {
-        alert("Failed to delete category");
+        const d = await res.json().catch(() => ({}));
+        toast.error(d.error || "Failed to delete category");
       }
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message || "Failed to delete category");
     }
   };
 

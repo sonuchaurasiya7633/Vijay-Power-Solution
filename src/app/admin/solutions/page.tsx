@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import toast from "@/lib/toast";
 import { Sparkles, ArrowRight, Loader2, Plus, Trash2, Edit3, X, Save } from "lucide-react";
 
 export default function AdminSolutionsPage() {
@@ -83,14 +84,19 @@ export default function AdminSolutionsPage() {
         body: JSON.stringify(form),
       });
       if (res.ok) {
+        if (editingId) {
+          toast.updated("Updated successfully!", `Solution "${form.title}" updated.`);
+        } else {
+          toast.created("Created successfully!", `Solution "${form.title}" created.`);
+        }
         setShowModal(false);
         fetchSolutions();
       } else {
         const d = await res.json();
-        alert(d.error || "Failed to save solution");
+        toast.error(d.error || "Failed to save solution");
       }
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message || "Failed to save solution");
     } finally {
       setSaving(false);
     }
@@ -101,12 +107,14 @@ export default function AdminSolutionsPage() {
     try {
       const res = await fetch(`/api/solutions/${id}`, { method: "DELETE" });
       if (res.ok) {
+        toast.deleted("Deleted successfully!", `Solution "${title}" deleted.`);
         fetchSolutions();
       } else {
-        alert("Failed to delete solution");
+        const d = await res.json().catch(() => ({}));
+        toast.error(d.error || "Failed to delete solution");
       }
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message || "Failed to delete solution");
     }
   };
 

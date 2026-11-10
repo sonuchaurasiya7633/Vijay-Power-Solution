@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import toast from "@/lib/toast";
 import { Wrench, CheckCircle2, Plus, Trash2, Edit3, X, Loader2, Save } from "lucide-react";
 
 export default function AdminServicesPage() {
@@ -80,14 +81,19 @@ export default function AdminServicesPage() {
         body: JSON.stringify(form),
       });
       if (res.ok) {
+        if (editingId) {
+          toast.updated("Updated successfully!", `Service "${form.title}" updated.`);
+        } else {
+          toast.created("Created successfully!", `Service "${form.title}" created.`);
+        }
         setShowModal(false);
         fetchServices();
       } else {
         const d = await res.json();
-        alert(d.error || "Failed to save service");
+        toast.error(d.error || "Failed to save service");
       }
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message || "Failed to save service");
     } finally {
       setSaving(false);
     }
@@ -98,12 +104,14 @@ export default function AdminServicesPage() {
     try {
       const res = await fetch(`/api/services/${id}`, { method: "DELETE" });
       if (res.ok) {
+        toast.deleted("Deleted successfully!", `Service "${title}" deleted.`);
         fetchServices();
       } else {
-        alert("Failed to delete service");
+        const d = await res.json().catch(() => ({}));
+        toast.error(d.error || "Failed to delete service");
       }
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message || "Failed to delete service");
     }
   };
 

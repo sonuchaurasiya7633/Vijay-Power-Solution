@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import toast from "@/lib/toast";
 import { FolderGit2, Plus, CheckCircle2, Eye, EyeOff, Loader2, Trash2, Edit3, X, Save } from "lucide-react";
 import { formatDateIST } from "@/lib/utils/formatters";
 
@@ -95,7 +96,8 @@ export default function AdminProjectsPage() {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.hasCustomerConsent) {
-      return alert("Customer consent is strictly required before publishing any project publicly.");
+      toast.warning("Customer consent is strictly required before publishing any project publicly.");
+      return;
     }
 
     setSaving(true);
@@ -113,31 +115,56 @@ export default function AdminProjectsPage() {
       });
       const data = await res.json();
       if (res.ok) {
+        if (editingId) {
+          toast.updated("Updated successfully!", `Project "${form.title}" updated.`);
+        } else {
+          toast.created("Created successfully!", `Project "${form.title}" added to portfolio.`);
+        }
         setShowModal(false);
         fetchProjects();
       } else {
-        alert(data.error || "Failed to save project");
+        toast.error(data.error || "Failed to save project");
       }
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message || "Failed to save project");
     } finally {
       setSaving(false);
     }
   };
 
   const togglePublish = async (id: string, currentStatus: boolean) => {
-    await fetch(`/api/projects/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ isPublished: !currentStatus }),
-    });
-    fetchProjects();
+    try {
+      const res = await fetch(`/api/projects/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isPublished: !currentStatus }),
+      });
+      if (res.ok) {
+        toast.updated("Updated successfully!", `Project visibility set to ${!currentStatus ? "Published" : "Draft"}.`);
+        fetchProjects();
+      } else {
+        const d = await res.json().catch(() => ({}));
+        toast.error(d.error || "Failed to update project status");
+      }
+    } catch (e: any) {
+      toast.error(e.message || "Failed to update project status");
+    }
   };
 
   const deleteProject = async (id: string) => {
     if (!confirm("Are you sure you want to delete this case study?")) return;
-    await fetch(`/api/projects/${id}`, { method: "DELETE" });
-    fetchProjects();
+    try {
+      const res = await fetch(`/api/projects/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        toast.deleted("Deleted successfully!", "Case study removed from portfolio.");
+        fetchProjects();
+      } else {
+        const d = await res.json().catch(() => ({}));
+        toast.error(d.error || "Failed to delete project");
+      }
+    } catch (e: any) {
+      toast.error(e.message || "Failed to delete project");
+    }
   };
 
   return (

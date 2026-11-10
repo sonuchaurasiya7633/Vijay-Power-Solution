@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import toast from "@/lib/toast";
 import { MapPin, Plus, CheckCircle2, Trash2, Edit3, X, Loader2, Save } from "lucide-react";
 
 export default function AdminServiceAreasPage() {
@@ -86,7 +87,10 @@ export default function AdminServiceAreasPage() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.district || !form.city) return alert("District and City are required");
+    if (!form.district || !form.city) {
+      toast.warning("District and City are required");
+      return;
+    }
     setSaving(true);
     try {
       const url = editingId ? `/api/service-areas/${editingId}` : "/api/service-areas";
@@ -98,14 +102,19 @@ export default function AdminServiceAreasPage() {
         body: JSON.stringify(form),
       });
       if (res.ok) {
+        if (editingId) {
+          toast.updated("Updated successfully!", `Service area "${form.city}" updated.`);
+        } else {
+          toast.created("Created successfully!", `Service area "${form.city}" registered.`);
+        }
         setShowModal(false);
         fetchLocations();
       } else {
         const d = await res.json();
-        alert(d.error || "Failed to save location");
+        toast.error(d.error || "Failed to save location");
       }
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message || "Failed to save location");
     } finally {
       setSaving(false);
     }
@@ -116,12 +125,14 @@ export default function AdminServiceAreasPage() {
     try {
       const res = await fetch(`/api/service-areas/${id}`, { method: "DELETE" });
       if (res.ok) {
+        toast.deleted("Deleted successfully!", `Service area "${city}" deleted.`);
         fetchLocations();
       } else {
-        alert("Failed to delete service area");
+        const d = await res.json().catch(() => ({}));
+        toast.error(d.error || "Failed to delete service area");
       }
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message || "Failed to delete service area");
     }
   };
 

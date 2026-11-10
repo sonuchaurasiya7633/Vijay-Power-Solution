@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import toast from "@/lib/toast";
 import { FileText, Plus, CheckCircle2, Eye, Trash2, Edit3, X, Loader2, Save } from "lucide-react";
 import { formatDateIST } from "@/lib/utils/formatters";
 
@@ -87,14 +88,19 @@ export default function AdminBlogsPage() {
         }),
       });
       if (res.ok) {
+        if (editingId) {
+          toast.updated("Updated successfully!", `Article "${form.title}" updated.`);
+        } else {
+          toast.created("Created successfully!", `Article "${form.title}" created.`);
+        }
         setShowModal(false);
         fetchBlogs();
       } else {
         const d = await res.json();
-        alert(d.error || "Failed to save article");
+        toast.error(d.error || "Failed to save article");
       }
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message || "Failed to save article");
     } finally {
       setSaving(false);
     }
@@ -111,10 +117,14 @@ export default function AdminBlogsPage() {
         }),
       });
       if (res.ok) {
+        toast.updated("Updated successfully!", `Article status changed to ${!currentStatus ? "Published" : "Draft"}.`);
         fetchBlogs();
+      } else {
+        const d = await res.json().catch(() => ({}));
+        toast.error(d.error || "Failed to update article status");
       }
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message || "Failed to update article status");
     }
   };
 
@@ -123,12 +133,14 @@ export default function AdminBlogsPage() {
     try {
       const res = await fetch(`/api/blogs/${id}`, { method: "DELETE" });
       if (res.ok) {
+        toast.deleted("Deleted successfully!", "Educational article deleted.");
         fetchBlogs();
       } else {
-        alert("Failed to delete article");
+        const d = await res.json().catch(() => ({}));
+        toast.error(d.error || "Failed to delete article");
       }
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message || "Failed to delete article");
     }
   };
 

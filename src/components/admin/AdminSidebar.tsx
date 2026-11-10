@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import toast from "@/lib/toast";
 import {
   LayoutDashboard,
   Users,
@@ -103,8 +104,13 @@ export default function AdminSidebar({ userRole = "admin", userName = "Staff" }:
   ];
 
   const handleLogout = async () => {
-    await fetch("/api/auth/logout", { method: "POST" });
-    window.location.href = "/admin/login";
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+      toast.info("Logged out successfully");
+      window.location.href = "/admin/login";
+    } catch {
+      window.location.href = "/admin/login";
+    }
   };
 
   return (

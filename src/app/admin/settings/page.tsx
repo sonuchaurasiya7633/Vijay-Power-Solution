@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import toast from "@/lib/toast";
 import { Settings, Save, CheckCircle2 } from "lucide-react";
 
 export default function AdminSettingsPage() {
@@ -34,18 +35,25 @@ export default function AdminSettingsPage() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    await fetch("/api/settings", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ key: "general", value: general }),
-    });
-    await fetch("/api/settings", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ key: "calculator", value: calculator }),
-    });
-    setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+    try {
+      await Promise.all([
+        fetch("/api/settings", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ key: "general", value: general }),
+        }),
+        fetch("/api/settings", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ key: "calculator", value: calculator }),
+        }),
+      ]);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+      toast.saved("Saved successfully!", "General information and solar calculator constants updated.");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to save settings");
+    }
   };
 
   return (

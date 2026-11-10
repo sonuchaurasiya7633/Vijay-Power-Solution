@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { CheckCircle2, AlertCircle, ArrowRight, Loader2, Sparkles } from "lucide-react";
+import toast from "@/lib/toast";
 
 interface LeadCaptureFormProps {
   defaultEnquiryType?: string;
@@ -47,12 +48,16 @@ export default function LeadCaptureForm({
     // Quick Indian phone validation
     const cleanPhone = formData.phone.trim();
     if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
-      setErrorMsg("Please enter a valid 10-digit Indian mobile number (starting with 6, 7, 8, or 9)");
+      const err = "Please enter a valid 10-digit Indian mobile number (starting with 6, 7, 8, or 9)";
+      setErrorMsg(err);
+      toast.warning(err);
       return;
     }
 
     if (!formData.city.trim()) {
-      setErrorMsg("Please enter your city/district");
+      const err = "Please enter your city/district";
+      setErrorMsg(err);
+      toast.warning(err);
       return;
     }
 
@@ -89,14 +94,13 @@ export default function LeadCaptureForm({
         throw new Error(data.error || "Submission failed. Please check your details.");
       }
 
+      toast.submitted("Submitted successfully!", `Our solar engineer will contact you shortly. Ref: ${data.leadId}`);
       setSubmittedLeadId(data.leadId);
       if (onSuccess) onSuccess(data.leadId);
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        setErrorMsg(err.message);
-      } else {
-        setErrorMsg("Failed to submit enquiry. Please try again or call us directly.");
-      }
+      const msg = err instanceof Error ? err.message : "Failed to submit enquiry. Please try again or call us directly.";
+      setErrorMsg(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }

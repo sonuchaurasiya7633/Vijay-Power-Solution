@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import toast from "@/lib/toast";
 import {
   Phone,
   Save,
@@ -129,9 +130,10 @@ export default function AdminContactCmsPage() {
 
       setSaved(true);
       setTimeout(() => setSaved(false), 3500);
-    } catch (err) {
+      toast.saved("Saved successfully!", "Headquarters, regional desks, and contact channels updated.");
+    } catch (err: any) {
       console.error(err);
-      alert("Error saving contact CMS.");
+      toast.error(err?.message || "Error saving contact CMS.");
     } finally {
       setSaving(false);
     }

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import toast from "@/lib/toast";
 import { Package, Plus, Zap, CheckCircle2, Loader2, Trash2, Edit3, X, Save } from "lucide-react";
 
 export default function AdminProductsPage() {
@@ -94,7 +95,8 @@ export default function AdminProductsPage() {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (form.ratedPowerWp < 10 || form.ratedPowerWp > 730) {
-      return alert("Solar panel rated power must strictly be between 10W and 730W");
+      toast.warning("Solar panel rated power must strictly be between 10W and 730W");
+      return;
     }
 
     setSaving(true);
@@ -109,31 +111,56 @@ export default function AdminProductsPage() {
       });
       const data = await res.json();
       if (res.ok) {
+        if (editingId) {
+          toast.updated("Updated successfully!", `${form.name} updated.`);
+        } else {
+          toast.created("Created successfully!", `${form.name} added to catalogue.`);
+        }
         setShowModal(false);
         fetchProducts();
       } else {
-        alert(data.error || "Failed to save product");
+        toast.error(data.error || "Failed to save product");
       }
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message || "Failed to save product");
     } finally {
       setSaving(false);
     }
   };
 
   const togglePublish = async (id: string, currentStatus: boolean) => {
-    await fetch(`/api/products/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ isPublished: !currentStatus }),
-    });
-    fetchProducts();
+    try {
+      const res = await fetch(`/api/products/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isPublished: !currentStatus }),
+      });
+      if (res.ok) {
+        toast.updated("Updated successfully!", `Product status changed to ${!currentStatus ? "Published" : "Draft"}.`);
+        fetchProducts();
+      } else {
+        const d = await res.json();
+        toast.error(d.error || "Failed to update product status");
+      }
+    } catch (e: any) {
+      toast.error(e.message || "Failed to update product status");
+    }
   };
 
   const deleteProduct = async (id: string) => {
     if (!confirm("Are you sure you want to remove this product from the catalogue?")) return;
-    await fetch(`/api/products/${id}`, { method: "DELETE" });
-    fetchProducts();
+    try {
+      const res = await fetch(`/api/products/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        toast.deleted("Deleted successfully!", "Product removed from catalogue.");
+        fetchProducts();
+      } else {
+        const d = await res.json();
+        toast.error(d.error || "Failed to delete product");
+      }
+    } catch (e: any) {
+      toast.error(e.message || "Failed to delete product");
+    }
   };
 
   return (

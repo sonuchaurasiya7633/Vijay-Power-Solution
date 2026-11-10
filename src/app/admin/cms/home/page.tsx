@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import toast from "@/lib/toast";
 import {
   Sliders,
   Save,
@@ -185,12 +186,13 @@ export default function AdminHomeCmsPage() {
       if (res.ok) {
         setSaved(true);
         setTimeout(() => setSaved(false), 3500);
+        toast.saved("Saved successfully!", "Homepage sections and banner settings updated.");
       } else {
         const data = await res.json();
-        alert(data.error || "Failed to save homepage settings");
+        toast.error(data.error || "Failed to save homepage settings");
       }
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err?.message || "Failed to save homepage settings");
     } finally {
       setSaving(false);
     }

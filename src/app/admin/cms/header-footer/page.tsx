@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import toast from "@/lib/toast";
 import {
   Megaphone,
   Save,
@@ -104,9 +105,10 @@ export default function AdminHeaderFooterCmsPage() {
 
       setSaved(true);
       setTimeout(() => setSaved(false), 3500);
-    } catch (err) {
+      toast.saved("Saved successfully!", "Header and footer configuration updated.");
+    } catch (err: any) {
       console.error(err);
-      alert("Error saving header & footer settings.");
+      toast.error(err?.message || "Error saving header & footer settings.");
     } finally {
       setSaving(false);
     }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import toast from "@/lib/toast";
 import { HelpCircle, Plus, Trash2, Edit3, X, Loader2, Save } from "lucide-react";
 
 export default function AdminFaqsPage() {
@@ -59,14 +60,19 @@ export default function AdminFaqsPage() {
         body: JSON.stringify(form),
       });
       if (res.ok) {
+        if (editingId) {
+          toast.updated("Updated successfully!", "FAQ updated.");
+        } else {
+          toast.created("Created successfully!", "New FAQ added.");
+        }
         setShowModal(false);
         fetchFaqs();
       } else {
         const d = await res.json();
-        alert(d.error || "Failed to save FAQ");
+        toast.error(d.error || "Failed to save FAQ");
       }
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message || "Failed to save FAQ");
     } finally {
       setSaving(false);
     }
@@ -77,12 +83,14 @@ export default function AdminFaqsPage() {
     try {
       const res = await fetch(`/api/faqs/${id}`, { method: "DELETE" });
       if (res.ok) {
+        toast.deleted("Deleted successfully!", "FAQ deleted.");
         fetchFaqs();
       } else {
-        alert("Failed to delete FAQ");
+        const d = await res.json().catch(() => ({}));
+        toast.error(d.error || "Failed to delete FAQ");
       }
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message || "Failed to delete FAQ");
     }
   };
 
