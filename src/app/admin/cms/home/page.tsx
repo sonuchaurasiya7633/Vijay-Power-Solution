@@ -30,6 +30,7 @@ export default function AdminHomeCmsPage() {
     headline: "Power Your Future with Solar Energy",
     subheading:
       "Reliable Solar Panel Solutions & Professional Installation Across Bihar, Jharkhand, and Uttar Pradesh. Complete engineering, DISCOM net metering liaison, and PM Surya Ghar subsidy guidance.",
+    backgroundImage: "/images/hero-solar-rooftop.jpg",
     checkpoints: [
       "Modules from 10W to 730W",
       "Up to ₹78,000 Govt Subsidy Guidance",
@@ -361,6 +362,26 @@ export default function AdminHomeCmsPage() {
                     onChange={(e) => setHero({ ...hero, subheading: e.target.value })}
                     className="w-full p-2.5 rounded-xl border border-slate-border leading-relaxed outline-none focus:border-solar-green"
                   />
+                </div>
+
+                <div>
+                  <label className="font-bold text-navy-800 block mb-1">Hero Background Image</label>
+                  <input
+                    type="text"
+                    value={hero.backgroundImage || "/images/hero-solar-banner.jpg"}
+                    onChange={(e) => setHero({ ...hero, backgroundImage: e.target.value })}
+                    className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green"
+                  />
+                  <div className="mt-2 flex items-center gap-3">
+                    <img
+                      src={hero.backgroundImage || "/images/hero-solar-banner.jpg"}
+                      alt="Hero Background Preview"
+                      className="w-32 h-20 object-cover rounded-lg border border-slate-border shadow-sm"
+                    />
+                    <span className="text-[11px] text-slate-muted">
+                      Solar EPC Collage banner: Residential, Commercial, Agro pumping & Mill (/images/hero-solar-banner.jpg)
+                    </span>
+                  </div>
                 </div>
 
                 <div className="pt-2">

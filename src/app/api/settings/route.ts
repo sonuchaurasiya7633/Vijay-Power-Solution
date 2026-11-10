@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const session = await getSession();
-    if (!session || !hasPermission(session.role, "manage:settings")) {
+    if (!session || (!hasPermission(session.role, "manage:settings") && !hasPermission(session.role, "write:cms"))) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

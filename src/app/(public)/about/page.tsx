@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { ShieldCheck, Award, Users, Compass, CheckCircle2, ArrowRight } from "lucide-react";
+import { ShieldCheck, Award, Compass, Sparkles, Quote, ArrowRight } from "lucide-react";
 import StatsSection from "@/components/public/StatsSection";
 import CtaBanner from "@/components/public/CtaBanner";
 import connectDB from "@/lib/db/connection";
 import Page from "@/models/Page";
+import Setting from "@/models/Setting";
 
 export const metadata: Metadata = {
   title: "About Us | VIJOY POWER SOLUTION Solar EPC",
@@ -17,17 +18,77 @@ export const revalidate = 60;
 
 export default async function AboutPage() {
   let dynamicPage: any = null;
+  let cmsAbout: any = null;
+
   try {
     await connectDB();
-    dynamicPage = await Page.findOne({ slug: "about", isPublished: true }).lean();
+    const [pageDoc, settingDoc] = await Promise.all([
+      Page.findOne({ slug: "about", isPublished: true }).lean(),
+      Setting.findOne({ key: "about_page" }).lean(),
+    ]);
+    dynamicPage = pageDoc;
+    if (settingDoc && settingDoc.value) {
+      cmsAbout = settingDoc.value;
+    }
   } catch (err) {
     console.error("Error loading dynamic about page:", err);
   }
 
-  const title = dynamicPage?.title || "About VIJOY POWER SOLUTION";
+  // Fallbacks combined with dynamic CMS
+  const heroBadge = cmsAbout?.hero?.badge || "Company Profile & Engineering Philosophy";
+  const title = cmsAbout?.hero?.title || dynamicPage?.title || "About VIJOY POWER SOLUTION";
   const heroSubtitle =
+    cmsAbout?.hero?.subtitle ||
     dynamicPage?.heroSubtitle ||
     "Delivering clean, dependable solar rooftop engineering, ALMM-compliant panel supply, and seamless DISCOM net-metering across Eastern and Northern India.";
+  const heroImage =
+    cmsAbout?.hero?.imageUrl ||
+    dynamicPage?.heroImage ||
+    "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=1000&q=85";
+
+  const storyBadge = cmsAbout?.narrative?.badge || "Engineering Heritage";
+  const storyHeadline =
+    cmsAbout?.narrative?.headline || "Empowering Bihar, Jharkhand & UP with Reliable Renewable Energy";
+  const paragraph1 =
+    cmsAbout?.narrative?.paragraph1 ||
+    "VIJOY POWER SOLUTION was founded with a singular conviction: renewable energy must be engineered for real Indian operating conditions. Solar panels in Bihar and Uttar Pradesh face intense summer heat exceeding 45°C, high dust deposition, and severe monsoon winds.";
+  const paragraph2 =
+    cmsAbout?.narrative?.paragraph2 ||
+    "We bridge the gap between premium tier-1 equipment and flawless civil-electrical execution. From 10W specialized modules up to 730W high-efficiency Heterojunction and N-Type TOPCon bifacial arrays, every system is designed around the customer's exact roof geometry and energy consumption pattern.";
+  const missionTitle = cmsAbout?.narrative?.missionTitle || "Our Mission";
+  const missionDesc =
+    cmsAbout?.narrative?.missionDesc ||
+    "To make rooftop solar the most dependable, cost-effective power source for every home and enterprise.";
+  const valuesTitle = cmsAbout?.narrative?.valuesTitle || "Our Core Value";
+  const valuesDesc =
+    cmsAbout?.narrative?.valuesDesc ||
+    "Uncompromising engineering transparency: verified equipment, no fake pricing, and zero shortcuts on safety.";
+
+  const pillars = cmsAbout?.pillars || [
+    {
+      title: "Tier-1 ALMM Module Supply",
+      desc: "Strictly deploy ALMM-listed mono PERC and N-type TOPCon modules ranging from 10W to 730W with 25-30 year linear output warranties.",
+    },
+    {
+      title: "Rigorous Civil & Wind Engineering",
+      desc: "Hot-dip galvanized mounting structures engineered to withstand 150 km/h wind gusts, anchored with non-destructive ballasts.",
+    },
+    {
+      title: "DISCOM Liaison Mastery",
+      desc: "End-to-end liaison with SBPDCL, NBPDCL, JBVNL, and UPPCL for rapid feasibility approval and bi-directional meter synchronization.",
+    },
+    {
+      title: "Dedicated Local Field Support",
+      desc: "Trained resident technicians in Gaya, Patna, Ranchi, and Lucknow ensuring prompt routine maintenance and warranty service.",
+    },
+  ];
+
+  const leadership = cmsAbout?.leadership || {
+    quote:
+      "Solar rooftop adoption is not just an equipment sale — it is a quarter-century engineering commitment to our clients in Bihar, Jharkhand, and UP.",
+    author: "Eng. Vijay Kumar",
+    designation: "Founder & Chief Technical Director",
+  };
 
   return (
     <div className="bg-white">
@@ -35,7 +96,7 @@ export default async function AboutPage() {
       <div className="bg-navy-900 text-white py-16 sm:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
           <span className="text-xs font-bold uppercase tracking-wider text-solar-yellow bg-white/10 px-3 py-1 rounded-full">
-            Company Profile & Engineering Philosophy
+            {heroBadge}
           </span>
           <h1 className="text-3xl sm:text-5xl font-display font-extrabold text-white tracking-tight">
             {title}
@@ -52,10 +113,10 @@ export default async function AboutPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-6 space-y-6">
               <span className="text-xs font-bold uppercase tracking-wider text-solar-green bg-solar-green-light px-3 py-1 rounded-full">
-                Engineering Heritage
+                {storyBadge}
               </span>
               <h2 className="text-3xl sm:text-4xl font-display font-extrabold text-navy-800 tracking-tight">
-                Empowering Bihar, Jharkhand & UP with Reliable Renewable Energy
+                {storyHeadline}
               </h2>
               {dynamicPage?.contentHtml ? (
                 <div
@@ -65,22 +126,22 @@ export default async function AboutPage() {
               ) : (
                 <>
                   <p className="text-sm sm:text-base text-slate-muted leading-relaxed">
-                    VIJOY POWER SOLUTION was founded with a singular conviction: renewable energy must be engineered for real Indian operating conditions. Solar panels in Bihar and Uttar Pradesh face intense summer heat exceeding 45°C, high dust deposition, and severe monsoon winds.
+                    {paragraph1}
                   </p>
                   <p className="text-sm sm:text-base text-slate-muted leading-relaxed">
-                    We bridge the gap between premium tier-1 equipment and flawless civil-electrical execution. From 10W specialized modules up to 730W high-efficiency Heterojunction and N-Type TOPCon bifacial arrays, every system is designed around the customer&apos;s exact roof geometry and energy consumption pattern.
+                    {paragraph2}
                   </p>
                 </>
               )}
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                 <div className="p-4 rounded-xl border border-slate-border bg-slate-bg/60 space-y-1">
-                  <h4 className="text-sm font-bold text-navy-800">Our Mission</h4>
-                  <p className="text-xs text-slate-muted">To make rooftop solar the most dependable, cost-effective power source for every home and enterprise.</p>
+                  <h4 className="text-sm font-bold text-navy-800">{missionTitle}</h4>
+                  <p className="text-xs text-slate-muted">{missionDesc}</p>
                 </div>
                 <div className="p-4 rounded-xl border border-slate-border bg-slate-bg/60 space-y-1">
-                  <h4 className="text-sm font-bold text-navy-800">Our Core Value</h4>
-                  <p className="text-xs text-slate-muted">Uncompromising engineering transparency: verified equipment, no fake pricing, and zero shortcuts on safety.</p>
+                  <h4 className="text-sm font-bold text-navy-800">{valuesTitle}</h4>
+                  <p className="text-xs text-slate-muted">{valuesDesc}</p>
                 </div>
               </div>
             </div>
@@ -88,7 +149,7 @@ export default async function AboutPage() {
             <div className="lg:col-span-6">
               <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-slate-border h-96 sm:h-[450px]">
                 <Image
-                  src={dynamicPage?.heroImage || "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=1000&q=85"}
+                  src={heroImage}
                   alt="Solar installation engineering"
                   fill
                   className="object-cover"
@@ -137,44 +198,52 @@ export default async function AboutPage() {
       {/* Stats */}
       <StatsSection />
 
-      {/* Leadership & Standards */}
+      {/* Standards & Benchmarks (CMS Controlled) */}
       <section className="py-20 bg-slate-bg border-t border-slate-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="text-center max-w-2xl mx-auto space-y-3">
             <span className="text-xs font-bold uppercase tracking-wider text-solar-green bg-solar-green-light px-3 py-1 rounded-full">
-              Quality Principles
+              Engineering Benchmarks
             </span>
             <h2 className="text-3xl font-display font-extrabold text-navy-800">
-              Our Non-Negotiable Standards
+              Our Non-Negotiable Quality Standards
             </h2>
             <p className="text-xs sm:text-sm text-slate-muted">
-              Every installation executed by VIJOY POWER SOLUTION adheres to strict structural, electrical, and regulatory criteria.
+              Every solar plant engineered by VIJOY POWER SOLUTION adheres to certified structural, electrical, and DISCOM criteria.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white p-6 rounded-2xl border border-slate-border shadow-sm space-y-3">
-              <ShieldCheck className="w-8 h-8 text-solar-green" />
-              <h3 className="text-base font-bold text-navy-800">ALMM & BIS Verified</h3>
-              <p className="text-xs text-slate-muted leading-relaxed">
-                We supply modules that are formally included in the Approved List of Models and Manufacturers (ALMM) issued by the Ministry of New and Renewable Energy (MNRE).
-              </p>
-            </div>
-            <div className="bg-white p-6 rounded-2xl border border-slate-border shadow-sm space-y-3">
-              <Compass className="w-8 h-8 text-solar-yellow-hover" />
-              <h3 className="text-base font-bold text-navy-800">Precision Structural Safety</h3>
-              <p className="text-xs text-slate-muted leading-relaxed">
-                All mounting frames utilize 80-micron hot-dip galvanized steel, stainless steel A2/A4 fasteners, and engineered ballast or chemical anchors to prevent roof leaks.
-              </p>
-            </div>
-            <div className="bg-white p-6 rounded-2xl border border-slate-border shadow-sm space-y-3">
-              <Award className="w-8 h-8 text-navy-800" />
-              <h3 className="text-base font-bold text-navy-800">Triple Earthing & SPD Protection</h3>
-              <p className="text-xs text-slate-muted leading-relaxed">
-                Complete isolation between AC, DC, and lightning arrester chemical earthing electrodes, protecting sensitive home appliances from grid and lightning surges.
-              </p>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {pillars.map((pillar: any, idx: number) => (
+              <div key={idx} className="bg-white p-6 rounded-2xl border border-slate-border shadow-sm space-y-3 flex flex-col justify-between">
+                <div className="space-y-3">
+                  <span className="w-8 h-8 rounded-xl bg-navy-800 text-solar-yellow flex items-center justify-center font-bold text-sm">
+                    0{idx + 1}
+                  </span>
+                  <h3 className="text-sm font-bold text-navy-800">{pillar.title}</h3>
+                  <p className="text-xs text-slate-muted leading-relaxed">
+                    {pillar.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
+
+          {/* Leadership Note */}
+          {leadership?.quote && (
+            <div className="mt-12 bg-white rounded-3xl p-8 border border-slate-border shadow-md max-w-3xl mx-auto flex items-start gap-4">
+              <Quote className="w-10 h-10 text-solar-green shrink-0 opacity-40 mt-1" />
+              <div className="space-y-3">
+                <p className="text-sm sm:text-base italic text-navy-800 font-medium leading-relaxed">
+                  &ldquo;{leadership.quote}&rdquo;
+                </p>
+                <div>
+                  <h4 className="text-xs font-bold text-navy-800">{leadership.author}</h4>
+                  <p className="text-[11px] text-solar-green font-semibold">{leadership.designation}</p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 

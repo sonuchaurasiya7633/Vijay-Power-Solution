@@ -857,6 +857,7 @@ async function seedDemoData() {
           headline: "Power Your Future with Solar Energy",
           subheading:
             "Reliable Solar Panel Solutions & Professional Installation Across Bihar, Jharkhand, and Uttar Pradesh. Complete engineering, DISCOM net metering liaison, and PM Surya Ghar subsidy guidance.",
+          backgroundImage: "/images/hero-solar-rooftop.jpg",
           checkpoints: [
             "Modules from 10W to 730W",
             "Up to ₹78,000 Govt Subsidy Guidance",
@@ -954,6 +955,244 @@ async function seedDemoData() {
           buttonText: "Request Free Consultation",
           buttonLink: "/get-quote",
         },
+      },
+      createdAt: now,
+      updatedAt: now,
+    },
+    {
+      key: "about_page",
+      value: {
+        hero: {
+          badge: "Company Profile & Engineering Philosophy",
+          title: "About VIJOY POWER SOLUTION",
+          subtitle:
+            "Delivering clean, dependable solar rooftop engineering, ALMM-compliant panel supply, and seamless DISCOM net-metering across Eastern and Northern India.",
+          imageUrl: "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=1000&q=85",
+        },
+        narrative: {
+          badge: "Engineering Heritage",
+          headline: "Empowering Bihar, Jharkhand & UP with Reliable Renewable Energy",
+          paragraph1:
+            "VIJOY POWER SOLUTION was founded with a singular conviction: renewable energy must be engineered for real Indian operating conditions. Solar panels in Bihar and Uttar Pradesh face intense summer heat exceeding 45°C, high dust deposition, and severe monsoon winds.",
+          paragraph2:
+            "We bridge the gap between premium tier-1 equipment and flawless civil-electrical execution. From 10W specialized modules up to 730W high-efficiency Heterojunction and N-Type TOPCon bifacial arrays, every system is designed around the customer's exact roof geometry and energy consumption pattern.",
+          missionTitle: "Our Mission",
+          missionDesc:
+            "To make rooftop solar the most dependable, cost-effective power source for every home and enterprise in Eastern India.",
+          valuesTitle: "Our Core Value",
+          valuesDesc:
+            "Uncompromising engineering transparency: verified tier-1 equipment, zero fake pricing, and zero shortcuts on safety.",
+        },
+        pillars: [
+          {
+            title: "Tier-1 ALMM Module Supply",
+            desc: "Strictly deploy ALMM-listed mono PERC and N-type TOPCon modules ranging from 10W to 730W with 25-30 year linear output warranties.",
+          },
+          {
+            title: "Rigorous Civil & Wind Engineering",
+            desc: "Hot-dip galvanized mounting structures engineered to withstand 150 km/h wind gusts, anchored with non-destructive ballasts.",
+          },
+          {
+            title: "DISCOM Liaison Mastery",
+            desc: "End-to-end liaison with SBPDCL, NBPDCL, JBVNL, and UPPCL for rapid feasibility approval and bi-directional meter synchronization.",
+          },
+          {
+            title: "Dedicated Local Field Support",
+            desc: "Trained resident technicians in Gaya, Patna, Ranchi, and Lucknow ensuring prompt routine maintenance and warranty service.",
+          },
+        ],
+        leadership: {
+          quote:
+            "Solar rooftop adoption is not just an equipment sale — it is a quarter-century engineering commitment to our clients in Bihar, Jharkhand, and UP.",
+          author: "Eng. Vijay Kumar",
+          designation: "Founder & Chief Technical Director",
+        },
+      },
+      createdAt: now,
+      updatedAt: now,
+    },
+    {
+      key: "contact_page",
+      value: {
+        hero: {
+          badge: "Direct Communication & Regional Desks",
+          title: "Contact VIJOY POWER SOLUTION",
+          subtitle:
+            "Reach out to our certified solar engineering and technical support teams. We are available Monday through Saturday across Bihar, Jharkhand, and Uttar Pradesh.",
+        },
+        headquarters: {
+          name: "Corporate Headquarters & Main Solar Yard",
+          address: "Main Road, Near Power Grid Substation, Gaya, Bihar - 823001",
+          city: "Gaya",
+          state: "Bihar",
+          phone: "+91 94310 00000",
+          email: "contact@vijoypowersolution.com",
+          operatingHours: "Monday – Saturday: 9:00 AM – 7:00 PM IST",
+        },
+        branches: [
+          {
+            city: "Patna",
+            state: "Bihar",
+            title: "Patna Regional EPC Office",
+            address: "Bailey Road, Saguna More, Danapur, Patna, Bihar - 801503",
+            phone: "+91 94310 00001",
+            contactPerson: "Er. Ramesh Pandey (Regional Manager)",
+          },
+          {
+            city: "Ranchi",
+            state: "Jharkhand",
+            title: "Ranchi Liaison & Technical Center",
+            address: "Harmu Bypass Road, Near Sahjanand Chowk, Ranchi, Jharkhand - 834002",
+            phone: "+91 94310 00002",
+            contactPerson: "Er. Ankit Kumar (Jharkhand Lead)",
+          },
+          {
+            city: "Lucknow",
+            state: "Uttar Pradesh",
+            title: "Lucknow DISCOM & Project Desk",
+            address: "Vibhuti Khand, Gomti Nagar, Lucknow, Uttar Pradesh - 226010",
+            phone: "+91 94310 00003",
+            contactPerson: "Er. Priya Sharma (UP EPC Specialist)",
+          },
+        ],
+        channels: {
+          tollFreeOrHelpline: "+91 94310 00000",
+          whatsappNumber: "919431000000",
+          salesEmail: "sales@vijoypowersolution.com",
+          supportEmail: "support@vijoypowersolution.com",
+          discomSupportEmail: "discom.liaison@vijoypowersolution.com",
+        },
+        mapEmbedUrl:
+          "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d115668.75653422615!2d84.9255755!3d24.7954545!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39f32a514d4e3efb%3A0xbcf04fb5b8821cf3!2sGaya%2C%20Bihar!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin",
+      },
+      createdAt: now,
+      updatedAt: now,
+    },
+    {
+      key: "subsidy_page",
+      value: {
+        hero: {
+          badge: "Government Initiatives & Schemes",
+          title: "PM Surya Ghar: Muft Bijli Yojana",
+          subtitle:
+            "Educational guide to national financial assistance, eligibility guidelines, DISCOM technical requirements, and step-by-step application workflow for rooftop solar in Bihar, Jharkhand, and Uttar Pradesh.",
+        },
+        slabs: [
+          {
+            capacity: "1 kW System",
+            subsidyAmount: "₹30,000",
+            application: "Small homes (1-2 fans, TV, LED lights)",
+            typicalSavings: "₹800 – ₹1,200 / month",
+          },
+          {
+            capacity: "2 kW System",
+            subsidyAmount: "₹60,000",
+            application: "Medium homes (1 AC, refrigerator, washing machine)",
+            typicalSavings: "₹1,800 – ₹2,500 / month",
+          },
+          {
+            capacity: "3 kW to 10 kW System",
+            subsidyAmount: "₹78,000 (Maximum Cap)",
+            application: "Large homes & multi-floor residences (2-3 ACs, heavy loads)",
+            typicalSavings: "₹3,500 – ₹8,000+ / month",
+          },
+          {
+            capacity: "Group Housing Societies (GHS/RWA)",
+            subsidyAmount: "₹18,000 per kW (up to 500 kW)",
+            application: "Common facilities (lifts, water pumping, corridors)",
+            typicalSavings: "₹15,000 – ₹50,000+ / month",
+          },
+        ],
+        states: [
+          {
+            state: "Bihar",
+            discoms: "SBPDCL & NBPDCL",
+            perks:
+              "Online Suvidha Portal integration for seamless Net-Metering application. Bi-directional meter installation fee adjusted in upcoming electricity bills.",
+          },
+          {
+            state: "Jharkhand",
+            discoms: "JBVNL",
+            perks:
+              "Single-window rooftop portal with expedited feeder feasibility checks. Zero meter security deposit for domestic consumers under 5 kW.",
+          },
+          {
+            state: "Uttar Pradesh",
+            discoms: "UPPCL (MVVNL, PVVNL, DVVNL, PuVVNL)",
+            perks:
+              "Direct DISCOM portal sync with central PM Surya Ghar national portal. State additional incentive of up to ₹30,000 credited under the UP Solar Energy Policy 2022.",
+          },
+        ],
+        workflow: [
+          {
+            step: "01",
+            title: "National Portal Registration",
+            desc: "Register on pmsuryaghar.gov.in using your electricity consumer CA number and mobile number.",
+          },
+          {
+            step: "02",
+            title: "Feasibility Approval by DISCOM",
+            desc: "Local DISCOM engineers verify transformer capacity and sanction approval within 7-15 days.",
+          },
+          {
+            step: "03",
+            title: "Installation by Certified Vendor",
+            desc: "VIJOY POWER SOLUTION installs ALMM compliant panels, galvanized structure, and grid inverter.",
+          },
+          {
+            step: "04",
+            title: "Net-Meter Inspection & Synchronization",
+            desc: "DISCOM officials inspect technical safety, install the bi-directional meter, and commission the plant.",
+          },
+          {
+            step: "05",
+            title: "Direct Benefit Transfer (DBT)",
+            desc: "Commissioning certificate is uploaded, and the subsidy is credited directly to the customer's bank account within 30 days.",
+          },
+        ],
+        documents: [
+          { name: "Latest Electricity Bill", note: "Should be in consumer's name showing sanctioned load & CA number" },
+          { name: "Aadhaar Card", note: "Linked to the bank account and mobile number" },
+          { name: "Cancelled Bank Cheque / Passbook", note: "For direct subsidy deposit via PFMS DBT" },
+          { name: "Terrace / Rooftop Ownership Proof", note: "Latest property tax receipt or registered title deed" },
+          { name: "Passport Size Photograph", note: "Recent color photo of the electricity connection holder" },
+        ],
+        disclaimer:
+          "VIJOY POWER SOLUTION provides turnkey EPC liaison and subsidy application assistance. Central subsidy disbursement is managed exclusively by the Ministry of New and Renewable Energy (MNRE) directly to the beneficiary bank account.",
+      },
+      createdAt: now,
+      updatedAt: now,
+    },
+    {
+      key: "header_footer",
+      value: {
+        noticeBar: {
+          enabled: false,
+          badge: "PM Surya Ghar 2026",
+          text: "Serving Bihar, Jharkhand & Uttar Pradesh | Solar Modules 10W to 730W | Subsidy up to ₹78,000 Guidance",
+          linkText: "Check Subsidy",
+          linkUrl: "/subsidy-information",
+        },
+        topBar: {
+          phone: "+91 94310 00000",
+          whatsapp: "919431000000",
+          email: "contact@vijoypowersolution.com",
+        },
+        footer: {
+          companyName: "VIJOY POWER SOLUTION",
+          tagline: "Premier solar engineering, supply, and rooftop installation specialist empowering households, commercial enterprises, and agricultural farms across Bihar, Jharkhand, and Uttar Pradesh.",
+          address: "Main Road, Near Power Grid Substation, Gaya, Bihar - 823001",
+          phone: "+91 94310 00000",
+          email: "contact@vijoypowersolution.com",
+          workingHours: "Mon – Sat: 9:00 AM – 7:00 PM (Sunday Closed)",
+          copyright: "© 2026 VIJOY POWER SOLUTION (VPS SOLAR). All rights reserved. Registered EPC Contractor in Bihar, Jharkhand & UP.",
+        },
+        badges: [
+          "ALMM Listed Solar Modules (10W - 730W)",
+          "MNRE Registered Channel Vendor",
+          "DISCOM Net-Metering Liaison (Bihar, JH, UP)",
+          "Strict Private Quotation Policy (Non-Ecommerce)",
+        ],
       },
       createdAt: now,
       updatedAt: now,

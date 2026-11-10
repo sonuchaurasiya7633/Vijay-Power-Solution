@@ -12,18 +12,41 @@ export default async function Footer() {
     address: "Main Road, Near Power Grid Substation, Gaya, Bihar - 823001",
     workingHours: "Mon – Sat: 9:00 AM – 7:00 PM",
   };
+  let headerFooterCms: any = null;
 
   try {
     await connectDB();
-    const generalDoc = await Setting.findOne({ key: "general" }).lean();
+    const [generalDoc, hfDoc] = await Promise.all([
+      Setting.findOne({ key: "general" }).lean(),
+      Setting.findOne({ key: "header_footer" }).lean(),
+    ]);
+
     if (generalDoc && generalDoc.value) {
       contact = { ...contact, ...(generalDoc.value as object) };
+    }
+    if (hfDoc && hfDoc.value) {
+      headerFooterCms = hfDoc.value;
+      if (headerFooterCms.footer) {
+        contact = {
+          ...contact,
+          ...(headerFooterCms.footer.phone ? { phone: headerFooterCms.footer.phone } : {}),
+          ...(headerFooterCms.footer.email ? { email: headerFooterCms.footer.email } : {}),
+          ...(headerFooterCms.footer.address ? { address: headerFooterCms.footer.address } : {}),
+          ...(headerFooterCms.footer.workingHours ? { workingHours: headerFooterCms.footer.workingHours } : {}),
+        };
+      }
     }
   } catch (e) {
     // Graceful fallback
   }
 
   const cleanPhone = contact.phone ? contact.phone.replace(/[^0-9+]/g, "") : "+919431000000";
+  const tagline =
+    headerFooterCms?.footer?.tagline ||
+    "Premier solar engineering, supply, and rooftop installation specialist empowering households, commercial enterprises, and agricultural farms across Bihar, Jharkhand, and Uttar Pradesh.";
+  const copyrightText =
+    headerFooterCms?.footer?.copyright ||
+    `© ${currentYear} VIJOY POWER SOLUTION. All rights reserved.`;
 
   return (
     <footer className="bg-navy-900 text-slate-300 pt-16 pb-10 border-t border-navy-700">
@@ -50,8 +73,7 @@ export default async function Footer() {
               </div>
             </Link>
             <p className="text-sm text-slate-300 leading-relaxed pr-6">
-              Premier solar engineering, supply, and rooftop installation specialist empowering
-              households, commercial enterprises, and agricultural farms across <strong>Bihar</strong>, <strong>Jharkhand</strong>, and <strong>Uttar Pradesh</strong>.
+              {tagline}
             </p>
             <div className="pt-2 flex flex-col gap-2.5 text-xs text-slate-300">
               <div className="flex items-start gap-2.5">
@@ -197,7 +219,7 @@ export default async function Footer() {
 
         {/* Bottom bar */}
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
-          <p>© {currentYear} VIJOY POWER SOLUTION. All rights reserved.</p>
+          <p>{copyrightText}</p>
           <div className="flex flex-wrap items-center gap-4">
             <Link href="/privacy-policy" className="hover:text-white transition-colors">
               Privacy Policy

@@ -5,6 +5,7 @@ import LeadCaptureForm from "@/components/forms/LeadCaptureForm";
 import CtaBanner from "@/components/public/CtaBanner";
 import connectDB from "@/lib/db/connection";
 import Page from "@/models/Page";
+import Setting from "@/models/Setting";
 
 export const metadata: Metadata = {
   title: "PM Surya Ghar Subsidy Guide | Rooftop Solar in Bihar, JH & UP",
@@ -16,17 +17,106 @@ export const revalidate = 60;
 
 export default async function SubsidyInformationPage() {
   let dynamicPage: any = null;
+  let cmsSubsidy: any = null;
+
   try {
     await connectDB();
-    dynamicPage = await Page.findOne({ slug: "subsidy-information", isPublished: true }).lean();
+    const [pageDoc, settingDoc] = await Promise.all([
+      Page.findOne({ slug: "subsidy-information", isPublished: true }).lean(),
+      Setting.findOne({ key: "subsidy_page" }).lean(),
+    ]);
+    dynamicPage = pageDoc;
+    if (settingDoc && settingDoc.value) {
+      cmsSubsidy = settingDoc.value;
+    }
   } catch (err) {
     console.error("Error loading dynamic subsidy page:", err);
   }
 
-  const title = dynamicPage?.title || "PM Surya Ghar: Muft Bijli Yojana";
+  const heroBadge = cmsSubsidy?.hero?.badge || "Government Initiatives & Schemes";
+  const title = cmsSubsidy?.hero?.title || dynamicPage?.title || "PM Surya Ghar: Muft Bijli Yojana";
   const heroSubtitle =
+    cmsSubsidy?.hero?.subtitle ||
     dynamicPage?.heroSubtitle ||
     "Educational guide to national financial assistance, eligibility guidelines, DISCOM technical requirements, and step-by-step application workflow for rooftop solar in Bihar, Jharkhand, and Uttar Pradesh.";
+
+  const slabs = cmsSubsidy?.slabs || [
+    {
+      capacity: "1 kW System",
+      subsidyAmount: "₹30,000",
+      application: "Small homes (1-2 fans, TV, LED lights)",
+    },
+    {
+      capacity: "2 kW System",
+      subsidyAmount: "₹60,000",
+      application: "Medium homes (1 AC, refrigerator, washing machine)",
+    },
+    {
+      capacity: "3 kW to 10 kW System",
+      subsidyAmount: "₹78,000 (Maximum Cap)",
+      application: "Large homes & multi-floor residences (2-3 ACs, heavy loads)",
+    },
+    {
+      capacity: "Group Housing Societies (GHS/RWA)",
+      subsidyAmount: "₹18,000 per kW (up to 500 kW)",
+      application: "Common facilities (lifts, water pumping, corridors)",
+    },
+  ];
+
+  const workflow = cmsSubsidy?.workflow || [
+    {
+      step: "01",
+      title: "Portal Registration",
+      desc: "Register on the official national portal (pmsuryaghar.gov.in) with your State, DISCOM name, electricity consumer account number, mobile number, and email.",
+    },
+    {
+      step: "02",
+      title: "DISCOM Technical Feasibility Approval",
+      desc: "Submit the rooftop application. Your regional utility (SBPDCL/NBPDCL in Bihar, JBVNL in Jharkhand, UPPCL in UP) reviews local distribution transformer capacity and issues technical clearance.",
+    },
+    {
+      step: "03",
+      title: "Installation by Authorized Solar EPC",
+      desc: "Install your solar plant using ALMM-certified panels, BIS-approved inverters, and hot-dip galvanized mounting structures with dedicated chemical earthing pits.",
+    },
+    {
+      step: "04",
+      title: "Net Meter Inspection & Direct DBT Disbursement",
+      desc: "DISCOM officials inspect the plant and install the bi-directional meter. Once the commissioning certificate is generated on the portal, subsidy funds are credited directly to the homeowner's bank account via Direct Benefit Transfer (DBT).",
+    },
+  ];
+
+  const states = cmsSubsidy?.states || [
+    {
+      state: "Bihar",
+      discoms: "SBPDCL & NBPDCL",
+      perks:
+        "Online Suvidha Portal integration for seamless Net-Metering application. Bi-directional meter installation fee adjusted in upcoming electricity bills.",
+    },
+    {
+      state: "Jharkhand",
+      discoms: "JBVNL",
+      perks:
+        "Single-window rooftop portal with expedited feeder feasibility checks. Zero meter security deposit for domestic consumers under 5 kW.",
+    },
+    {
+      state: "Uttar Pradesh",
+      discoms: "UPPCL (MVVNL, PVVNL, DVVNL, PuVVNL)",
+      perks:
+        "Direct DISCOM portal sync with central PM Surya Ghar national portal. State additional incentive of up to ₹30,000 credited under the UP Solar Energy Policy 2022.",
+    },
+  ];
+
+  const documents = cmsSubsidy?.documents || [
+    { name: "Latest Electricity Bill", note: "Should be in consumer's name showing sanctioned load & CA number" },
+    { name: "Aadhaar Card", note: "Linked to the bank account and mobile number" },
+    { name: "Cancelled Bank Cheque / Passbook", note: "For direct subsidy deposit via PFMS DBT" },
+    { name: "Rooftop Photograph", note: "Photograph showing rooftop space with consumer" },
+  ];
+
+  const disclaimer =
+    cmsSubsidy?.disclaimer ||
+    "Subsidy eligibility, benefits, documentation, and approval depend strictly on applicable government rules, quota availability, and DISCOM requirements under the PM Surya Ghar scheme. VIJOY POWER SOLUTION does not guarantee subsidy approval, which is solely determined by utility and central nodal agencies. Always verify latest official guidelines through the official national government portal.";
 
   return (
     <div className="bg-white">
@@ -34,7 +124,7 @@ export default async function SubsidyInformationPage() {
       <div className="bg-navy-900 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
           <span className="text-xs font-bold uppercase tracking-wider text-solar-yellow bg-white/10 px-3 py-1 rounded-full">
-            Government Initiatives & Schemes
+            {heroBadge}
           </span>
           <h1 className="text-3xl sm:text-5xl font-display font-extrabold text-white tracking-tight">
             {title}
@@ -71,30 +161,40 @@ export default async function SubsidyInformationPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 bg-white">
-                    <tr className="hover:bg-slate-bg">
-                      <td className="p-3.5 sm:p-4 font-bold text-navy-800">1 kW System</td>
-                      <td className="p-3.5 sm:p-4 font-bold text-solar-green">₹30,000</td>
-                      <td className="p-3.5 sm:p-4 text-slate-muted">Small homes (1-2 fans, TV, LED lights)</td>
-                    </tr>
-                    <tr className="hover:bg-slate-bg">
-                      <td className="p-3.5 sm:p-4 font-bold text-navy-800">2 kW System</td>
-                      <td className="p-3.5 sm:p-4 font-bold text-solar-green">₹60,000</td>
-                      <td className="p-3.5 sm:p-4 text-slate-muted">Medium homes (refrigerator, washing machine)</td>
-                    </tr>
-                    <tr className="hover:bg-slate-bg bg-solar-green-light/20">
-                      <td className="p-3.5 sm:p-4 font-bold text-navy-800">3 kW and Above</td>
-                      <td className="p-3.5 sm:p-4 font-bold text-solar-green">₹78,000 (Maximum Cap)</td>
-                      <td className="p-3.5 sm:p-4 text-slate-muted">Homes with 1-2 Air Conditioners</td>
-                    </tr>
-                    <tr className="hover:bg-slate-bg">
-                      <td className="p-3.5 sm:p-4 font-bold text-navy-800">Group Housing Societies (GHS/RWA)</td>
-                      <td className="p-3.5 sm:p-4 font-bold text-solar-green">₹18,000 per kW (up to 500 kW)</td>
-                      <td className="p-3.5 sm:p-4 text-slate-muted">Common facilities (lifts, water pumping, corridors)</td>
-                    </tr>
+                    {slabs.map((slab: any, idx: number) => (
+                      <tr key={idx} className={`hover:bg-slate-bg ${idx === 2 ? "bg-solar-green-light/20" : ""}`}>
+                        <td className="p-3.5 sm:p-4 font-bold text-navy-800">{slab.capacity}</td>
+                        <td className="p-3.5 sm:p-4 font-bold text-solar-green">{slab.subsidyAmount}</td>
+                        <td className="p-3.5 sm:p-4 text-slate-muted">{slab.application}</td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
             </div>
+
+            {/* State Additional Benefits */}
+            {states && states.length > 0 && (
+              <div className="space-y-4 pt-4 border-t border-slate-border">
+                <span className="text-xs font-bold uppercase tracking-wider text-solar-green bg-solar-green-light px-2.5 py-0.5 rounded-full">
+                  Regional Policies
+                </span>
+                <h3 className="text-xl font-bold font-display text-navy-800">
+                  State-Specific Net Metering Provisions (Bihar, JH & UP)
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {states.map((st: any, idx: number) => (
+                    <div key={idx} className="p-4 rounded-2xl border border-slate-border bg-slate-50 space-y-2">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-solar-green bg-solar-green-light px-2 py-0.5 rounded-full">
+                        {st.state}
+                      </span>
+                      <h4 className="text-sm font-bold text-navy-800">{st.discoms}</h4>
+                      <p className="text-xs text-slate-muted leading-relaxed">{st.perks}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Step-by-Step Application Procedure */}
             <div className="space-y-4 pt-4 border-t border-slate-border">
@@ -102,53 +202,19 @@ export default async function SubsidyInformationPage() {
                 Step-by-Step Portal Application Process
               </h3>
               <div className="space-y-3 text-xs sm:text-sm">
-                <div className="p-4 rounded-2xl bg-slate-bg border border-slate-border flex gap-3.5">
-                  <span className="w-7 h-7 rounded-full bg-navy-800 text-white font-bold flex items-center justify-center shrink-0 text-xs">
-                    1
-                  </span>
-                  <div>
-                    <h4 className="font-bold text-navy-800">Portal Registration</h4>
-                    <p className="text-xs text-slate-muted mt-1 leading-relaxed">
-                      Register on the official national portal (pmsuryaghar.gov.in) with your State, DISCOM name, electricity consumer account number, mobile number, and email.
-                    </p>
+                {workflow.map((wf: any, idx: number) => (
+                  <div key={idx} className="p-4 rounded-2xl bg-slate-bg border border-slate-border flex gap-3.5">
+                    <span className="w-7 h-7 rounded-full bg-navy-800 text-white font-bold flex items-center justify-center shrink-0 text-xs">
+                      {wf.step || idx + 1}
+                    </span>
+                    <div>
+                      <h4 className="font-bold text-navy-800">{wf.title}</h4>
+                      <p className="text-xs text-slate-muted mt-1 leading-relaxed">
+                        {wf.desc}
+                      </p>
+                    </div>
                   </div>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-slate-bg border border-slate-border flex gap-3.5">
-                  <span className="w-7 h-7 rounded-full bg-navy-800 text-white font-bold flex items-center justify-center shrink-0 text-xs">
-                    2
-                  </span>
-                  <div>
-                    <h4 className="font-bold text-navy-800">DISCOM Technical Feasibility Approval</h4>
-                    <p className="text-xs text-slate-muted mt-1 leading-relaxed">
-                      Submit the rooftop application. Your regional utility (SBPDCL/NBPDCL in Bihar, JBVNL in Jharkhand, UPPCL in UP) reviews local distribution transformer capacity and issues technical clearance.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-slate-bg border border-slate-border flex gap-3.5">
-                  <span className="w-7 h-7 rounded-full bg-navy-800 text-white font-bold flex items-center justify-center shrink-0 text-xs">
-                    3
-                  </span>
-                  <div>
-                    <h4 className="font-bold text-navy-800">Installation by Authorized Solar EPC</h4>
-                    <p className="text-xs text-slate-muted mt-1 leading-relaxed">
-                      Install your solar plant using ALMM-certified panels, BIS-approved inverters, and hot-dip galvanized mounting structures with dedicated chemical earthing pits.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-slate-bg border border-slate-border flex gap-3.5">
-                  <span className="w-7 h-7 rounded-full bg-navy-800 text-white font-bold flex items-center justify-center shrink-0 text-xs">
-                    4
-                  </span>
-                  <div>
-                    <h4 className="font-bold text-navy-800">Net Meter Inspection & Direct DBT Disbursement</h4>
-                    <p className="text-xs text-slate-muted mt-1 leading-relaxed">
-                      DISCOM officials inspect the plant and install the bi-directional meter. Once the commissioning certificate is generated on the portal, subsidy funds are credited directly to the homeowner&apos;s bank account via Direct Benefit Transfer (DBT).
-                    </p>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
 
@@ -158,22 +224,15 @@ export default async function SubsidyInformationPage() {
                 Documents Required for Subsidy Claim
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                <div className="p-3.5 rounded-xl border border-slate-border flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-solar-green shrink-0" />
-                  <span>Latest Electricity Bill (Domestic connection)</span>
-                </div>
-                <div className="p-3.5 rounded-xl border border-slate-border flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-solar-green shrink-0" />
-                  <span>Aadhaar Card matching consumer bill name</span>
-                </div>
-                <div className="p-3.5 rounded-xl border border-slate-border flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-solar-green shrink-0" />
-                  <span>Cancelled Cheque / Bank Passbook for DBT</span>
-                </div>
-                <div className="p-3.5 rounded-xl border border-slate-border flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-solar-green shrink-0" />
-                  <span>Rooftop photograph with homeowner</span>
-                </div>
+                {documents.map((doc: any, idx: number) => (
+                  <div key={idx} className="p-3.5 rounded-xl border border-slate-border flex items-start gap-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-solar-green shrink-0 mt-0.5" />
+                    <div>
+                      <span className="font-bold text-navy-800 block">{doc.name}</span>
+                      {doc.note && <span className="text-[11px] text-slate-muted block">{doc.note}</span>}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
 
@@ -201,9 +260,7 @@ export default async function SubsidyInformationPage() {
                 <ShieldAlert className="w-4 h-4 text-yellow-700 shrink-0" />
                 <span>Regulatory Notice & Vendor Disclaimer:</span>
               </div>
-              <p>
-                Subsidy eligibility, benefits, documentation, and approval depend strictly on applicable government rules, quota availability, and DISCOM requirements under the PM Surya Ghar scheme. VIJOY POWER SOLUTION does not guarantee subsidy approval, which is solely determined by utility and central nodal agencies. Always verify latest official guidelines through the official national government portal.
-              </p>
+              <p>{disclaimer}</p>
             </div>
           </div>
 

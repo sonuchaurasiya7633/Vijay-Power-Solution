@@ -1,42 +1,48 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Phone, MessageCircle, Menu, X, Sun, ChevronDown } from "lucide-react";
+import { Phone, Menu, X, Sun, ChevronDown } from "lucide-react";
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [solutionsDropdown, setSolutionsDropdown] = useState(false);
 
+  const [headerCms, setHeaderCms] = useState({
+    noticeBar: {
+      enabled: false,
+      badge: "PM Surya Ghar 2026",
+      text: "Serving Bihar, Jharkhand & Uttar Pradesh | Solar Modules 10W to 730W",
+      linkText: "Check Subsidy",
+      linkUrl: "/subsidy-information",
+    },
+    topBar: {
+      phone: "+91 94310 00000",
+      whatsapp: "919431000000",
+      email: "contact@vijoypowersolution.com",
+    },
+  });
+
+  useEffect(() => {
+    fetch("/api/settings?key=header_footer")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.setting && Object.keys(d.setting).length > 0) {
+          setHeaderCms((prev) => ({
+            noticeBar: { ...prev.noticeBar, ...(d.setting.noticeBar || {}) },
+            topBar: { ...prev.topBar, ...(d.setting.topBar || {}) },
+          }));
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const cleanPhone = headerCms.topBar.phone ? headerCms.topBar.phone.replace(/[^0-9+]/g, "") : "+919431000000";
+  const cleanWa = headerCms.topBar.whatsapp ? headerCms.topBar.whatsapp.replace(/[^0-9]/g, "") : "919431000000";
+
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-border shadow-sm">
-      {/* Top emergency / state banner */}
-      <div className="bg-navy-800 text-white text-xs py-1.5 px-4">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <span className="inline-block w-2 h-2 rounded-full bg-solar-yellow animate-pulse" />
-            <span>Serving <strong>Bihar</strong>, <strong>Jharkhand</strong> & <strong>Uttar Pradesh</strong> | Solar Modules 10W to 730W</span>
-          </div>
-          <div className="hidden sm:flex items-center gap-4 text-slate-200">
-            <a href="tel:+919431000000" className="flex items-center gap-1 hover:text-solar-yellow transition-colors">
-              <Phone className="w-3.5 h-3.5 text-solar-yellow" />
-              <span>+91 94310 00000</span>
-            </a>
-            <span className="text-navy-600">|</span>
-            <a
-              href="https://wa.me/919431000000?text=Hello%20VIJOY%20POWER%20SOLUTION,%20I%20would%20like%20to%20enquire%20about%20solar%20installation."
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1 hover:text-green-400 transition-colors"
-            >
-              <MessageCircle className="w-3.5 h-3.5 text-green-400" />
-              <span>WhatsApp Us</span>
-            </a>
-          </div>
-        </div>
-      </div>
-
       {/* Main Navbar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
@@ -153,7 +159,7 @@ export default function Navbar() {
           {/* Mobile Menu Button */}
           <div className="flex items-center gap-2 lg:hidden">
             <a
-              href="tel:+919431000000"
+              href={`tel:${cleanPhone}`}
               className="p-2 rounded-lg bg-navy-50 text-navy-800 border border-slate-border"
               aria-label="Call"
             >
