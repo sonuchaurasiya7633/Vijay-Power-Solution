@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import toast from "@/lib/toast";
+import CmsImageUploader from "@/components/admin/CmsImageUploader";
 import {
   Building2,
   Save,
@@ -271,22 +272,17 @@ export default function AdminAboutCmsPage() {
               />
             </div>
 
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-muted mb-1.5">
-                Hero Showcase Image URL (Unsplash or Cloudinary)
-              </label>
-              <input
-                type="text"
-                value={form.hero.imageUrl}
-                onChange={(e) => setForm({ ...form, hero: { ...form.hero, imageUrl: e.target.value } })}
-                className="w-full text-xs px-3 py-2.5 rounded-xl border border-slate-border focus:border-solar-green outline-none"
-              />
-              {form.hero.imageUrl && (
-                <div className="mt-3 relative w-48 h-28 rounded-xl overflow-hidden border border-slate-border">
-                  <img src={form.hero.imageUrl} alt="Hero Preview" className="w-full h-full object-cover" />
-                </div>
-              )}
-            </div>
+            <CmsImageUploader
+              label="Hero Showcase Image"
+              value={form.hero.imageUrl}
+              onChange={(data: any) =>
+                setForm({ ...form, hero: { ...form.hero, imageUrl: data?.imageUrl || data } })
+              }
+              folder="about"
+              defaultFallback="https://images.unsplash.com/photo-1509391365360-2e959784a276?w=1000&q=85"
+              aspectRatioLabel="Landscape (16:9)"
+              hint="Shown on the About page hero section alongside company philosophy."
+            />
           </div>
         )}
 

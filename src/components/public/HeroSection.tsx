@@ -10,7 +10,7 @@ export default async function HeroSection() {
     badge: "Certified Solar EPC • Serving Customers Across India",
     headline: "Professional Solar Panel Installation Services Across India",
     subheading:
-      "Vijoy Power Solution delivers reliable solar panel supply and installation solutions for residential, commercial, industrial, and agricultural requirements across India.",
+      "Vijoy Power Solution delivers reliable solar panel supply and installation solutions for residential, commercial, industrial, and agricultural requirements across India. Complete engineering, DISCOM net metering liaison, and PM Surya Ghar subsidy guidance.",
     backgroundImage: "/images/hero-solar-banner.jpg",
     checkpoints: [
       "Modules from 10W to 730W",
@@ -50,8 +50,35 @@ export default async function HeroSection() {
     // fallback gracefully
   }
 
-  const heroHeading = heroData.headline;
-  const heroSubtitle = heroData.subheading;
+  // Sanitize any residual 3-state legacy text into nationwide Pan India messaging
+  let heroBadge = heroData.badge || "Certified Solar EPC • Serving Customers Across India";
+  if (heroBadge.includes("Bihar") || heroBadge.includes("Jharkhand") || heroBadge.includes("Uttar Pradesh")) {
+    heroBadge = "Certified Solar EPC • Serving Customers Across India";
+  }
+
+  let heroHeading = heroData.headline || "Professional Solar Panel Installation Services Across India";
+  if (heroHeading === "Power Your Future with Solar Energy") {
+    heroHeading = "Professional Solar Panel Installation Services Across India";
+  }
+
+  let heroSubtitle = heroData.subheading || "";
+  if (
+    heroSubtitle.includes("Bihar, Jharkhand, and Uttar Pradesh") ||
+    heroSubtitle.includes("Bihar | Jharkhand")
+  ) {
+    heroSubtitle = heroSubtitle.replace(
+      /Across Bihar, Jharkhand, and Uttar Pradesh/gi,
+      "Across India"
+    ).replace(
+      /in Bihar, Jharkhand, and Uttar Pradesh/gi,
+      "across India"
+    );
+  }
+  if (!heroSubtitle) {
+    heroSubtitle =
+      "Vijoy Power Solution delivers reliable solar panel supply and installation solutions for residential, commercial, industrial, and agricultural requirements across India. Complete engineering, DISCOM net metering liaison, and PM Surya Ghar subsidy guidance.";
+  }
+
   const checkpoints = heroData.checkpoints || [];
   const bgImage = heroData.backgroundImage || "/images/hero-solar-banner.jpg";
 
@@ -96,6 +123,12 @@ export default async function HeroSection() {
 
         {/* Solid Corporate Navy Card - Zero Glassmorphism, 100% Crisp Typography */}
         <div className="max-w-xl lg:max-w-2xl bg-gradient-to-br from-navy-900 via-navy-950 to-navy-900 p-5 sm:p-7 rounded-3xl border border-navy-700 shadow-2xl space-y-4">
+          {/* Top Badge Pill */}
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-navy-800/90 border border-solar-yellow/30 text-solar-yellow text-xs font-bold tracking-wide shadow-sm">
+            <span className="text-sm">☀️</span>
+            <span>{heroBadge}</span>
+          </div>
+
           {/* Main Headline with High-Contrast Golden Yellow Accent */}
           <h1 className="font-display font-extrabold text-2xl sm:text-3xl md:text-4xl text-white tracking-tight leading-[1.18]">
             {heroHeading.includes("Across India") ? (

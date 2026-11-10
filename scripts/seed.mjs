@@ -197,7 +197,7 @@ async function seed() {
       slug: "residential-rooftop-solar",
       category: "Residential",
       tagline: "Slash your monthly home electricity bill up to 90% with clean solar energy.",
-      description: "Custom-engineered rooftop solar solutions for independent bungalows, villas, and housing societies in Bihar, Jharkhand, and UP. We handle site survey, structural planning, high-efficiency panel mounting, and DISCOM net-metering approvals.",
+      description: "Custom-engineered rooftop solar solutions for independent bungalows, villas, and housing societies across India. We handle site survey, structural planning, high-efficiency panel mounting, and DISCOM net-metering approvals.",
       keyBenefits: ["Save 70-90% on home electricity bills", "PM Surya Ghar subsidy eligibility guidance", "25-year panel performance guarantee", "Minimal maintenance and weather-resistant mounting"],
       suitableFor: ["Independent houses", "Duplexes & Villas", "Apartment Societies", "Rural Farmhouses"],
       typicalCapacityRange: "1 kW – 10 kW",
@@ -296,7 +296,7 @@ async function seed() {
         { stepNumber: 3, title: "Load & Bill Analysis", description: "Assessment of peak load requirements and DISCOM connection sanctioned capacity." },
         { stepNumber: 4, title: "Technical Feasibility Report", description: "Delivery of custom solar engineering proposal." }
       ],
-      serviceableStates: ["Bihar", "Jharkhand", "Uttar Pradesh"],
+      serviceableStates: ["Pan India", "Bihar", "Jharkhand", "Uttar Pradesh", "West Bengal", "Odisha", "Delhi NCR", "Rajasthan", "Maharashtra", "All States & UTs"],
       image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=1200&q=80",
       sortOrder: 1,
       isAvailable: true,
@@ -316,7 +316,7 @@ async function seed() {
         { stepNumber: 3, title: "Inverter & DCDB Wiring", description: "Neat routing of DC & AC cables with conduit protection." },
         { stepNumber: 4, title: "Earthing & Safety Check", description: "Dedicated earthing pits for structure, inverter, and lightning arrester." }
       ],
-      serviceableStates: ["Bihar", "Jharkhand", "Uttar Pradesh"],
+      serviceableStates: ["Pan India", "Bihar", "Jharkhand", "Uttar Pradesh", "West Bengal", "Odisha", "Delhi NCR", "Rajasthan", "Maharashtra", "All States & UTs"],
       image: "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=1200&q=80",
       sortOrder: 2,
       isAvailable: true,
@@ -336,7 +336,7 @@ async function seed() {
         { stepNumber: 3, title: "Work Completion Report", description: "Submission of installer testing results and inverter specs." },
         { stepNumber: 4, title: "Bi-directional Meter Testing", description: "Final testing and seal fixing by utility staff." }
       ],
-      serviceableStates: ["Bihar", "Jharkhand", "Uttar Pradesh"],
+      serviceableStates: ["Pan India", "Bihar", "Jharkhand", "Uttar Pradesh", "West Bengal", "Odisha", "Delhi NCR", "Rajasthan", "Maharashtra", "All States & UTs"],
       image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1200&q=80",
       sortOrder: 3,
       isAvailable: true,
@@ -347,7 +347,7 @@ async function seed() {
       slug: "subsidy-application-guidance",
       shortDescription: "Expert assistance with national portal registration and document submission for residential rooftop subsidies.",
       fullDescription: "Under the PM Surya Ghar: Muft Bijli Yojana, residential households can claim up to ₹78,000 national financial assistance for 3kW rooftop installations. We provide guidance on uploading verified electricity consumer bills, bank details, and installer certificates.",
-      benefits: ["Transparent step-by-step guidance on official national portal", "Document verification to prevent application rejection", "Direct DBT subsidy transfer to customer bank account", "Support across Bihar, Jharkhand, and UP state DISCOMs"],
+      benefits: ["Transparent step-by-step guidance on official national portal", "Document verification to prevent application rejection", "Direct DBT subsidy transfer to customer bank account", "Support across state DISCOMs nationwide"],
       suitableCustomers: ["Residential consumers with valid DISCOM account"],
       supportedSystemTypes: ["1 kW to 10 kW Residential Rooftop"],
       processSteps: [
@@ -356,7 +356,7 @@ async function seed() {
         { stepNumber: 3, title: "System Installation", description: "Installation by authorized team using ALMM certified panels." },
         { stepNumber: 4, title: "Subsidy Disbursement", description: "Commissioning certificate submission and direct bank transfer." }
       ],
-      serviceableStates: ["Bihar", "Jharkhand", "Uttar Pradesh"],
+      serviceableStates: ["Pan India", "Bihar", "Jharkhand", "Uttar Pradesh", "West Bengal", "Odisha", "Delhi NCR", "Rajasthan", "Maharashtra", "All States & UTs"],
       image: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=1200&q=80",
       sortOrder: 4,
       isAvailable: true,
@@ -376,7 +376,7 @@ async function seed() {
         { stepNumber: 3, title: "Inverter Check", description: "Heat sink cleaning, firmware log review, and error code audit." },
         { stepNumber: 4, title: "Report Handover", description: "Detailed before/after generation report provided to owner." }
       ],
-      serviceableStates: ["Bihar", "Jharkhand", "Uttar Pradesh"],
+      serviceableStates: ["Pan India", "Bihar", "Jharkhand", "Uttar Pradesh", "West Bengal", "Odisha", "Delhi NCR", "Rajasthan", "Maharashtra", "All States & UTs"],
       image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=1200&q=80",
       sortOrder: 5,
       isAvailable: true,
@@ -821,7 +821,7 @@ async function seed() {
       isPublished: true,
     },
     {
-      question: "What is the subsidy under the PM Surya Ghar: Muft Bijli Yojana in Bihar, Jharkhand, and UP?",
+      question: "What is the subsidy under the PM Surya Ghar: Muft Bijli Yojana across India?",
       answer: "Under the PM Surya Ghar national scheme, residential rooftop systems receive up to ₹30,000 for 1 kW, ₹60,000 for 2 kW, and a maximum of ₹78,000 for systems 3 kW and above. The subsidy is disbursed directly to your bank account via DBT after DISCOM commissioning.",
       category: "subsidy",
       sortOrder: 2,

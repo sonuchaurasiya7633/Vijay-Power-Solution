@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import toast from "@/lib/toast";
+import CmsImageUploader from "@/components/admin/CmsImageUploader";
 import {
   Sliders,
   Save,
@@ -366,25 +367,17 @@ export default function AdminHomeCmsPage() {
                   />
                 </div>
 
-                <div>
-                  <label className="font-bold text-navy-800 block mb-1">Hero Background Image</label>
-                  <input
-                    type="text"
-                    value={hero.backgroundImage || "/images/hero-solar-banner.jpg"}
-                    onChange={(e) => setHero({ ...hero, backgroundImage: e.target.value })}
-                    className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green"
-                  />
-                  <div className="mt-2 flex items-center gap-3">
-                    <img
-                      src={hero.backgroundImage || "/images/hero-solar-banner.jpg"}
-                      alt="Hero Background Preview"
-                      className="w-32 h-20 object-cover rounded-lg border border-slate-border shadow-sm"
-                    />
-                    <span className="text-[11px] text-slate-muted">
-                      Solar EPC Collage banner: Residential, Commercial, Agro pumping & Mill (/images/hero-solar-banner.jpg)
-                    </span>
-                  </div>
-                </div>
+                <CmsImageUploader
+                  label="Hero Background Collage Banner"
+                  value={hero.backgroundImage || "/images/hero-solar-banner.jpg"}
+                  onChange={(data: any) =>
+                    setHero({ ...hero, backgroundImage: data?.imageUrl || data })
+                  }
+                  folder="homepage"
+                  defaultFallback="/images/hero-solar-banner.jpg"
+                  aspectRatioLabel="Landscape banner (16:9 or 21:9)"
+                  hint="Solar EPC collage banner representing Residential, Commercial, Agro pumping & Mill installations."
+                />
 
                 <div className="pt-2">
                   <label className="font-bold text-navy-800 block mb-2">
