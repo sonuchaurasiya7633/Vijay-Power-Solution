@@ -56,9 +56,9 @@ export default async function HeroSection() {
   const bgImage = heroData.backgroundImage || "/images/hero-solar-banner.jpg";
 
   return (
-    <section className="relative overflow-hidden bg-navy-950 text-white min-h-[440px] lg:h-[52vh] lg:min-h-[480px] lg:max-h-[560px] flex items-center py-6 sm:py-8">
-      {/* Background Solar Collage Image - 100% Full View (Zero Crop) */}
-      <div className="absolute inset-0 z-0">
+    <section className="relative overflow-hidden bg-navy-950 text-white py-6 sm:py-8 lg:py-0 lg:h-[52vh] lg:min-h-[480px] lg:max-h-[560px] flex items-center">
+      {/* Background Solar Collage Image - Desktop Full View (hidden on mobile, visible lg:block) */}
+      <div className="hidden lg:block absolute inset-0 z-0">
         <Image
           src={bgImage}
           alt="VIJOY POWER SOLUTION - Residential, Commercial & Agricultural Solar EPC"
@@ -67,13 +67,35 @@ export default async function HeroSection() {
           sizes="100vw"
           className="object-fill object-center w-full h-full"
         />
-        {/* Soft dark tint to balance brightness */}
+        {/* Soft dark tint to balance brightness on desktop */}
         <div className="absolute inset-0 bg-navy-950/25 pointer-events-none" />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        {/* Solid Corporate Navy Card - Zero Glassmorphism, 100% Crisp Background */}
-        <div className="max-w-xl lg:max-w-2xl bg-gradient-to-br from-navy-900 via-navy-950 to-navy-900 p-6 sm:p-7 rounded-3xl border border-navy-700 shadow-2xl space-y-4">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-2 lg:py-0">
+        {/* Mobile Visual Solar Showcase - 100% visible on mobile devices (hidden on lg desktop) */}
+        <div className="lg:hidden w-full mb-4 rounded-2xl overflow-hidden border border-navy-700 shadow-2xl relative aspect-[16/9] bg-navy-900 group">
+          <Image
+            src={bgImage}
+            alt="VIJOY POWER SOLUTION - Solar Panels Installation in Bihar, Jharkhand & UP"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-center"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-navy-950/85 via-transparent to-transparent pointer-events-none" />
+          <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-navy-900/90 backdrop-blur-md border border-solar-yellow/40 text-[10px] font-bold text-solar-yellow shadow-md">
+              <CheckCircle2 className="w-3.5 h-3.5 text-solar-yellow shrink-0" />
+              <span>Certified Solar EPC • 10W to 730W</span>
+            </span>
+            <span className="text-[10px] font-bold text-white bg-solar-green/90 px-2.5 py-0.5 rounded-md shadow-sm">
+              Bihar • JH • UP
+            </span>
+          </div>
+        </div>
+
+        {/* Solid Corporate Navy Card - Zero Glassmorphism, 100% Crisp Typography */}
+        <div className="max-w-xl lg:max-w-2xl bg-gradient-to-br from-navy-900 via-navy-950 to-navy-900 p-5 sm:p-7 rounded-3xl border border-navy-700 shadow-2xl space-y-4">
           {/* Main Headline with High-Contrast Golden Yellow Accent */}
           <h1 className="font-display font-extrabold text-2xl sm:text-3xl md:text-4xl text-white tracking-tight leading-[1.18]">
             {heroHeading.includes("Solar Energy") ? (
