@@ -8,6 +8,7 @@ import { formatDateIST } from "@/lib/utils/formatters";
 import { INDIAN_STATES_AND_UTS } from "@/lib/constants/states";
 import CmsImageUploader from "@/components/admin/CmsImageUploader";
 import CmsLivePreviewModal from "@/components/admin/CmsLivePreviewModal";
+import CmsTableImageCell from "@/components/admin/CmsTableImageCell";
 
 export default function AdminProjectsPage() {
   const [projects, setProjects] = useState<any[]>([]);
@@ -225,6 +226,7 @@ export default function AdminProjectsPage() {
             <table className="w-full text-left text-xs">
               <thead className="bg-slate-bg text-slate-muted uppercase font-bold text-[10px] tracking-wider border-b border-slate-border">
                 <tr>
+                  <th className="p-4 w-20">Photo</th>
                   <th className="p-4">Project</th>
                   <th className="p-4">Capacity</th>
                   <th className="p-4">Location</th>
@@ -232,12 +234,41 @@ export default function AdminProjectsPage() {
                   <th className="p-4">Consent</th>
                   <th className="p-4">Status</th>
                   <th className="p-4">Completed</th>
-                  <th className="p-4">Actions</th>
+                  <th className="p-4 text-right sticky right-0 bg-slate-bg shadow-[-6px_0_10px_rgba(0,0,0,0.04)] z-10">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {projects.map((p) => (
-                  <tr key={p._id} className="hover:bg-slate-bg/50 transition-colors">
+                  <tr key={p._id} className="hover:bg-slate-bg/50 transition-colors group/row">
+                    <td className="p-4">
+                      <CmsTableImageCell
+                        imageUrl={p.coverImage}
+                        title={p.title}
+                        folder="projects"
+                        onUpdate={async (newUrl) => {
+                          const res = await fetch(`/api/projects/${p._id}`, {
+                            method: "PATCH",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ coverImage: newUrl }),
+                          });
+                          if (!res.ok) throw new Error("Failed to update project photo");
+                          setProjects((prev) =>
+                            prev.map((item) => (item._id === p._id ? { ...item, coverImage: newUrl } : item))
+                          );
+                        }}
+                        onDelete={async () => {
+                          const res = await fetch(`/api/projects/${p._id}`, {
+                            method: "PATCH",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ coverImage: "" }),
+                          });
+                          if (!res.ok) throw new Error("Failed to remove project photo");
+                          setProjects((prev) =>
+                            prev.map((item) => (item._id === p._id ? { ...item, coverImage: "" } : item))
+                          );
+                        }}
+                      />
+                    </td>
                     <td className="p-4 font-bold text-navy-800 max-w-xs truncate">{p.title}</td>
                     <td className="p-4 font-extrabold text-navy-800">{p.systemCapacityKw} kW</td>
                     <td className="p-4 text-slate-muted">{p.city}, {p.state}</td>
@@ -262,7 +293,8 @@ export default function AdminProjectsPage() {
                       </span>
                     </td>
                     <td className="p-4 text-slate-muted">{p.completionDate ? formatDateIST(p.completionDate) : "-"}</td>
-                    <td className="p-4 flex items-center gap-2">
+                    <td className="p-4 sticky right-0 bg-white group-hover/row:bg-slate-50 shadow-[-6px_0_10px_rgba(0,0,0,0.04)] z-10">
+                      <div className="flex items-center justify-end gap-1.5">
                       <button
                         onClick={() => openEditModal(p)}
                         className="p-1.5 rounded bg-navy-50 text-navy-800 hover:bg-navy-800 hover:text-white font-bold text-[11px] flex items-center gap-1 transition-colors"
@@ -291,7 +323,8 @@ export default function AdminProjectsPage() {
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
-                    </td>
+                    </div>
+                  </td>
                   </tr>
                 ))}
               </tbody>

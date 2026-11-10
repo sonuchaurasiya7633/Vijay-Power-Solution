@@ -184,16 +184,17 @@ export default function CmsImageUploader({
             <div
               className={`relative w-full ${getAspectClass()} rounded-xl overflow-hidden bg-navy-950 flex items-center justify-center group`}
             >
-              <Image
+              <img
                 src={value}
                 alt={altText || "CMS Image"}
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-contain"
+                onError={(e) => {
+                  e.currentTarget.src = "/images/hero-solar-rooftop.jpg";
+                }}
+                className="w-full h-full object-contain"
               />
 
               {/* Hover overlay with action pills */}
-              <div className="absolute inset-0 bg-navy-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-4">
+              <div className="absolute inset-0 bg-navy-950/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-4">
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
@@ -211,6 +212,15 @@ export default function CmsImageUploader({
                   <Eye className="w-3.5 h-3.5" />
                   <span>Full View</span>
                 </button>
+                <button
+                  type="button"
+                  onClick={handleClearImage}
+                  disabled={uploading}
+                  className="px-3 py-1.5 rounded-lg bg-red-600 text-white text-xs font-bold shadow-md hover:bg-red-700 flex items-center gap-1.5 transition-transform hover:scale-105"
+                >
+                  <X className="w-3.5 h-3.5" />
+                  <span>Delete Photo</span>
+                </button>
               </div>
 
               {uploading && (
@@ -224,15 +234,26 @@ export default function CmsImageUploader({
             {/* Quick action bar beneath preview */}
             <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-[11px] text-slate-muted">
               <span className="truncate max-w-xs">{value}</span>
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={uploading}
-                className="font-bold text-solar-green hover:underline flex items-center gap-1"
-              >
-                <Upload className="w-3 h-3" />
-                <span>Replace with Local File</span>
-              </button>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                  className="font-bold text-solar-green hover:underline flex items-center gap-1 cursor-pointer"
+                >
+                  <Upload className="w-3.5 h-3.5" />
+                  <span>Replace Photo</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleClearImage}
+                  disabled={uploading}
+                  className="font-bold text-red-600 hover:underline flex items-center gap-1 cursor-pointer"
+                >
+                  <X className="w-3.5 h-3.5" />
+                  <span>Delete Photo</span>
+                </button>
+              </div>
             </div>
           </div>
         ) : (

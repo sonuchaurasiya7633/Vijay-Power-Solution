@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import CmsImageUploader from "@/components/admin/CmsImageUploader";
 import CmsLivePreviewModal from "@/components/admin/CmsLivePreviewModal";
+import CmsTableImageCell from "@/components/admin/CmsTableImageCell";
 
 export default function AdminSolutionsPage() {
   const [solutions, setSolutions] = useState<any[]>([]);
@@ -208,18 +209,35 @@ export default function AdminSolutionsPage() {
             >
               <div>
                 <div className="relative h-44 w-full bg-slate-100 overflow-hidden">
-                  {s.image ? (
-                    <img
-                      src={s.image}
-                      alt={s.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-slate-400">
-                      <ImageIcon className="w-8 h-8" />
-                    </div>
-                  )}
-                  <div className="absolute top-3 left-3">
+                  <CmsTableImageCell
+                    imageUrl={s.image}
+                    title={s.title}
+                    folder="solutions"
+                    aspect="card"
+                    onUpdate={async (newUrl) => {
+                      const res = await fetch(`/api/solutions/${s._id}`, {
+                        method: "PATCH",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ image: newUrl }),
+                      });
+                      if (!res.ok) throw new Error("Failed to update solution photo");
+                      setSolutions((prev) =>
+                        prev.map((item) => (item._id === s._id ? { ...item, image: newUrl } : item))
+                      );
+                    }}
+                    onDelete={async () => {
+                      const res = await fetch(`/api/solutions/${s._id}`, {
+                        method: "PATCH",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ image: "" }),
+                      });
+                      if (!res.ok) throw new Error("Failed to remove solution photo");
+                      setSolutions((prev) =>
+                        prev.map((item) => (item._id === s._id ? { ...item, image: "" } : item))
+                      );
+                    }}
+                  />
+                  <div className="absolute top-3 left-3 z-10 pointer-events-none">
                     <span
                       className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase shadow-sm ${
                         s.isPublished

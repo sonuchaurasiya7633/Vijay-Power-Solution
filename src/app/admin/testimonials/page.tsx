@@ -20,6 +20,7 @@ import {
 import { INDIAN_STATES_AND_UTS } from "@/lib/constants/states";
 import CmsImageUploader from "@/components/admin/CmsImageUploader";
 import CmsLivePreviewModal from "@/components/admin/CmsLivePreviewModal";
+import CmsTableImageCell from "@/components/admin/CmsTableImageCell";
 
 export default function AdminTestimonialsPage() {
   const [reviews, setReviews] = useState<any[]>([]);
@@ -227,15 +228,34 @@ export default function AdminTestimonialsPage() {
 
               <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-full overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
-                    {t.photoUrl ? (
-                      <img src={t.photoUrl} alt={t.customerName} className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-slate-400">
-                        <User className="w-4 h-4" />
-                      </div>
-                    )}
-                  </div>
+                  <CmsTableImageCell
+                    imageUrl={t.photoUrl}
+                    title={t.customerName}
+                    folder="testimonials"
+                    aspect="avatar"
+                    onUpdate={async (newUrl) => {
+                      const res = await fetch(`/api/testimonials/${t._id}`, {
+                        method: "PATCH",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ photoUrl: newUrl }),
+                      });
+                      if (!res.ok) throw new Error("Failed to update reviewer photo");
+                      setReviews((prev) =>
+                        prev.map((item) => (item._id === t._id ? { ...item, photoUrl: newUrl } : item))
+                      );
+                    }}
+                    onDelete={async () => {
+                      const res = await fetch(`/api/testimonials/${t._id}`, {
+                        method: "PATCH",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ photoUrl: "" }),
+                      });
+                      if (!res.ok) throw new Error("Failed to remove reviewer photo");
+                      setReviews((prev) =>
+                        prev.map((item) => (item._id === t._id ? { ...item, photoUrl: "" } : item))
+                      );
+                    }}
+                  />
                   <div>
                     <h4 className="text-xs font-bold text-navy-800">{t.customerName}</h4>
                     <p className="text-[10px] text-slate-muted">{t.customerCity}, {t.customerState} ({t.systemCapacityKw}kW)</p>

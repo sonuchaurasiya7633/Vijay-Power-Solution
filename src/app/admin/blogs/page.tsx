@@ -5,6 +5,8 @@ import Link from "next/link";
 import toast from "@/lib/toast";
 import { FileText, Plus, CheckCircle2, Eye, Trash2, Edit3, X, Loader2, Save } from "lucide-react";
 import { formatDateIST } from "@/lib/utils/formatters";
+import CmsImageUploader from "@/components/admin/CmsImageUploader";
+import CmsTableImageCell from "@/components/admin/CmsTableImageCell";
 
 export default function AdminBlogsPage() {
   const [blogs, setBlogs] = useState<any[]>([]);
@@ -18,6 +20,7 @@ export default function AdminBlogsPage() {
     slug: "",
     excerpt: "",
     content: "",
+    coverImage: "",
     category: "Subsidy Guides",
     authorName: "Er. Vijoy Kumar",
     isPublished: true,
@@ -42,6 +45,7 @@ export default function AdminBlogsPage() {
       slug: "",
       excerpt: "",
       content: "",
+      coverImage: "",
       category: "Subsidy Guides",
       authorName: "Er. Vijoy Kumar",
       isPublished: true,
@@ -56,6 +60,7 @@ export default function AdminBlogsPage() {
       slug: b.slug || "",
       excerpt: b.excerpt || "",
       content: b.content || "",
+      coverImage: b.coverImage || "",
       category: b.category || "Subsidy Guides",
       authorName: b.authorName || "Er. Vijoy Kumar",
       isPublished: b.isPublished !== undefined ? b.isPublished : true,
@@ -182,17 +187,48 @@ export default function AdminBlogsPage() {
             <table className="w-full text-left text-xs">
               <thead className="bg-slate-bg text-slate-muted uppercase font-bold text-[10px] tracking-wider border-b border-slate-border">
                 <tr>
+                  <th className="p-4 w-20">Cover</th>
                   <th className="p-4">Title</th>
                   <th className="p-4">Category</th>
                   <th className="p-4">Author</th>
                   <th className="p-4">Status</th>
                   <th className="p-4">Published</th>
-                  <th className="p-4">Actions</th>
+                  <th className="p-4 text-right sticky right-0 bg-slate-bg shadow-[-6px_0_10px_rgba(0,0,0,0.04)] z-10">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {blogs.map((b) => (
-                  <tr key={b._id} className="hover:bg-slate-bg/50 transition-colors">
+                  <tr key={b._id} className="hover:bg-slate-bg/50 transition-colors group/row">
+                    <td className="p-4">
+                      <CmsTableImageCell
+                        imageUrl={b.coverImage}
+                        title={b.title}
+                        folder="blogs"
+                        aspect="square"
+                        onUpdate={async (newUrl) => {
+                          const res = await fetch(`/api/blogs/${b._id}`, {
+                            method: "PATCH",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ coverImage: newUrl }),
+                          });
+                          if (!res.ok) throw new Error("Failed to update blog cover");
+                          setBlogs((prev) =>
+                            prev.map((item) => (item._id === b._id ? { ...item, coverImage: newUrl } : item))
+                          );
+                        }}
+                        onDelete={async () => {
+                          const res = await fetch(`/api/blogs/${b._id}`, {
+                            method: "PATCH",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ coverImage: "" }),
+                          });
+                          if (!res.ok) throw new Error("Failed to remove blog cover");
+                          setBlogs((prev) =>
+                            prev.map((item) => (item._id === b._id ? { ...item, coverImage: "" } : item))
+                          );
+                        }}
+                      />
+                    </td>
                     <td className="p-4 font-bold text-navy-800 max-w-sm truncate">{b.title}</td>
                     <td className="p-4 text-slate-muted">{b.category}</td>
                     <td className="p-4 text-slate-muted">{b.authorName}</td>
@@ -206,35 +242,37 @@ export default function AdminBlogsPage() {
                       </span>
                     </td>
                     <td className="p-4 text-slate-muted">{b.publishedAt ? formatDateIST(b.publishedAt) : "-"}</td>
-                    <td className="p-4 flex items-center gap-2">
-                      <button
-                        onClick={() => openEditModal(b)}
-                        className="p-1.5 rounded bg-navy-50 text-navy-800 hover:bg-navy-800 hover:text-white font-bold text-[11px] flex items-center gap-1 transition-colors"
-                        title="Edit Article"
-                      >
-                        <Edit3 className="w-3.5 h-3.5" />
-                        <span>Edit</span>
-                      </button>
-                      <button
-                        onClick={() => togglePublish(b._id, b.isPublished)}
-                        className="px-2 py-1 rounded border border-slate-border text-navy-800 hover:bg-slate-50 font-bold text-[10px]"
-                      >
-                        {b.isPublished ? "Unpublish" : "Publish"}
-                      </button>
-                      <Link
-                        href={`/blog/${b.slug}`}
-                        target="_blank"
-                        className="px-2 py-1 rounded bg-navy-50 text-navy-800 hover:bg-navy-800 hover:text-white font-bold text-[10px] inline-block"
-                      >
-                        Preview
-                      </Link>
-                      <button
-                        onClick={() => handleDelete(b._id)}
-                        className="p-1 text-slate-400 hover:text-red-500 rounded"
-                        title="Delete Article"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
+                    <td className="p-4 sticky right-0 bg-white group-hover/row:bg-slate-50 shadow-[-6px_0_10px_rgba(0,0,0,0.04)] z-10">
+                      <div className="flex items-center justify-end gap-1.5">
+                        <button
+                          onClick={() => openEditModal(b)}
+                          className="p-1.5 rounded bg-navy-50 text-navy-800 hover:bg-navy-800 hover:text-white font-bold text-[11px] flex items-center gap-1 transition-colors"
+                          title="Edit Article"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                          <span>Edit</span>
+                        </button>
+                        <button
+                          onClick={() => togglePublish(b._id, b.isPublished)}
+                          className="px-2 py-1 rounded border border-slate-border text-navy-800 hover:bg-slate-50 font-bold text-[10px]"
+                        >
+                          {b.isPublished ? "Unpublish" : "Publish"}
+                        </button>
+                        <Link
+                          href={`/blog/${b.slug}`}
+                          target="_blank"
+                          className="px-2 py-1 rounded bg-navy-50 text-navy-800 hover:bg-navy-800 hover:text-white font-bold text-[10px] inline-block"
+                        >
+                          Preview
+                        </Link>
+                        <button
+                          onClick={() => handleDelete(b._id)}
+                          className="p-1 text-slate-400 hover:text-red-500 rounded"
+                          title="Delete Article"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -279,6 +317,16 @@ export default function AdminBlogsPage() {
                   className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green font-mono"
                 />
               </div>
+
+              {/* Cover Photo */}
+              <CmsImageUploader
+                label="Article Cover Photo"
+                value={form.coverImage}
+                onChange={(url) => setForm({ ...form, coverImage: url })}
+                folder="blogs"
+                aspectRatio="banner"
+                helpText="Upload a banner photo for this educational guide. Replaces existing image and saves to Cloudinary."
+              />
 
               <div className="grid grid-cols-2 gap-3">
                 <div>

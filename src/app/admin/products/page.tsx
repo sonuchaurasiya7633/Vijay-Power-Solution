@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import CmsImageUploader from "@/components/admin/CmsImageUploader";
 import CmsLivePreviewModal from "@/components/admin/CmsLivePreviewModal";
+import CmsTableImageCell from "@/components/admin/CmsTableImageCell";
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<any[]>([]);
@@ -236,7 +237,7 @@ export default function AdminProductsPage() {
             <table className="w-full text-left text-xs">
               <thead className="bg-slate-bg text-slate-muted uppercase font-bold text-[10px] tracking-wider border-b border-slate-border">
                 <tr>
-                  <th className="p-4">Photo</th>
+                  <th className="p-4 w-20">Photo</th>
                   <th className="p-4">Product ID</th>
                   <th className="p-4">Name</th>
                   <th className="p-4">Brand</th>
@@ -244,26 +245,40 @@ export default function AdminProductsPage() {
                   <th className="p-4">Group</th>
                   <th className="p-4">Efficiency</th>
                   <th className="p-4">Status</th>
-                  <th className="p-4 text-right">Actions</th>
+                  <th className="p-4 text-right sticky right-0 bg-slate-bg shadow-[-6px_0_10px_rgba(0,0,0,0.04)] z-10">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {products.map((p) => (
-                  <tr key={p._id} className="hover:bg-slate-bg/50 transition-colors">
+                  <tr key={p._id} className="hover:bg-slate-bg/50 transition-colors group/row">
                     <td className="p-4">
-                      <div className="w-12 h-12 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 relative shrink-0">
-                        {p.coverImage ? (
-                          <img
-                            src={p.coverImage}
-                            alt={p.name}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-slate-400">
-                            <ImageIcon className="w-5 h-5" />
-                          </div>
-                        )}
-                      </div>
+                      <CmsTableImageCell
+                        imageUrl={p.coverImage}
+                        title={p.name}
+                        folder="products"
+                        onUpdate={async (newUrl) => {
+                          const res = await fetch(`/api/products/${p._id}`, {
+                            method: "PATCH",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ coverImage: newUrl }),
+                          });
+                          if (!res.ok) throw new Error("Failed to save image in database");
+                          setProducts((prev) =>
+                            prev.map((item) => (item._id === p._id ? { ...item, coverImage: newUrl } : item))
+                          );
+                        }}
+                        onDelete={async () => {
+                          const res = await fetch(`/api/products/${p._id}`, {
+                            method: "PATCH",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ coverImage: "" }),
+                          });
+                          if (!res.ok) throw new Error("Failed to remove image in database");
+                          setProducts((prev) =>
+                            prev.map((item) => (item._id === p._id ? { ...item, coverImage: "" } : item))
+                          );
+                        }}
+                      />
                     </td>
                     <td className="p-4 font-mono font-bold text-navy-800">{p.productId}</td>
                     <td className="p-4 font-bold text-navy-800 max-w-xs truncate">{p.name}</td>
@@ -289,7 +304,7 @@ export default function AdminProductsPage() {
                         {p.isPublished ? "Published" : "Draft"}
                       </button>
                     </td>
-                    <td className="p-4">
+                    <td className="p-4 sticky right-0 bg-white group-hover/row:bg-slate-50 shadow-[-6px_0_10px_rgba(0,0,0,0.04)] z-10">
                       <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => openEditModal(p)}

@@ -24,6 +24,7 @@ import {
   User,
 } from "lucide-react";
 import { INDIAN_STATES_AND_UTS } from "@/lib/constants/states";
+import CmsImageUploader from "@/components/admin/CmsImageUploader";
 
 interface GalleryDoc {
   _id: string;
@@ -717,6 +718,16 @@ export default function AdminInstallationGalleryPage() {
                   className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green text-xs"
                 />
               </div>
+
+              {/* Replace / Manage Photograph */}
+              <CmsImageUploader
+                label="Photograph File (Replace or Upload New)"
+                value={editForm.imageUrl}
+                onChange={(url) => setEditForm({ ...editForm, imageUrl: url })}
+                folder="gallery"
+                aspectRatio="portrait"
+                helpText="Upload an authentic installation photograph with customer. Replaces existing image and saves to Cloudinary."
+              />
 
               {/* Customer Name & Capacity */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

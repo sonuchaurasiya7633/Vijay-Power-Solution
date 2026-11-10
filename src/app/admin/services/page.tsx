@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import CmsImageUploader from "@/components/admin/CmsImageUploader";
 import CmsLivePreviewModal from "@/components/admin/CmsLivePreviewModal";
+import CmsTableImageCell from "@/components/admin/CmsTableImageCell";
 
 export default function AdminServicesPage() {
   const [services, setServices] = useState<any[]>([]);
@@ -209,18 +210,35 @@ export default function AdminServicesPage() {
             >
               <div>
                 <div className="relative h-44 w-full bg-slate-100 overflow-hidden">
-                  {s.image ? (
-                    <img
-                      src={s.image}
-                      alt={s.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-slate-400">
-                      <ImageIcon className="w-8 h-8" />
-                    </div>
-                  )}
-                  <div className="absolute top-3 left-3 flex gap-1.5">
+                  <CmsTableImageCell
+                    imageUrl={s.image}
+                    title={s.title}
+                    folder="services"
+                    aspect="card"
+                    onUpdate={async (newUrl) => {
+                      const res = await fetch(`/api/services/${s._id}`, {
+                        method: "PATCH",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ image: newUrl }),
+                      });
+                      if (!res.ok) throw new Error("Failed to update service photo");
+                      setServices((prev) =>
+                        prev.map((item) => (item._id === s._id ? { ...item, image: newUrl } : item))
+                      );
+                    }}
+                    onDelete={async () => {
+                      const res = await fetch(`/api/services/${s._id}`, {
+                        method: "PATCH",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ image: "" }),
+                      });
+                      if (!res.ok) throw new Error("Failed to remove service photo");
+                      setServices((prev) =>
+                        prev.map((item) => (item._id === s._id ? { ...item, image: "" } : item))
+                      );
+                    }}
+                  />
+                  <div className="absolute top-3 left-3 flex gap-1.5 z-10 pointer-events-none">
                     <span
                       className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase shadow-sm ${
                         s.isAvailable
