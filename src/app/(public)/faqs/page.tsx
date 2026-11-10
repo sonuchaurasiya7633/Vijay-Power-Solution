@@ -5,7 +5,7 @@ import CtaBanner from "@/components/public/CtaBanner";
 export const metadata: Metadata = {
   title: "Frequently Asked Questions | VIJOY POWER SOLUTION Solar",
   description:
-    "Find answers to common rooftop solar questions: subsidies, DISCOM net metering, payback periods, warranties, and maintenance in Bihar, JH, and UP.",
+    "Find answers to common rooftop solar questions: subsidies, DISCOM net metering, payback periods, warranties, and maintenance across India.",
 };
 
 export default function FaqsPage() {

@@ -64,7 +64,7 @@ export default function SurveysPage() {
             Rooftop Site Surveys
           </h1>
           <p className="text-xs text-slate-muted mt-0.5">
-            Physical site inspections, shadow analysis, and load verification across Bihar, JH, and UP.
+            Physical site inspections, shadow analysis, and load verification across India.
           </p>
         </div>
       </div>

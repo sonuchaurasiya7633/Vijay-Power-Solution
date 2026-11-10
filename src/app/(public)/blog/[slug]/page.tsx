@@ -35,9 +35,9 @@ export default async function BlogPostPage({
   if (!article) {
     if (params.slug === "pm-surya-ghar-subsidy-guide-bihar-jharkhand-up") {
       article = {
-        title: "Complete PM Surya Ghar Subsidy Guide for Bihar, Jharkhand & UP",
-        excerpt: "Everything residential consumers need to know about the ₹78,000 central rooftop subsidy, DISCOM portal registration, and net meter commissioning.",
-        content: `The PM Surya Ghar: Muft Bijli Yojana launched by the Government of India provides a transformative opportunity for homeowners across Bihar, Jharkhand, and Uttar Pradesh to install rooftop solar with direct financial assistance.
+        title: "Complete PM Surya Ghar Subsidy Guide — Pan India Coverage",
+        excerpt: "Everything residential consumers need to know about the ₹78,000 central rooftop subsidy, DISCOM portal registration, and net meter commissioning across India.",
+        content: `The PM Surya Ghar: Muft Bijli Yojana launched by the Government of India provides a transformative opportunity for homeowners across India to install rooftop solar with direct financial assistance.
 
 ### Key Subsidy Slabs
 1. **1 kW Solar System:** ₹30,000 central assistance.

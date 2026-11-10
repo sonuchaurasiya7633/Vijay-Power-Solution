@@ -24,430 +24,558 @@ import {
   Landmark,
   Building2,
   Megaphone,
-  Compass,
-  Cpu,
+  Search,
+  Camera,
   FolderGit2,
+  Settings,
+  LayoutGrid,
 } from "lucide-react";
+import CmsLivePreviewModal from "@/components/admin/CmsLivePreviewModal";
 
-export default function AdminCmsHubPage() {
-  const [stats, setStats] = useState({
-    products: 21,
-    solutions: 12,
-    services: 15,
-    projects: 9,
-    testimonials: 6,
-    faqs: 30,
-    blogs: 10,
-    pages: 7,
-  });
+interface WebsitePageItem {
+  id: string;
+  title: string;
+  slug: string;
+  category: "core" | "catalogue" | "proof" | "legal";
+  publicUrl: string;
+  cmsHref: string;
+  sectionsCount: number;
+  sectionsList: string;
+  icon: any;
+  status: "Published" | "Active";
+  lastUpdated: string;
+  badge: string;
+  badgeColor: string;
+}
 
-  useEffect(() => {
-    // Attempt to fetch live counts
-    Promise.all([
-      fetch("/api/products").then((r) => r.json()).catch(() => ({ total: 21 })),
-      fetch("/api/solutions").then((r) => r.json()).catch(() => ({ total: 12 })),
-      fetch("/api/services").then((r) => r.json()).catch(() => ({ total: 15 })),
-      fetch("/api/projects").then((r) => r.json()).catch(() => ({ total: 9 })),
-      fetch("/api/faqs").then((r) => r.json()).catch(() => ({ total: 30 })),
-      fetch("/api/blogs").then((r) => r.json()).catch(() => ({ total: 10 })),
-      fetch("/api/pages").then((r) => r.json()).catch(() => ({ pages: [] })),
-    ]).then(([prod, sol, serv, proj, faqs, blogs, pgs]) => {
-      setStats({
-        products: prod.total || 21,
-        solutions: sol.total || 12,
-        services: serv.total || 15,
-        projects: proj.total || 9,
-        testimonials: 6,
-        faqs: faqs.total || 30,
-        blogs: blogs.total || 10,
-        pages: pgs.pages?.length || 7,
-      });
-    });
-  }, []);
+export default function AdminCmsAllPages() {
+  const [search, setSearch] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState("/");
+  const [previewTitle, setPreviewTitle] = useState("Live Page Preview");
 
-  const coreCmsModules = [
+  // Complete inventory of all public website pages
+  const websitePages: WebsitePageItem[] = [
     {
-      title: "Homepage CMS",
+      id: "home",
+      title: "Homepage",
       slug: "home",
-      description: "Hero headline, 10W-730W showcase, trust stats, 8-step journey, video walkthroughs, and CTA banner.",
-      href: "/admin/cms/home",
+      category: "core",
       publicUrl: "/",
+      cmsHref: "/admin/cms/home",
+      sectionsCount: 6,
+      sectionsList: "Hero Banner, Trust Metrics, Why Choose Us, 8-Step Journey, Video Walkthroughs, CTA Banner",
       icon: Sliders,
-      badge: "Highest Traffic",
+      status: "Published",
+      lastUpdated: "Today",
+      badge: "Core Page",
       badgeColor: "bg-solar-yellow/20 text-yellow-800 border-solar-yellow/40",
-      status: "100% Dynamic",
     },
     {
-      title: "About Us CMS",
+      id: "about",
+      title: "About Us",
       slug: "about",
-      description: "Engineering heritage narrative, mission, vision, 4 quality pillars, team leadership note, and regional footprint.",
-      href: "/admin/cms/about",
+      category: "core",
       publicUrl: "/about",
+      cmsHref: "/admin/cms/about",
+      sectionsCount: 4,
+      sectionsList: "Hero Showcase, Heritage Narrative, 4 Quality Pillars, Leadership Quote",
       icon: Building2,
+      status: "Published",
+      lastUpdated: "Recently",
       badge: "Brand Identity",
       badgeColor: "bg-blue-100 text-blue-800 border-blue-200",
-      status: "100% Dynamic",
     },
     {
-      title: "PM Surya Ghar & Subsidy CMS",
-      slug: "subsidy",
-      description: "Central subsidy slabs (₹30K-₹78K), Bihar/JH/UP state policies, DISCOM guidelines, and document checklist.",
-      href: "/admin/cms/subsidy",
+      id: "products",
+      title: "Solar Panels Catalogue (10W - 730W)",
+      slug: "solar-panels",
+      category: "catalogue",
+      publicUrl: "/solar-panels",
+      cmsHref: "/admin/products",
+      sectionsCount: 5,
+      sectionsList: "Module Filters, Power Bands, Technical Specs, ALMM Compliance, Private RFQ",
+      icon: Package,
+      status: "Published",
+      lastUpdated: "Live Sync",
+      badge: "Catalogue",
+      badgeColor: "bg-emerald-100 text-emerald-800 border-emerald-200",
+    },
+    {
+      id: "solutions",
+      title: "Solar Solutions Architecture",
+      slug: "solar-solutions",
+      category: "catalogue",
+      publicUrl: "/solar-solutions",
+      cmsHref: "/admin/solutions",
+      sectionsCount: 6,
+      sectionsList: "Residential Rooftop, Commercial & Institutional, Industrial, Agro, On-Grid, Hybrid",
+      icon: Sparkles,
+      status: "Published",
+      lastUpdated: "Live Sync",
+      badge: "Solutions",
+      badgeColor: "bg-purple-100 text-purple-800 border-purple-200",
+    },
+    {
+      id: "services",
+      title: "Turnkey EPC Services",
+      slug: "services",
+      category: "catalogue",
+      publicUrl: "/services",
+      cmsHref: "/admin/services",
+      sectionsCount: 4,
+      sectionsList: "Feasibility Surveys, DISCOM Liaison, Civil-Electrical Mounting, Net-Metering Sync",
+      icon: Wrench,
+      status: "Published",
+      lastUpdated: "Live Sync",
+      badge: "Services",
+      badgeColor: "bg-teal-100 text-teal-800 border-teal-200",
+    },
+    {
+      id: "projects",
+      title: "Installation Case Studies",
+      slug: "projects",
+      category: "proof",
+      publicUrl: "/projects",
+      cmsHref: "/admin/projects",
+      sectionsCount: 4,
+      sectionsList: "Residential Case Studies, Commercial Plants, Customer Verification, Consent Badges",
+      icon: FolderGit2,
+      status: "Published",
+      lastUpdated: "Live Sync",
+      badge: "Portfolio",
+      badgeColor: "bg-indigo-100 text-indigo-800 border-indigo-200",
+    },
+    {
+      id: "gallery",
+      title: "Customer Installation Gallery",
+      slug: "gallery",
+      category: "proof",
+      publicUrl: "/gallery",
+      cmsHref: "/admin/gallery",
+      sectionsCount: 3,
+      sectionsList: "Authentic Customer Photos, Poster Cards, Fullscreen Lightbox, Tag Filters",
+      icon: Camera,
+      status: "Published",
+      lastUpdated: "Live Sync",
+      badge: "Authentic Photos",
+      badgeColor: "bg-amber-100 text-amber-800 border-amber-200",
+    },
+    {
+      id: "videos",
+      title: "Video Walkthroughs & Stories",
+      slug: "videos",
+      category: "proof",
+      publicUrl: "/videos",
+      cmsHref: "/admin/cms/home",
+      sectionsCount: 2,
+      sectionsList: "Rooftop Video Stories, Site Walkthroughs, Client Testimonial Clips",
+      icon: FilmIcon,
+      status: "Published",
+      lastUpdated: "Recently",
+      badge: "Media",
+      badgeColor: "bg-rose-100 text-rose-800 border-rose-200",
+    },
+    {
+      id: "subsidy",
+      title: "PM Surya Ghar Subsidy Guide",
+      slug: "subsidy-information",
+      category: "core",
       publicUrl: "/subsidy-information",
+      cmsHref: "/admin/cms/subsidy",
+      sectionsCount: 5,
+      sectionsList: "Subsidy Slabs (₹30K-₹78K), State Policies, Application Steps, Required Documents",
       icon: Landmark,
+      status: "Published",
+      lastUpdated: "Recently",
       badge: "Govt Schemes",
       badgeColor: "bg-emerald-100 text-emerald-800 border-emerald-200",
-      status: "100% Dynamic",
     },
     {
-      title: "Contact & Regional Desks CMS",
+      id: "calculator",
+      title: "Solar Savings Calculator",
+      slug: "solar-calculator",
+      category: "core",
+      publicUrl: "/solar-calculator",
+      cmsHref: "/admin/cms/home",
+      sectionsCount: 3,
+      sectionsList: "Interactive Monthly Bill Slider, kW Sizing Engine, 25-Year Savings Breakdown",
+      icon: CalcIcon,
+      status: "Active",
+      lastUpdated: "System Tool",
+      badge: "Calculator",
+      badgeColor: "bg-blue-100 text-blue-800 border-blue-200",
+    },
+    {
+      id: "service-areas",
+      title: "Pan India Service Coverage",
+      slug: "service-areas",
+      category: "core",
+      publicUrl: "/service-areas",
+      cmsHref: "/admin/service-areas",
+      sectionsCount: 3,
+      sectionsList: "Nationwide Coverage Map, Regional Partner Hubs, DISCOM Liaisons",
+      icon: MapPin,
+      status: "Published",
+      lastUpdated: "Live Sync",
+      badge: "Pan India",
+      badgeColor: "bg-green-100 text-green-800 border-green-200",
+    },
+    {
+      id: "contact",
+      title: "Contact & Regional Desks",
       slug: "contact",
-      description: "Gaya HQ, Patna branch, Ranchi desk, Lucknow desk, emergency helplines, WhatsApp desk, and Google Maps embed.",
-      href: "/admin/cms/contact",
+      category: "core",
       publicUrl: "/contact",
+      cmsHref: "/admin/cms/contact",
+      sectionsCount: 4,
+      sectionsList: "Gaya HQ, Patna Branch, Ranchi Desk, Lucknow Desk, Interactive Map",
       icon: Phone,
+      status: "Published",
+      lastUpdated: "Recently",
       badge: "Lead Routing",
       badgeColor: "bg-purple-100 text-purple-800 border-purple-200",
-      status: "100% Dynamic",
     },
     {
-      title: "Header, Notice Bar & Footer CMS",
-      slug: "header-footer",
-      description: "Top announcement marquee ticker, emergency hotline, navbar branding, footer about blurb, and copyright.",
-      href: "/admin/cms/header-footer",
+      id: "header-footer",
+      title: "Header, Marquee & Footer Shell",
+      slug: "global-shell",
+      category: "core",
       publicUrl: "/",
+      cmsHref: "/admin/cms/header-footer",
+      sectionsCount: 4,
+      sectionsList: "Brand Logo, Top Marquee Ticker, Emergency Hotline, Footer Office Address, Copyright",
       icon: Megaphone,
-      badge: "Global Shell",
-      badgeColor: "bg-rose-100 text-rose-800 border-rose-200",
-      status: "100% Dynamic",
+      status: "Active",
+      lastUpdated: "Global Shell",
+      badge: "All Pages Shell",
+      badgeColor: "bg-navy-100 text-navy-800 border-navy-200",
     },
     {
-      title: "Custom Pages & Legal CMS",
-      slug: "pages",
-      description: "Terms & Conditions, Privacy Policy, Solar Generation Disclaimer, and custom marketing landing pages.",
-      href: "/admin/pages",
+      id: "privacy-policy",
+      title: "Privacy Policy",
+      slug: "privacy-policy",
+      category: "legal",
       publicUrl: "/privacy-policy",
+      cmsHref: "/admin/pages",
+      sectionsCount: 2,
+      sectionsList: "Data Privacy Standards, Lead Information Safety, Customer Rights",
       icon: FileCode2,
-      badge: `${stats.pages} Active Pages`,
+      status: "Published",
+      lastUpdated: "Policy",
+      badge: "Legal",
       badgeColor: "bg-slate-100 text-slate-800 border-slate-200",
-      status: "Page Builder",
+    },
+    {
+      id: "terms-and-conditions",
+      title: "Terms and Conditions",
+      slug: "terms-and-conditions",
+      category: "legal",
+      publicUrl: "/terms-and-conditions",
+      cmsHref: "/admin/pages",
+      sectionsCount: 2,
+      sectionsList: "EPC Service Terms, Site Survey Protocols, Quotation Policies",
+      icon: FileCode2,
+      status: "Published",
+      lastUpdated: "Policy",
+      badge: "Legal",
+      badgeColor: "bg-slate-100 text-slate-800 border-slate-200",
+    },
+    {
+      id: "disclaimer",
+      title: "Solar Generation Disclaimer",
+      slug: "disclaimer",
+      category: "legal",
+      publicUrl: "/disclaimer",
+      cmsHref: "/admin/pages",
+      sectionsCount: 2,
+      sectionsList: "Regulatory Disclaimers, Solar Generation & Irradiance Assumptions",
+      icon: FileCode2,
+      status: "Published",
+      lastUpdated: "Policy",
+      badge: "Legal",
+      badgeColor: "bg-slate-100 text-slate-800 border-slate-200",
     },
   ];
 
-  const catalogueModules = [
-    {
-      title: "Solar Panels Catalog",
-      count: `${stats.products} Models (10W-730W)`,
-      description: "Mono PERC, TOPCon, HJT, Poly, Bifacial modules with cell count, efficiency, and dimensions.",
-      href: "/admin/products",
-      icon: Package,
-    },
-    {
-      title: "Product Categories",
-      count: "12 Categories",
-      description: "Module families, inverters, hybrid batteries, mounting structures, and solar pumps.",
-      href: "/admin/categories",
-      icon: Layers,
-    },
-    {
-      title: "Solar Solutions",
-      count: `${stats.solutions} Solutions`,
-      description: "Residential, Commercial, Industrial, Agricultural, Petrol Pumps, Hospitals, and Cold Storages.",
-      href: "/admin/solutions",
-      icon: Sparkles,
-    },
-    {
-      title: "Turnkey EPC Services",
-      count: `${stats.services} Services`,
-      description: "Engineering surveys, net metering liaison, shadow analysis, pergola solar, and AMC contracts.",
-      href: "/admin/services",
-      icon: Wrench,
-    },
-    {
-      title: "Nationwide Service Coverage",
-      count: "Pan India",
-      description: "Service presence, DISCOM net metering liaisons, and certified installation coverage across India.",
-      href: "/admin/service-areas",
-      icon: MapPin,
-    },
-  ];
+  function FilmIcon(props: any) {
+    return <ImageIcon {...props} />;
+  }
+  function CalcIcon(props: any) {
+    return <Sliders {...props} />;
+  }
 
-  const socialProofModules = [
-    {
-      title: "Installation Customer Gallery",
-      count: "Cloudinary CDN",
-      description: "Authentic installation & customer photos, photo replacement, delete, hide/show, and lightbox display.",
-      href: "/admin/gallery",
-      icon: ImageIcon,
-    },
-    {
-      title: "Portfolio Projects",
-      count: `${stats.projects} Case Studies`,
-      description: "Verified customer installations across India with signed customer consent flags.",
-      href: "/admin/projects",
-      icon: FolderGit2,
-    },
-    {
-      title: "Customer Testimonials",
-      count: `${stats.testimonials} Reviews`,
-      description: "5-star residential and commercial testimonials with consent-enforced media verification.",
-      href: "/admin/testimonials",
-      icon: MessageSquareQuote,
-    },
-    {
-      title: "Solar FAQs Knowledge Hub",
-      count: `${stats.faqs} Answered FAQs`,
-      description: "Categorized into Subsidies, Net Metering, Battery Hybrid, Pergola Structures, and Commercial ROI.",
-      href: "/admin/faqs",
-      icon: HelpCircle,
-    },
-    {
-      title: "Educational Blogs & Guides",
-      count: `${stats.blogs} Articles`,
-      description: "Guides on PM Surya Ghar, TOPCon vs Mono, Bihar/UP net metering tariffs, and ALMM lists.",
-      href: "/admin/blogs",
-      icon: FileText,
-    },
-    {
-      title: "Media Assets Library",
-      count: "Cloudinary CDN",
-      description: "High-resolution project photos, technical diagrams, video walkthroughs, and certificates.",
-      href: "/admin/media",
-      icon: ImageIcon,
-    },
-  ];
+  // Filtered pages
+  const filteredPages = websitePages.filter((p) => {
+    const matchesCategory =
+      selectedCategory === "all" || p.category === selectedCategory;
+    const matchesSearch =
+      p.title.toLowerCase().includes(search.toLowerCase()) ||
+      p.slug.toLowerCase().includes(search.toLowerCase()) ||
+      p.sectionsList.toLowerCase().includes(search.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
+
+  const handleOpenPreview = (url: string, title: string) => {
+    setPreviewUrl(url);
+    setPreviewTitle(title);
+    setPreviewOpen(true);
+  };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Top Banner */}
       <div className="bg-gradient-to-r from-navy-900 via-navy-800 to-navy-950 p-6 sm:p-8 rounded-3xl text-white shadow-xl border border-navy-700 relative overflow-hidden">
         <div className="relative z-10 space-y-3">
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-[11px] font-extrabold uppercase tracking-widest text-solar-yellow bg-white/10 px-3 py-1 rounded-full border border-solar-yellow/30">
-              A to Z Content Management System
+              Central Content Control
             </span>
             <span className="text-[11px] font-bold text-solar-green bg-solar-green/20 px-2.5 py-0.5 rounded-full border border-solar-green/30 flex items-center gap-1">
-              <CheckCircle2 className="w-3.5 h-3.5" /> 100% Dynamic Database Driven
+              <CheckCircle2 className="w-3.5 h-3.5" /> All {websitePages.length} Pages Admin Editable
             </span>
           </div>
 
-          <h1 className="text-2xl sm:text-4xl font-display font-extrabold tracking-tight">
-            Central Content Control Hub
+          <h1 className="text-2xl sm:text-3xl font-display font-extrabold tracking-tight">
+            Website Pages & Visual Content Management
           </h1>
           <p className="text-slate-300 text-xs sm:text-sm max-w-3xl leading-relaxed">
-            Manage every single piece of content on <strong>VIJOY POWER SOLUTION</strong> without touching any code. 
-            All headlines, subsidy rates, contact desks, product catalogues, and legal guidelines are dynamically linked to MongoDB Atlas.
+            Manage every public webpage on <strong>VIJOY POWER SOLUTION</strong> from one central hub.
+            Edit sections, replace Cloudinary images, customize button links, and preview changes across Desktop, Tablet, and Mobile.
           </p>
 
           <div className="pt-2 flex flex-wrap items-center gap-3">
-            <Link
-              href="/"
-              target="_blank"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-solar-green hover:bg-solar-green/90 text-white rounded-xl text-xs font-bold transition-all shadow-sm"
+            <button
+              type="button"
+              onClick={() => handleOpenPreview("/", "Homepage Live Preview")}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-solar-green hover:bg-solar-green-hover text-white rounded-xl text-xs font-bold transition-all shadow-sm"
             >
               <Eye className="w-4 h-4" />
               <span>Preview Live Website</span>
-              <ExternalLink className="w-3.5 h-3.5 opacity-70" />
+            </button>
+
+            <Link
+              href="/admin/seo"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-bold transition-all border border-white/20"
+            >
+              <Globe className="w-4 h-4 text-solar-yellow" />
+              <span>Global SEO Manager</span>
             </Link>
 
             <Link
               href="/admin/pages"
               className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-bold transition-all border border-white/20"
             >
-              <FileCode2 className="w-4 h-4 text-solar-yellow" />
-              <span>Dynamic Page Builder</span>
+              <FileCode2 className="w-4 h-4 text-solar-green" />
+              <span>Custom Page Builder</span>
             </Link>
           </div>
         </div>
       </div>
 
-      {/* Overview Quick Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="bg-white p-4 rounded-2xl border border-slate-border shadow-sm">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-muted block">Dynamic Pages</span>
-          <p className="text-2xl font-black text-navy-800 mt-1 font-display">{stats.pages} Pages</p>
-          <span className="text-[10px] text-solar-green font-semibold">100% Admin Editable</span>
+      {/* Filter and Search Bar */}
+      <div className="bg-white p-4 rounded-2xl border border-slate-border shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        {/* Category Tabs */}
+        <div className="flex items-center gap-1 overflow-x-auto text-xs font-bold pb-1 sm:pb-0 scrollbar-none">
+          <button
+            type="button"
+            onClick={() => setSelectedCategory("all")}
+            className={`px-3 py-2 rounded-xl transition-colors whitespace-nowrap ${
+              selectedCategory === "all"
+                ? "bg-navy-800 text-white"
+                : "text-slate-muted hover:text-navy-800 hover:bg-slate-50"
+            }`}
+          >
+            All Pages ({websitePages.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setSelectedCategory("core")}
+            className={`px-3 py-2 rounded-xl transition-colors whitespace-nowrap ${
+              selectedCategory === "core"
+                ? "bg-navy-800 text-white"
+                : "text-slate-muted hover:text-navy-800 hover:bg-slate-50"
+            }`}
+          >
+            Core Pages
+          </button>
+          <button
+            type="button"
+            onClick={() => setSelectedCategory("catalogue")}
+            className={`px-3 py-2 rounded-xl transition-colors whitespace-nowrap ${
+              selectedCategory === "catalogue"
+                ? "bg-navy-800 text-white"
+                : "text-slate-muted hover:text-navy-800 hover:bg-slate-50"
+            }`}
+          >
+            Catalogue & Services
+          </button>
+          <button
+            type="button"
+            onClick={() => setSelectedCategory("proof")}
+            className={`px-3 py-2 rounded-xl transition-colors whitespace-nowrap ${
+              selectedCategory === "proof"
+                ? "bg-navy-800 text-white"
+                : "text-slate-muted hover:text-navy-800 hover:bg-slate-50"
+            }`}
+          >
+            Projects & Gallery
+          </button>
+          <button
+            type="button"
+            onClick={() => setSelectedCategory("legal")}
+            className={`px-3 py-2 rounded-xl transition-colors whitespace-nowrap ${
+              selectedCategory === "legal"
+                ? "bg-navy-800 text-white"
+                : "text-slate-muted hover:text-navy-800 hover:bg-slate-50"
+            }`}
+          >
+            Legal & Policies
+          </button>
         </div>
-        <div className="bg-white p-4 rounded-2xl border border-slate-border shadow-sm">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-muted block">Solar Catalogue</span>
-          <p className="text-2xl font-black text-navy-800 mt-1 font-display">{stats.products} Panels</p>
-          <span className="text-[10px] text-solar-green font-semibold">10W to 730W Range</span>
-        </div>
-        <div className="bg-white p-4 rounded-2xl border border-slate-border shadow-sm">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-muted block">Solutions & EPC</span>
-          <p className="text-2xl font-black text-navy-800 mt-1 font-display">{stats.solutions + stats.services} Tiers</p>
-          <span className="text-[10px] text-solar-green font-semibold">Residential, C&I, Agro</span>
-        </div>
-        <div className="bg-white p-4 rounded-2xl border border-slate-border shadow-sm">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-muted block">Knowledge & FAQs</span>
-          <p className="text-2xl font-black text-navy-800 mt-1 font-display">{stats.faqs + stats.blogs} Items</p>
-          <span className="text-[10px] text-solar-green font-semibold">PM Surya Ghar & Technical</span>
+
+        {/* Search input */}
+        <div className="relative w-full sm:w-64 shrink-0">
+          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <input
+            type="text"
+            placeholder="Search pages or sections..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-border text-xs outline-none focus:border-solar-green bg-slate-50/50"
+          />
         </div>
       </div>
 
-      {/* Group 1: Core Website Pages CMS */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-lg font-bold font-display text-navy-800 flex items-center gap-2">
-              <Globe className="w-5 h-5 text-solar-green" />
-              <span>Core Public Pages CMS</span>
-            </h2>
-            <p className="text-xs text-slate-muted">
-              Dedicated visual section editors for high-traffic customer-facing pages.
-            </p>
+      {/* Pages Management Table */}
+      <div className="bg-white rounded-2xl border border-slate-border shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs">
+            <thead className="bg-slate-bg text-slate-muted uppercase font-bold text-[10px] tracking-wider border-b border-slate-border">
+              <tr>
+                <th className="p-4">Page Name</th>
+                <th className="p-4">Public URL</th>
+                <th className="p-4">Managed Sections</th>
+                <th className="p-4">Status</th>
+                <th className="p-4">Last Sync</th>
+                <th className="p-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {filteredPages.map((page) => {
+                const Icon = page.icon;
+                return (
+                  <tr key={page.id} className="hover:bg-slate-bg/50 transition-colors">
+                    {/* Page Name */}
+                    <td className="p-4 font-bold text-navy-800">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-xl bg-slate-100 text-navy-800 flex items-center justify-center shrink-0 border border-slate-200">
+                          <Icon className="w-4 h-4 text-solar-green" />
+                        </div>
+                        <div>
+                          <span className="block font-bold text-navy-800">{page.title}</span>
+                          <span className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded border ${page.badgeColor}`}>
+                            {page.badge}
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+
+                    {/* Public URL */}
+                    <td className="p-4 font-mono font-bold text-slate-600">
+                      {page.publicUrl}
+                    </td>
+
+                    {/* Managed Sections */}
+                    <td className="p-4 max-w-xs">
+                      <div className="space-y-0.5">
+                        <span className="text-[11px] font-bold text-navy-800">
+                          {page.sectionsCount} Sections
+                        </span>
+                        <p className="text-[10px] text-slate-muted line-clamp-1 truncate">
+                          {page.sectionsList}
+                        </p>
+                      </div>
+                    </td>
+
+                    {/* Status */}
+                    <td className="p-4">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase bg-green-100 text-green-700">
+                        {page.status}
+                      </span>
+                    </td>
+
+                    {/* Last Sync */}
+                    <td className="p-4 text-slate-muted font-medium">
+                      {page.lastUpdated}
+                    </td>
+
+                    {/* Actions */}
+                    <td className="p-4">
+                      <div className="flex items-center justify-end gap-1.5">
+                        {/* Edit Content Button */}
+                        <Link
+                          href={page.cmsHref}
+                          className="px-3 py-1.5 rounded-lg bg-navy-800 hover:bg-navy-900 text-white font-bold text-[11px] flex items-center gap-1 shadow-sm transition-colors"
+                        >
+                          <span>Edit</span>
+                          <ArrowRight className="w-3 h-3" />
+                        </Link>
+
+                        {/* Live Preview Button */}
+                        <button
+                          type="button"
+                          onClick={() => handleOpenPreview(page.publicUrl, `${page.title} Live Preview`)}
+                          className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-navy-800 transition-colors"
+                          title="Preview in responsive modal"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                        </button>
+
+                        {/* Manage SEO Link */}
+                        <Link
+                          href="/admin/seo"
+                          className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-navy-800 transition-colors"
+                          title="Manage SEO Meta Tags"
+                        >
+                          <Globe className="w-3.5 h-3.5" />
+                        </Link>
+
+                        {/* Open Public Page */}
+                        <Link
+                          href={page.publicUrl}
+                          target="_blank"
+                          className="p-1.5 rounded-lg text-slate-400 hover:text-navy-800 hover:bg-slate-100 transition-colors"
+                          title="Open public page in new tab"
+                        >
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </Link>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        {filteredPages.length === 0 && (
+          <div className="p-16 text-center space-y-2">
+            <LayoutGrid className="w-10 h-10 text-slate-300 mx-auto" />
+            <h3 className="text-sm font-bold text-navy-800">No pages found matching &ldquo;{search}&rdquo;</h3>
+            <p className="text-xs text-slate-muted">Try clearing the search or category filter.</p>
           </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {coreCmsModules.map((m) => {
-            const Icon = m.icon;
-            return (
-              <div
-                key={m.slug}
-                className="bg-white rounded-2xl border border-slate-border p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group"
-              >
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="w-10 h-10 rounded-xl bg-navy-50 text-navy-800 flex items-center justify-center border border-slate-border group-hover:scale-105 transition-transform">
-                      <Icon className="w-5 h-5 text-solar-green" />
-                    </div>
-                    <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${m.badgeColor}`}>
-                      {m.badge}
-                    </span>
-                  </div>
-
-                  <div>
-                    <h3 className="text-sm font-bold text-navy-800 group-hover:text-solar-green transition-colors flex items-center gap-1.5">
-                      <span>{m.title}</span>
-                    </h3>
-                    <p className="text-xs text-slate-muted mt-1 leading-relaxed">
-                      {m.description}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between">
-                  <span className="text-[11px] font-semibold text-emerald-600 flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5" /> {m.status}
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <Link
-                      href={m.publicUrl}
-                      target="_blank"
-                      className="p-1.5 rounded-lg text-slate-400 hover:text-navy-800 hover:bg-slate-100 transition-colors"
-                      title="View public page"
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                    </Link>
-                    <Link
-                      href={m.href}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-navy-800 hover:bg-navy-900 text-white rounded-xl text-xs font-bold transition-all shadow-sm"
-                    >
-                      <span>Edit Content</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        )}
       </div>
 
-      {/* Group 2: Solar Catalogue & Service Content */}
-      <div className="space-y-4">
-        <div>
-          <h2 className="text-lg font-bold font-display text-navy-800 flex items-center gap-2">
-            <Package className="w-5 h-5 text-solar-yellow" />
-            <span>Catalogue & Engineering Modules</span>
-          </h2>
-          <p className="text-xs text-slate-muted">
-            Manage product specs (10W-730W strictly), categories, EPC service cards, and state service areas.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {catalogueModules.map((item, idx) => {
-            const Icon = item.icon;
-            return (
-              <Link
-                key={idx}
-                href={item.href}
-                className="bg-white p-5 rounded-2xl border border-slate-border hover:border-solar-green/50 hover:shadow-md transition-all flex items-start gap-4 group"
-              >
-                <div className="w-10 h-10 rounded-xl bg-slate-50 text-navy-800 flex items-center justify-center border border-slate-border shrink-0 group-hover:bg-solar-green-light transition-colors">
-                  <Icon className="w-5 h-5 text-navy-800 group-hover:text-solar-green" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-1">
-                    <h3 className="text-xs font-bold text-navy-800 group-hover:text-solar-green transition-colors truncate">
-                      {item.title}
-                    </h3>
-                    <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full shrink-0">
-                      {item.count}
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-slate-muted mt-1 leading-normal line-clamp-2">
-                    {item.description}
-                  </p>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Group 3: Social Proof, Media & Knowledge Hub */}
-      <div className="space-y-4">
-        <div>
-          <h2 className="text-lg font-bold font-display text-navy-800 flex items-center gap-2">
-            <MessageSquareQuote className="w-5 h-5 text-solar-green" />
-            <span>Social Proof, Media & Knowledge Hub</span>
-          </h2>
-          <p className="text-xs text-slate-muted">
-            Installations case studies with customer consent, verified testimonials, educational blogs, and FAQs.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {socialProofModules.map((item, idx) => {
-            const Icon = item.icon;
-            return (
-              <Link
-                key={idx}
-                href={item.href}
-                className="bg-white p-5 rounded-2xl border border-slate-border hover:border-solar-green/50 hover:shadow-md transition-all flex items-start gap-4 group"
-              >
-                <div className="w-10 h-10 rounded-xl bg-slate-50 text-navy-800 flex items-center justify-center border border-slate-border shrink-0 group-hover:bg-solar-green-light transition-colors">
-                  <Icon className="w-5 h-5 text-navy-800 group-hover:text-solar-green" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-1">
-                    <h3 className="text-xs font-bold text-navy-800 group-hover:text-solar-green transition-colors truncate">
-                      {item.title}
-                    </h3>
-                    <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full shrink-0">
-                      {item.count}
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-slate-muted mt-1 leading-normal line-clamp-2">
-                    {item.description}
-                  </p>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Bottom Compliance & Policy Notice */}
-      <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 flex items-start gap-3">
-        <ShieldCheck className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
-        <div className="text-xs text-amber-900 leading-relaxed">
-          <strong>Non-Ecommerce & Compliance Policy Enforced:</strong> All product modules across the CMS strictly prohibit public price listings, cart buttons, and online checkouts. All quotations remain private, engineered per customer rooftop survey across Bihar, Jharkhand, and Uttar Pradesh.
-        </div>
-      </div>
+      {/* In-App Live Responsive Preview Modal */}
+      <CmsLivePreviewModal
+        isOpen={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+        url={previewUrl}
+        pageTitle={previewTitle}
+      />
     </div>
   );
 }

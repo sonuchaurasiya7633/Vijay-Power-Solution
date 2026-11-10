@@ -197,7 +197,7 @@ async function seedDemoData() {
       "Optimized for high-temperature Eastern India operating environments"
     ],
     typicalApplications: [p.app, "Eligible for PM Surya Ghar rooftop solar projects"],
-    description: `Engineered ${p.watt}W solar panel offering ${p.eff}% module efficiency. Designed for residential, commercial, and utility installations across Bihar, Jharkhand, and Uttar Pradesh.`,
+    description: `Engineered ${p.watt}W solar panel offering ${p.eff}% module efficiency. Designed for residential, commercial, and utility installations across India.`,
     availabilityStatus: "in_stock",
     isFeatured: [10, 100, 335, 540, 550, 580, 700, 730].includes(p.watt),
     isPublished: true,
@@ -268,7 +268,7 @@ async function seedDemoData() {
 
   await solCol.insertMany(demoSolutions.map(s => ({
     ...s,
-    description: `Comprehensive solar engineering solution tailored for ${s.category.toLowerCase()} applications in Bihar, Jharkhand, and Uttar Pradesh.`,
+    description: `Comprehensive solar engineering solution tailored for ${s.category.toLowerCase()} applications across India.`,
     keyBenefits: ["Save 70-90% on electricity expenses", "Tier-1 ALMM compliant equipment", "Full DISCOM net-metering approvals", "25-year performance warranty"],
     suitableFor: ["Independent buildings", "Commercial units", "Farms & enterprises"],
     image: "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=1200&q=80",
@@ -340,7 +340,7 @@ async function seedDemoData() {
     { question: "Can I install rooftop solar if my sanctioned electricity load is only 2 kW?", answer: "DISCOM regulations usually permit solar capacity up to 100% of your sanctioned load. If you require a 5 kW solar plant, our team coordinates the load enhancement application with your DISCOM simultaneously.", category: "installation", sortOrder: 9 },
     { question: "Does JBVNL in Jharkhand permit net metering for residential connections?", answer: "Yes, Jharkhand Bijli Vitran Nigam Limited (JBVNL) actively supports bi-directional net metering for domestic and commercial rooftop solar installations.", category: "installation", sortOrder: 10 },
     { question: "Does UPPCL in Uttar Pradesh charge application fees for net metering?", answer: "UPPCL has standard nominal processing and smart bi-directional meter testing fees which are transparently itemized in our turnkey EPC proposals.", category: "installation", sortOrder: 11 },
-    { question: "How long does DISCOM net-meter inspection and synchronization take?", answer: "In Bihar, Jharkhand, and UP, the net-metering cycle from online registration to final physical meter swap typically takes 15 to 30 working days.", category: "installation", sortOrder: 12 },
+    { question: "How long does DISCOM net-meter inspection and synchronization take?", answer: "Across India, the net-metering cycle from online registration to final physical meter swap typically takes 15 to 30 working days depending on state DISCOM regulations.", category: "installation", sortOrder: 12 },
 
     // Equipment & Wattage (6)
     { question: "Why does VIJOY POWER SOLUTION offer solar panels from 10W to 730W?", answer: "Different applications require different module sizes. Small 10W-100W modules power streetlights, CCTV, and rural huts, while 540W-730W high-efficiency bifacial modules are engineered for residential and industrial rooftops.", category: "residential", sortOrder: 13 },
@@ -392,7 +392,7 @@ async function seedDemoData() {
     ...b,
     authorName: "Er. Vijoy Kumar",
     coverImage: "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=1000&q=80",
-    content: `## ${b.title}\n\nSolar energy adoption is transforming households and businesses across Bihar, Jharkhand, and Uttar Pradesh. With abundant solar irradiance throughout the year, switching to solar represents both an environmental milestone and an outstanding financial investment.\n\n### Key Highlights\n- High efficiency tier-1 modules (10W to 730W)\n- Up to ₹78,000 direct DBT subsidy under PM Surya Ghar\n- Net metering synchronization with local DISCOMs\n- 25-year manufacturer performance warranties\n\n### Practical Engineering Recommendations\nWhen planning a solar installation, always ensure thorough structural site inspection, certified mounting brackets, and proper chemical earthing. Contact VIJOY POWER SOLUTION for site-specific engineering consultation.`,
+    content: `## ${b.title}\n\nSolar energy adoption is transforming households and businesses across India. With abundant solar irradiance throughout the year, switching to solar represents both an environmental milestone and an outstanding financial investment.\n\n### Key Highlights\n- High efficiency tier-1 modules (10W to 730W)\n- Up to ₹78,000 direct DBT subsidy under PM Surya Ghar\n- Net metering synchronization with local DISCOMs\n- 25-year manufacturer performance warranties\n\n### Practical Engineering Recommendations\nWhen planning a solar installation, always ensure thorough structural site inspection, certified mounting brackets, and proper chemical earthing. Contact VIJOY POWER SOLUTION for site-specific engineering consultation.`,
     tags: ["solar", "renewable-energy", "pm-surya-ghar", "bihar", "jharkhand", "up"],
     isPublished: true,
     publishedAt: new Date(now.getTime() - (idx + 1) * 3 * 86400000),

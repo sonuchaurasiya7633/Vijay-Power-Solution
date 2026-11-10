@@ -180,7 +180,7 @@ export default async function SubsidyInformationPage() {
                   Regional Policies
                 </span>
                 <h3 className="text-xl font-bold font-display text-navy-800">
-                  State-Specific Net Metering Provisions (Bihar, JH & UP)
+                  State & Regional Net Metering Provisions Across India
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {states.map((st: any, idx: number) => (
@@ -275,7 +275,7 @@ export default async function SubsidyInformationPage() {
                   Need Help with Subsidy Filing?
                 </h3>
                 <p className="text-xs text-slate-muted mt-1">
-                  Our regulatory desk assists homeowners in Bihar, Jharkhand, and UP with portal registration and technical document preparation.
+                  Our regulatory desk assists homeowners across India with portal registration and technical document preparation.
                 </p>
               </div>
 

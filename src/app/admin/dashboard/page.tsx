@@ -21,7 +21,16 @@ import InstallationJob from "@/models/InstallationJob";
 import PortfolioProject from "@/models/PortfolioProject";
 import SolarProduct from "@/models/SolarProduct";
 import Blog from "@/models/Blog";
+import Page from "@/models/Page";
+import InstallationGallery from "@/models/InstallationGallery";
 import { formatDateIST } from "@/lib/utils/formatters";
+import {
+  Sliders,
+  LayoutGrid,
+  Camera,
+  UploadCloud,
+  FileCode2,
+} from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -42,6 +51,8 @@ export default async function AdminDashboardPage() {
   let activeInstallations = 0;
   let completedProjects = 0;
   let publishedProducts = 0;
+  let galleryCount = 10;
+  let pagesCount = 7;
   let recentLeads: any[] = [];
   let stateBreakdown: any[] = [];
 
@@ -66,6 +77,8 @@ export default async function AdminDashboardPage() {
       aInstallations,
       cProjects,
       pProducts,
+      gCount,
+      pgCount,
       rLeads,
       sBreakdown,
     ] = await Promise.all([
@@ -83,6 +96,8 @@ export default async function AdminDashboardPage() {
       }),
       PortfolioProject.countDocuments({ isPublished: true }),
       SolarProduct.countDocuments({ isPublished: true }),
+      InstallationGallery.countDocuments({ isPublished: true }),
+      Page.countDocuments(),
       Lead.find({ isArchived: false })
         .sort({ createdAt: -1 })
         .limit(6)
@@ -107,6 +122,8 @@ export default async function AdminDashboardPage() {
     activeInstallations = aInstallations;
     completedProjects = cProjects;
     publishedProducts = pProducts;
+    galleryCount = gCount;
+    pagesCount = pgCount || 7;
     recentLeads = rLeads;
     stateBreakdown = sBreakdown;
   } catch (err) {
@@ -114,18 +131,18 @@ export default async function AdminDashboardPage() {
   }
 
   const cards = [
-    { label: "Total Leads", value: totalLeads, icon: Users, color: "text-navy-800", bg: "bg-navy-50", link: "/admin/leads" },
+    { label: "Total Public Pages", value: pagesCount, icon: FileCode2, color: "text-navy-800", bg: "bg-navy-50", link: "/admin/cms" },
+    { label: "Total Leads", value: totalLeads, icon: Users, color: "text-blue-600", bg: "bg-blue-50", link: "/admin/leads" },
     { label: "New Leads (Uncontacted)", value: newLeads, icon: Zap, color: "text-solar-green", bg: "bg-solar-green-light", link: "/admin/leads?stage=new_lead" },
-    { label: "Today's Enquiries", value: todayLeads, icon: Calendar, color: "text-blue-600", bg: "bg-blue-50", link: "/admin/leads" },
-    { label: "Pending Follow-ups", value: pendingFollowUps, icon: Clock, color: "text-amber-600", bg: "bg-amber-50", link: "/admin/follow-ups" },
-    { label: "Scheduled Surveys", value: scheduledSurveys, icon: ClipboardCheck, color: "text-purple-600", bg: "bg-purple-50", link: "/admin/surveys" },
+    { label: "Today's Enquiries", value: todayLeads, icon: Calendar, color: "text-amber-600", bg: "bg-amber-50", link: "/admin/leads" },
+    { label: "Gallery Installations", value: galleryCount, icon: Camera, color: "text-purple-600", bg: "bg-purple-50", link: "/admin/gallery" },
     { label: "Active Installations", value: activeInstallations, icon: HardHat, color: "text-indigo-600", bg: "bg-indigo-50", link: "/admin/installations" },
     { label: "Won Customers", value: wonLeads, icon: CheckCircle2, color: "text-emerald-600", bg: "bg-emerald-50", link: "/admin/leads?stage=won" },
     { label: "Catalogue Products", value: publishedProducts, icon: Package, color: "text-teal-600", bg: "bg-teal-50", link: "/admin/products" },
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Top Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-border shadow-sm">
         <div>
@@ -150,6 +167,54 @@ export default async function AdminDashboardPage() {
             className="px-4 py-2 rounded-xl text-xs font-bold bg-solar-green text-white hover:bg-solar-green-hover transition-colors shadow-sm"
           >
             Manage All Leads
+          </Link>
+        </div>
+      </div>
+
+      {/* Quick Action Navigation Buttons */}
+      <div className="bg-white p-4 rounded-2xl border border-slate-border shadow-sm">
+        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-muted block mb-2 px-1">
+          Quick Management Actions
+        </span>
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+          <Link
+            href="/admin/cms/home"
+            className="p-3 rounded-xl bg-slate-50 hover:bg-solar-green-light hover:text-solar-green border border-slate-border/80 flex items-center gap-2.5 text-xs font-bold text-navy-800 transition-all group"
+          >
+            <Sliders className="w-4 h-4 text-solar-green group-hover:scale-110 transition-transform" />
+            <span className="truncate">Manage Homepage</span>
+          </Link>
+
+          <Link
+            href="/admin/cms"
+            className="p-3 rounded-xl bg-slate-50 hover:bg-solar-green-light hover:text-solar-green border border-slate-border/80 flex items-center gap-2.5 text-xs font-bold text-navy-800 transition-all group"
+          >
+            <LayoutGrid className="w-4 h-4 text-navy-800 group-hover:text-solar-green group-hover:scale-110 transition-transform" />
+            <span className="truncate">Website All Pages</span>
+          </Link>
+
+          <Link
+            href="/admin/media"
+            className="p-3 rounded-xl bg-slate-50 hover:bg-solar-green-light hover:text-solar-green border border-slate-border/80 flex items-center gap-2.5 text-xs font-bold text-navy-800 transition-all group"
+          >
+            <UploadCloud className="w-4 h-4 text-blue-600 group-hover:scale-110 transition-transform" />
+            <span className="truncate">Upload Images</span>
+          </Link>
+
+          <Link
+            href="/admin/gallery"
+            className="p-3 rounded-xl bg-slate-50 hover:bg-solar-green-light hover:text-solar-green border border-slate-border/80 flex items-center gap-2.5 text-xs font-bold text-navy-800 transition-all group"
+          >
+            <Camera className="w-4 h-4 text-purple-600 group-hover:scale-110 transition-transform" />
+            <span className="truncate">Customer Gallery</span>
+          </Link>
+
+          <Link
+            href="/admin/leads"
+            className="p-3 rounded-xl bg-slate-50 hover:bg-solar-green-light hover:text-solar-green border border-slate-border/80 flex items-center gap-2.5 text-xs font-bold text-navy-800 transition-all group"
+          >
+            <Users className="w-4 h-4 text-emerald-600 group-hover:scale-110 transition-transform" />
+            <span className="truncate">View Leads ({totalLeads})</span>
           </Link>
         </div>
       </div>

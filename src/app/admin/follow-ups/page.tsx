@@ -61,7 +61,7 @@ export default function FollowUpsPage() {
             Task & Follow-Up Management
           </h1>
           <p className="text-xs text-slate-muted mt-0.5">
-            Never lose momentum with prospective clients across Bihar, JH, and UP.
+            Never lose momentum with prospective clients across India.
           </p>
         </div>
 

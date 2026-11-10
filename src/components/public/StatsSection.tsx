@@ -15,9 +15,9 @@ export default async function StatsSection() {
       suffix: "Megawatts",
     },
     {
-      label: "Primary Service Regions",
-      value: "3",
-      suffix: "Bihar, JH, UP",
+      label: "Service Coverage",
+      value: "Pan India",
+      suffix: "All States & UTs",
     },
     {
       label: "Engineering Experience",
@@ -48,9 +48,9 @@ export default async function StatsSection() {
             suffix: "Megawatts",
           },
           {
-            label: "Primary Service Regions",
-            value: "3",
-            suffix: "Bihar, JH, UP",
+            label: "Service Coverage",
+            value: "Pan India",
+            suffix: "All States & UTs",
           },
           {
             label: "Engineering Experience",

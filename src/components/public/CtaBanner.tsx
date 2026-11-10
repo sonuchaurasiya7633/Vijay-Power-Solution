@@ -5,7 +5,7 @@ import Setting from "@/models/Setting";
 
 export default async function CtaBanner() {
   let ctaData = {
-    badge: "Free Engineering Consultation Across Bihar, JH & UP",
+    badge: "Free Engineering Consultation Across India",
     title: "Ready to Switch to Solar?",
     description:
       "Take the first step towards clean, reliable power and drastically lower monthly electricity bills. Book an appointment with our solar engineering specialist today.",
