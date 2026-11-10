@@ -22,6 +22,7 @@ import {
   HelpCircle,
   MessageSquareQuote,
   Image as ImageIcon,
+  Camera,
   Sliders,
   Globe,
   BarChart3,
@@ -62,6 +63,7 @@ export default function AdminSidebar({ userRole = "admin", userName = "Staff" }:
       group: "Operations & Projects",
       items: [
         { label: "Installation Jobs", href: "/admin/installations", icon: HardHat },
+        { label: "Installation Gallery", href: "/admin/gallery", icon: Camera },
         { label: "Portfolio Projects", href: "/admin/projects", icon: FolderGit2 },
         { label: "Media Library", href: "/admin/media", icon: ImageIcon },
       ],

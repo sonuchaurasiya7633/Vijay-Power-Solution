@@ -552,6 +552,27 @@ async function seedDemoData() {
   await testCol.insertMany(demoTestimonials.map(t => ({ ...t, createdAt: now, updatedAt: now })));
   console.log(`-> ${demoTestimonials.length} Verified Customer Testimonials Seeded`);
 
+  // 11.5. Installation Customer Gallery (10 Authentic Photographs)
+  console.log("\n[11.5/12] Seeding Authentic Customer Installation Gallery...");
+  const galCol = db.collection("installationgalleries");
+  await galCol.deleteMany({});
+
+  const demoGalleryItems = [
+    { imageUrl: "https://res.cloudinary.com/dqpbo1uho/image/upload/v1794303312/gallery/peclb2xlnhrgnee80gtr.jpg", cloudinaryPublicId: "gallery/peclb2xlnhrgnee80gtr", title: "Rooftop Solar Installation with Happy Customer", category: "Residential Rooftop", isFeatured: true, isPublished: true, sortOrder: 1 },
+    { imageUrl: "https://res.cloudinary.com/dqpbo1uho/image/upload/v1794303314/gallery/skumqggyxv2l9nangrk3.jpg", cloudinaryPublicId: "gallery/skumqggyxv2l9nangrk3", title: "Residential Solar Energy System Handover", category: "Residential Rooftop", isFeatured: true, isPublished: true, sortOrder: 2 },
+    { imageUrl: "https://res.cloudinary.com/dqpbo1uho/image/upload/v1794303314/gallery/obng8nqkacglehvotc82.jpg", cloudinaryPublicId: "gallery/obng8nqkacglehvotc82", title: "Turnkey Solar Rooftop Array Installation", category: "Residential Rooftop", isFeatured: true, isPublished: true, sortOrder: 3 },
+    { imageUrl: "https://res.cloudinary.com/dqpbo1uho/image/upload/v1794303315/gallery/zqtztnkzlqtojla8xfdk.jpg", cloudinaryPublicId: "gallery/zqtztnkzlqtojla8xfdk", title: "Customer Solar Plant Commissioning & Handover", category: "Residential Rooftop", isFeatured: true, isPublished: true, sortOrder: 4 },
+    { imageUrl: "https://res.cloudinary.com/dqpbo1uho/image/upload/v1794303316/gallery/zbxvqrnzjwizdsqbe6pg.jpg", cloudinaryPublicId: "gallery/zbxvqrnzjwizdsqbe6pg", title: "High-Efficiency Rooftop Solar Power Setup", category: "Residential Rooftop", isFeatured: true, isPublished: true, sortOrder: 5 },
+    { imageUrl: "https://res.cloudinary.com/dqpbo1uho/image/upload/v1794303317/gallery/ejt2wgjnovmcjtb7pg8t.jpg", cloudinaryPublicId: "gallery/ejt2wgjnovmcjtb7pg8t", title: "Residential Clean Solar Power Installation", category: "Residential Rooftop", isFeatured: true, isPublished: true, sortOrder: 6 },
+    { imageUrl: "https://res.cloudinary.com/dqpbo1uho/image/upload/v1794303318/gallery/otjhhooannci70rhv89l.jpg", cloudinaryPublicId: "gallery/otjhhooannci70rhv89l", title: "Solar PV Installation with Homeowner", category: "Residential Rooftop", isFeatured: false, isPublished: true, sortOrder: 7 },
+    { imageUrl: "https://res.cloudinary.com/dqpbo1uho/image/upload/v1794303318/gallery/te4aru2gy5shlfdijjs1.jpg", cloudinaryPublicId: "gallery/te4aru2gy5shlfdijjs1", title: "Customer On-Grid Solar System Commissioning", category: "Residential Rooftop", isFeatured: false, isPublished: true, sortOrder: 8 },
+    { imageUrl: "https://res.cloudinary.com/dqpbo1uho/image/upload/v1794303319/gallery/veijlr67s47m9diwbubk.jpg", cloudinaryPublicId: "gallery/veijlr67s47m9diwbubk", title: "Residential Solar Engineering Handover", category: "Residential Rooftop", isFeatured: false, isPublished: true, sortOrder: 9 },
+    { imageUrl: "https://res.cloudinary.com/dqpbo1uho/image/upload/v1794303320/gallery/e3v9r53sqydmn0cf9udi.jpg", cloudinaryPublicId: "gallery/e3v9r53sqydmn0cf9udi", title: "Solar Installation Completed with Satisfied Customer", category: "Residential Rooftop", isFeatured: false, isPublished: true, sortOrder: 10 },
+  ];
+
+  await galCol.insertMany(demoGalleryItems.map(g => ({ ...g, createdAt: now, updatedAt: now })));
+  console.log(`-> ${demoGalleryItems.length} Customer Installation Gallery Items Seeded`);
+
   // 12. CRM Leads & Pipeline (30 Realistic Multi-Stage Leads)
   console.log("\n[12/12] Seeding 30 Multi-Stage Leads, Surveys, Quotes, and Installations...");
   const leadsCol = db.collection("leads");

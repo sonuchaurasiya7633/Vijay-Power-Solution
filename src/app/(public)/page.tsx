@@ -2,6 +2,7 @@ import HeroSection from "@/components/public/HeroSection";
 import StatsSection from "@/components/public/StatsSection";
 import SolutionsGrid from "@/components/public/SolutionsGrid";
 import ProductWattageShowcase from "@/components/public/ProductWattageShowcase";
+import HomepageCustomerGallery from "@/components/public/HomepageCustomerGallery";
 import WhyChooseUs from "@/components/public/WhyChooseUs";
 import InstallationProcess from "@/components/public/InstallationProcess";
 import RecentProjectsSection from "@/components/public/RecentProjectsSection";
@@ -11,8 +12,22 @@ import TestimonialsSection from "@/components/public/TestimonialsSection";
 import CalculatorWidget from "@/components/public/CalculatorWidget";
 import FaqAccordion from "@/components/public/FaqAccordion";
 import CtaBanner from "@/components/public/CtaBanner";
+import connectDB from "@/lib/db/connection";
+import InstallationGallery from "@/models/InstallationGallery";
 
-export default function HomePage() {
+export default async function HomePage() {
+  let galleryItems: any[] = [];
+  try {
+    await connectDB();
+    galleryItems = await InstallationGallery.find({ isPublished: true })
+      .sort({ sortOrder: 1, createdAt: -1 })
+      .lean();
+  } catch (e) {
+    // Graceful fallback
+  }
+
+  const cleanGalleryItems = JSON.parse(JSON.stringify(galleryItems));
+
   return (
     <>
       {/* 1 & 2. Hero Section */}
@@ -26,6 +41,9 @@ export default function HomePage() {
 
       {/* 5. Solar Panel Range (10W to 730W) */}
       <ProductWattageShowcase />
+
+      {/* 5.5. Real Customer Solar Installation Gallery */}
+      <HomepageCustomerGallery initialItems={cleanGalleryItems} />
 
       {/* 6. Why Choose VIJOY POWER SOLUTION */}
       <WhyChooseUs />
