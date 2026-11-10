@@ -6,8 +6,8 @@ import { Lock, Mail, ArrowRight, Loader2, ShieldCheck, AlertCircle } from "lucid
 import toast from "@/lib/toast";
 
 export default function AdminLoginPage() {
-  const [email, setEmail] = useState("admin@vijoypowersolution.com");
-  const [password, setPassword] = useState("Admin@VPS2026SolarSecure!");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
