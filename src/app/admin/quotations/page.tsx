@@ -5,6 +5,7 @@ import Link from "next/link";
 import toast from "@/lib/toast";
 import { FileSpreadsheet, Plus, CheckCircle2, Send, Download, Loader2 } from "lucide-react";
 import { formatCurrencyINR, formatDateIST } from "@/lib/utils/formatters";
+import { AdminTableSkeleton } from "@/components/ui/SkeletonLoaders";
 
 export default function QuotationsPage() {
   const [quotations, setQuotations] = useState<any[]>([]);
@@ -63,10 +64,7 @@ export default function QuotationsPage() {
 
       <div className="bg-white rounded-2xl border border-slate-border shadow-sm overflow-hidden">
         {loading ? (
-          <div className="p-16 text-center text-xs text-slate-muted flex items-center justify-center gap-2">
-            <Loader2 className="w-5 h-5 animate-spin text-solar-green" />
-            <span>Loading quotations...</span>
-          </div>
+          <AdminTableSkeleton rows={5} />
         ) : quotations.length === 0 ? (
           <div className="p-16 text-center space-y-2">
             <FileSpreadsheet className="w-10 h-10 text-slate-300 mx-auto" />

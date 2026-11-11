@@ -19,6 +19,7 @@ import {
   Trash2,
 } from "lucide-react";
 const CmsLivePreviewModal = dynamic(() => import("@/components/admin/CmsLivePreviewModal"), { ssr: false });
+import { SolarPanelLoader } from "@/components/ui/SolarLoader";
 import {
   defaultSolarPanelsPageCms,
   mergeWithDefaults,
@@ -107,9 +108,10 @@ export default function AdminSolarPanelsCmsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[50vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-solar-green" />
-      </div>
+      <SolarPanelLoader
+        title="Loading Solar Panels Page CMS..."
+        subtitle="Syncing wattage showcase headers and module technology blocks"
+      />
     );
   }
 

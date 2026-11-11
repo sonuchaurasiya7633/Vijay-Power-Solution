@@ -17,6 +17,7 @@ import {
   ShieldAlert,
   FileCheck2,
 } from "lucide-react";
+import { SolarPanelLoader } from "@/components/ui/SolarLoader";
 const CmsLivePreviewModal = dynamic(() => import("@/components/admin/CmsLivePreviewModal"), { ssr: false });
 
 export default function AdminSubsidyCmsPage() {
@@ -186,10 +187,10 @@ export default function AdminSubsidyCmsPage() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] text-slate-muted">
-        <Loader2 className="w-8 h-8 animate-spin text-solar-green mb-2" />
-        <span className="text-sm font-semibold">Loading Subsidy CMS...</span>
-      </div>
+      <SolarPanelLoader
+        title="Loading PM Surya Ghar Subsidy CMS..."
+        subtitle="Syncing subsidy slabs, state DISCOM notes, and document guides"
+      />
     );
   }
 

@@ -7,6 +7,7 @@ import { FileText, Plus, CheckCircle2, Eye, Trash2, Edit3, X, Loader2, Save } fr
 import { formatDateIST } from "@/lib/utils/formatters";
 import CmsImageUploader from "@/components/admin/CmsImageUploader";
 import CmsTableImageCell from "@/components/admin/CmsTableImageCell";
+import { AdminTableSkeleton } from "@/components/ui/SkeletonLoaders";
 
 export default function AdminBlogsPage() {
   const [blogs, setBlogs] = useState<any[]>([]);
@@ -173,10 +174,7 @@ export default function AdminBlogsPage() {
 
       <div className="bg-white rounded-2xl border border-slate-border shadow-sm overflow-hidden">
         {loading ? (
-          <div className="p-16 text-center text-xs text-slate-muted flex items-center justify-center gap-2">
-            <Loader2 className="w-5 h-5 animate-spin text-solar-green" />
-            <span>Loading articles...</span>
-          </div>
+          <AdminTableSkeleton rows={5} />
         ) : blogs.length === 0 ? (
           <div className="p-16 text-center space-y-2">
             <FileText className="w-10 h-10 text-slate-300 mx-auto" />

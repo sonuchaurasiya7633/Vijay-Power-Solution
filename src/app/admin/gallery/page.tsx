@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { INDIAN_STATES_AND_UTS } from "@/lib/constants/states";
 import CmsImageUploader from "@/components/admin/CmsImageUploader";
+import { SolarEmblemSpinner, SolarPanelLoader } from "@/components/ui/SolarLoader";
 
 interface GalleryDoc {
   _id: string;
@@ -454,7 +455,7 @@ export default function AdminInstallationGalleryPage() {
               >
                 {uploading ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <SolarEmblemSpinner size="sm" variant="white" label="Uploading installation photos" />
                     <span>Uploading...</span>
                   </>
                 ) : (
@@ -469,7 +470,7 @@ export default function AdminInstallationGalleryPage() {
 
           {uploadProgress && (
             <div className="p-3 bg-solar-green-light/70 rounded-xl text-xs font-semibold text-solar-green flex items-center gap-2">
-              <Loader2 className="w-4 h-4 animate-spin shrink-0" />
+              <SolarEmblemSpinner size="sm" variant="brand" label="Upload progress" />
               <span>{uploadProgress}</span>
             </div>
           )}
@@ -508,10 +509,10 @@ export default function AdminInstallationGalleryPage() {
         </div>
 
         {loading ? (
-          <div className="p-20 text-center bg-white rounded-3xl border border-slate-border">
-            <Loader2 className="w-8 h-8 text-solar-green animate-spin mx-auto mb-2" />
-            <p className="text-xs text-slate-muted">Loading gallery collection...</p>
-          </div>
+          <SolarPanelLoader
+            title="Loading Customer Installation Gallery..."
+            subtitle="Fetching verified project photographs and captions"
+          />
         ) : items.length === 0 ? (
           <div className="p-16 text-center bg-white rounded-3xl border border-slate-border space-y-3">
             <ImageIcon className="w-12 h-12 text-slate-300 mx-auto" />

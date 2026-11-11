@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2, AlertCircle, ArrowRight, Loader2, Sparkles } from "lucide-react";
+import { CheckCircle2, AlertCircle, ArrowRight, Sparkles } from "lucide-react";
 import toast from "@/lib/toast";
+import { SolarEmblemSpinner } from "@/components/ui/SolarLoader";
 import { INDIAN_STATES_AND_UTS } from "@/lib/constants/states";
 
 interface LeadCaptureFormProps {
@@ -287,11 +288,12 @@ export default function LeadCaptureForm({
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-3.5 px-6 rounded-xl font-bold text-sm bg-solar-green text-white hover:bg-solar-green-hover shadow-lg shadow-solar-green/25 flex items-center justify-center gap-2 transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-70 cursor-pointer"
+        aria-busy={loading}
+        className="w-full py-3.5 px-6 rounded-xl font-bold text-sm bg-solar-green text-white hover:bg-solar-green-hover shadow-lg shadow-solar-green/25 flex items-center justify-center gap-2.5 transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-75 cursor-pointer"
       >
         {loading ? (
           <>
-            <Loader2 className="w-4 h-4 animate-spin" />
+            <SolarEmblemSpinner size="sm" variant="white" label="Submitting solar enquiry" />
             <span>Connecting with Solar Engineer...</span>
           </>
         ) : (

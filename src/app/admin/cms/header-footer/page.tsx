@@ -21,6 +21,7 @@ import {
   ImageIcon,
 } from "lucide-react";
 import CmsImageUploader from "@/components/admin/CmsImageUploader";
+import { SolarPanelLoader } from "@/components/ui/SolarLoader";
 const CmsLivePreviewModal = dynamic(() => import("@/components/admin/CmsLivePreviewModal"), { ssr: false });
 import { DEFAULT_SOCIAL_LINKS } from "@/lib/constants/social";
 
@@ -132,10 +133,10 @@ export default function AdminHeaderFooterCmsPage() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] text-slate-muted">
-        <Loader2 className="w-8 h-8 animate-spin text-solar-green mb-2" />
-        <span className="text-sm font-semibold">Loading Header & Footer CMS...</span>
-      </div>
+      <SolarPanelLoader
+        title="Loading Header & Footer CMS..."
+        subtitle="Syncing navigation badges, helplines, and social links"
+      />
     );
   }
 

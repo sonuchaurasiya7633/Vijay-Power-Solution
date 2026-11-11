@@ -1,7 +1,8 @@
 "use client";
 
 import { Toaster as SonnerToaster } from "sonner";
-import { CheckCircle2, AlertCircle, AlertTriangle, Info, Loader2 } from "lucide-react";
+import { CheckCircle2, AlertCircle, AlertTriangle, Info } from "lucide-react";
+import { SolarEmblemSpinner } from "@/components/ui/SolarLoader";
 
 export default function ToastProvider() {
   return (
@@ -17,7 +18,7 @@ export default function ToastProvider() {
         error: <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" />,
         warning: <AlertTriangle className="w-5 h-5 text-solar-yellow-hover shrink-0" />,
         info: <Info className="w-5 h-5 text-navy-800 shrink-0" />,
-        loading: <Loader2 className="w-5 h-5 text-solar-green animate-spin shrink-0" />,
+        loading: <SolarEmblemSpinner size="sm" label="Processing" />,
       }}
       toastOptions={{
         unstyled: false,

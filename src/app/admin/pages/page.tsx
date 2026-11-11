@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import CmsImageUploader from "@/components/admin/CmsImageUploader";
 import CmsLivePreviewModal from "@/components/admin/CmsLivePreviewModal";
+import { AdminTableSkeleton } from "@/components/ui/SkeletonLoaders";
 
 export default function AdminPagesManager() {
   const [pages, setPages] = useState<any[]>([]);
@@ -213,10 +214,7 @@ export default function AdminPagesManager() {
       {/* Pages Table */}
       <div className="bg-white rounded-2xl border border-slate-border shadow-sm overflow-hidden">
         {loading ? (
-          <div className="p-16 text-center text-xs text-slate-muted flex items-center justify-center gap-2">
-            <Loader2 className="w-5 h-5 animate-spin text-solar-green" />
-            <span>Loading pages...</span>
-          </div>
+          <AdminTableSkeleton rows={5} />
         ) : filteredPages.length === 0 ? (
           <div className="p-16 text-center space-y-2">
             <FileCode2 className="w-10 h-10 text-slate-300 mx-auto" />

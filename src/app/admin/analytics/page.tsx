@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { BarChart3, TrendingUp, Users, CheckCircle2, Phone, MessageCircle, MapPin, Loader2 } from "lucide-react";
+import { BarChart3, TrendingUp, Users, CheckCircle2, Phone, MessageCircle, MapPin } from "lucide-react";
+import { AdminWorkspaceSkeleton } from "@/components/ui/SkeletonLoaders";
 
 export default function AdminAnalyticsPage() {
   const [data, setData] = useState<any>(null);
@@ -16,12 +17,7 @@ export default function AdminAnalyticsPage() {
   }, []);
 
   if (loading) {
-    return (
-      <div className="p-20 text-center text-xs text-slate-muted flex items-center justify-center gap-2">
-        <Loader2 className="w-5 h-5 animate-spin text-solar-green" />
-        <span>Loading analytics metrics...</span>
-      </div>
-    );
+    return <AdminWorkspaceSkeleton />;
   }
 
   const metrics = data?.metrics || {};

@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Upload, Trash2, Eye, Loader2, Image as ImageIcon, RefreshCw, X } from "lucide-react";
+import { Upload, Trash2, Eye, Image as ImageIcon, RefreshCw, X } from "lucide-react";
 import toast from "@/lib/toast";
+import { SolarEmblemSpinner } from "@/components/ui/SolarLoader";
 
 interface CmsTableImageCellProps {
   imageUrl?: string;
@@ -177,7 +178,7 @@ export default function CmsTableImageCell({
           {/* Uploading / Deleting Spinner */}
           {(uploading || deleting) && (
             <div className="absolute inset-0 bg-navy-950/85 flex items-center justify-center text-white z-20">
-              <Loader2 className="w-4 h-4 animate-spin text-solar-yellow" />
+              <SolarEmblemSpinner size="sm" variant="gold" label={uploading ? "Uploading image" : "Deleting image"} />
             </div>
           )}
         </div>
@@ -190,7 +191,7 @@ export default function CmsTableImageCell({
           className={`${dimensionsClass} rounded-xl border-2 border-dashed border-slate-300 hover:border-solar-green bg-slate-50 hover:bg-solar-green/5 flex flex-col items-center justify-center gap-0.5 text-slate-400 hover:text-solar-green transition-all cursor-pointer`}
         >
           {uploading ? (
-            <Loader2 className="w-4 h-4 animate-spin text-solar-green" />
+            <SolarEmblemSpinner size="sm" variant="brand" label="Uploading image" />
           ) : (
             <>
               <Upload className="w-4 h-4" />

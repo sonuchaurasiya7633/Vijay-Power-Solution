@@ -5,6 +5,7 @@ import Link from "next/link";
 import toast from "@/lib/toast";
 import { MapPin, Plus, CheckCircle2, Trash2, Edit3, X, Loader2, Save } from "lucide-react";
 import { INDIAN_STATES_AND_UTS } from "@/lib/constants/states";
+import { AdminTableSkeleton } from "@/components/ui/SkeletonLoaders";
 
 export default function AdminServiceAreasPage() {
   const [locations, setLocations] = useState<any[]>([]);
@@ -160,10 +161,7 @@ export default function AdminServiceAreasPage() {
       </div>
 
       {loading ? (
-        <div className="p-16 text-center text-xs text-slate-muted flex items-center justify-center gap-2">
-          <Loader2 className="w-5 h-5 animate-spin text-solar-green" />
-          <span>Loading service areas...</span>
-        </div>
+        <AdminTableSkeleton rows={5} />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {locations.map((loc) => (

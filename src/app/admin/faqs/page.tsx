@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import toast from "@/lib/toast";
 import { HelpCircle, Plus, Trash2, Edit3, X, Loader2, Save, Eye } from "lucide-react";
 import CmsLivePreviewModal from "@/components/admin/CmsLivePreviewModal";
+import { AdminTableSkeleton } from "@/components/ui/SkeletonLoaders";
 
 export default function AdminFaqsPage() {
   const [faqs, setFaqs] = useState<any[]>([]);
@@ -130,10 +131,7 @@ export default function AdminFaqsPage() {
       </div>
 
       {loading ? (
-        <div className="p-16 text-center text-xs text-slate-muted flex items-center justify-center gap-2">
-          <Loader2 className="w-5 h-5 animate-spin text-solar-green" />
-          <span>Loading FAQs...</span>
-        </div>
+        <AdminTableSkeleton rows={5} />
       ) : faqs.length === 0 ? (
         <div className="p-16 bg-white rounded-2xl border border-slate-border text-center space-y-2">
           <HelpCircle className="w-10 h-10 text-slate-300 mx-auto" />

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import toast from "@/lib/toast";
 import { Layers, Plus, CheckCircle2, Loader2, Trash2, Edit3, X, Save } from "lucide-react";
+import { AdminTableSkeleton } from "@/components/ui/SkeletonLoaders";
 
 export default function AdminCategoriesPage() {
   const [categories, setCategories] = useState<any[]>([]);
@@ -137,10 +138,7 @@ export default function AdminCategoriesPage() {
       </div>
 
       {loading ? (
-        <div className="p-16 text-center text-xs text-slate-muted flex items-center justify-center gap-2">
-          <Loader2 className="w-5 h-5 animate-spin text-solar-green" />
-          <span>Loading categories...</span>
-        </div>
+        <AdminTableSkeleton rows={4} />
       ) : categories.length === 0 ? (
         <div className="p-16 bg-white rounded-2xl border border-slate-border text-center space-y-2">
           <Layers className="w-10 h-10 text-slate-300 mx-auto" />

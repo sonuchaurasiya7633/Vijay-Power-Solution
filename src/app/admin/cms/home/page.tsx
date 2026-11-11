@@ -22,6 +22,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import CmsImageUploader from "@/components/admin/CmsImageUploader";
+import { SolarPanelLoader } from "@/components/ui/SolarLoader";
 const CmsLivePreviewModal = dynamic(() => import("@/components/admin/CmsLivePreviewModal"), { ssr: false });
 import { extractYouTubeId } from "@/lib/utils/youtube";
 
@@ -423,10 +424,10 @@ export default function AdminHomeCmsPage() {
       </div>
 
       {loading ? (
-        <div className="bg-white p-16 rounded-2xl border border-slate-border text-center text-xs text-slate-muted flex items-center justify-center gap-2">
-          <Loader2 className="w-5 h-5 animate-spin text-solar-green" />
-          <span>Loading homepage configuration...</span>
-        </div>
+        <SolarPanelLoader
+          title="Loading Homepage Configuration..."
+          subtitle="Syncing hero, metrics, YouTube video showcase, and CTA blocks"
+        />
       ) : (
         <form onSubmit={handleSave} className="space-y-6">
           {/* TAB 1: HERO */}

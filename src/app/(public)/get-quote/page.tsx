@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { CheckCircle2 } from "lucide-react";
 import LeadCaptureForm from "@/components/forms/LeadCaptureForm";
+import { PublicPageSkeleton } from "@/components/ui/SkeletonLoaders";
 import { defaultPublicPagesCms, mergeWithDefaults } from "@/lib/cms-defaults";
 
 function GetQuoteContent() {
@@ -96,7 +97,7 @@ function GetQuoteContent() {
 
 export default function GetQuotePage() {
   return (
-    <Suspense fallback={<div className="p-12 text-center text-sm text-slate-muted">Loading quote system...</div>}>
+    <Suspense fallback={<PublicPageSkeleton />}>
       <GetQuoteContent />
     </Suspense>
   );

@@ -9,6 +9,7 @@ import { INDIAN_STATES_AND_UTS } from "@/lib/constants/states";
 import CmsImageUploader from "@/components/admin/CmsImageUploader";
 import CmsLivePreviewModal from "@/components/admin/CmsLivePreviewModal";
 import CmsTableImageCell from "@/components/admin/CmsTableImageCell";
+import { AdminTableSkeleton } from "@/components/ui/SkeletonLoaders";
 
 export default function AdminProjectsPage() {
   const [projects, setProjects] = useState<any[]>([]);
@@ -211,10 +212,7 @@ export default function AdminProjectsPage() {
 
       <div className="bg-white rounded-2xl border border-slate-border shadow-sm overflow-hidden">
         {loading ? (
-          <div className="p-16 text-center text-xs text-slate-muted flex items-center justify-center gap-2">
-            <Loader2 className="w-5 h-5 animate-spin text-solar-green" />
-            <span>Loading case studies...</span>
-          </div>
+          <AdminTableSkeleton rows={5} />
         ) : projects.length === 0 ? (
           <div className="p-16 text-center space-y-2">
             <FolderGit2 className="w-10 h-10 text-slate-300 mx-auto" />

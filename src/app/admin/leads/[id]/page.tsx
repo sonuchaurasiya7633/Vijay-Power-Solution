@@ -21,6 +21,7 @@ import {
   Send,
 } from "lucide-react";
 import { formatDateIST, formatDateTimeIST } from "@/lib/utils/formatters";
+import { SolarPanelLoader } from "@/components/ui/SolarLoader";
 
 export default function LeadDetailPage() {
   const { id } = useParams() as { id: string };
@@ -149,10 +150,10 @@ export default function LeadDetailPage() {
 
   if (loading) {
     return (
-      <div className="p-20 text-center text-xs text-slate-muted flex items-center justify-center gap-2">
-        <Loader2 className="w-5 h-5 animate-spin text-solar-green" />
-        <span>Loading lead profile...</span>
-      </div>
+      <SolarPanelLoader
+        title="Loading Lead Profile..."
+        subtitle="Fetching activity timeline, surveys, and private quotations"
+      />
     );
   }
 

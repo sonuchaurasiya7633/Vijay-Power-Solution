@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { History, ShieldCheck, User, Loader2 } from "lucide-react";
+import { History, ShieldCheck, User } from "lucide-react";
 import { formatDateTimeIST } from "@/lib/utils/formatters";
+import { AdminTableSkeleton } from "@/components/ui/SkeletonLoaders";
 
 export default function AdminActivityLogsPage() {
   const [logs, setLogs] = useState<any[]>([]);
@@ -40,13 +41,10 @@ export default function AdminActivityLogsPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl border border-slate-border shadow-sm overflow-hidden">
-        {loading ? (
-          <div className="p-16 text-center text-xs text-slate-muted flex items-center justify-center gap-2">
-            <Loader2 className="w-5 h-5 animate-spin text-solar-green" />
-            <span>Loading security audit logs...</span>
-          </div>
-        ) : (
+      {loading ? (
+        <AdminTableSkeleton rows={6} />
+      ) : (
+        <div className="bg-white rounded-2xl border border-slate-border shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead className="bg-slate-bg text-slate-muted uppercase font-bold text-[10px] tracking-wider border-b border-slate-border">
@@ -77,8 +75,8 @@ export default function AdminActivityLogsPage() {
               </tbody>
             </table>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import toast from "@/lib/toast";
 import { ShieldCheck, User, Plus, CheckCircle2, Loader2, Trash2, X, AlertCircle, Edit2 } from "lucide-react";
+import { AdminTableSkeleton } from "@/components/ui/SkeletonLoaders";
 
 export default function AdminTeamPage() {
   const [team, setTeam] = useState<any[]>([]);
@@ -174,10 +175,7 @@ export default function AdminTeamPage() {
 
       <div className="bg-white rounded-2xl border border-slate-border shadow-sm overflow-hidden">
         {loading ? (
-          <div className="p-16 text-center text-xs text-slate-muted flex items-center justify-center gap-2">
-            <Loader2 className="w-5 h-5 animate-spin text-solar-green" />
-            <span>Loading team members...</span>
-          </div>
+          <AdminTableSkeleton rows={4} />
         ) : team.length === 0 ? (
           <div className="p-16 text-center space-y-2">
             <User className="w-10 h-10 text-slate-300 mx-auto" />

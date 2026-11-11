@@ -20,6 +20,7 @@ import {
   Plus,
   Trash2,
 } from "lucide-react";
+import { SolarPanelLoader } from "@/components/ui/SolarLoader";
 const CmsLivePreviewModal = dynamic(() => import("@/components/admin/CmsLivePreviewModal"), { ssr: false });
 
 export default function AdminContactCmsPage() {
@@ -174,10 +175,10 @@ export default function AdminContactCmsPage() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] text-slate-muted">
-        <Loader2 className="w-8 h-8 animate-spin text-solar-green mb-2" />
-        <span className="text-sm font-semibold">Loading Contact CMS...</span>
-      </div>
+      <SolarPanelLoader
+        title="Loading Contact & Regional Desks CMS..."
+        subtitle="Syncing headquarters info, branch desks, and map embeds"
+      />
     );
   }
 

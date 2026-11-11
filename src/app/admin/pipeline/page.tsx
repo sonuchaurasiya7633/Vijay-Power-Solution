@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Kanban, ArrowRight, Phone, MapPin, Loader2 } from "lucide-react";
+import { Kanban, ArrowRight, Phone, MapPin } from "lucide-react";
+import { AdminTableSkeleton } from "@/components/ui/SkeletonLoaders";
 
 export default function PipelinePage() {
   const [leads, setLeads] = useState<any[]>([]);
@@ -57,10 +58,7 @@ export default function PipelinePage() {
       </div>
 
       {loading ? (
-        <div className="p-20 text-center text-xs text-slate-muted flex items-center justify-center gap-2">
-          <Loader2 className="w-5 h-5 animate-spin text-solar-green" />
-          <span>Loading visual funnel...</span>
-        </div>
+        <AdminTableSkeleton rows={5} />
       ) : (
         <div className="flex gap-4 overflow-x-auto pb-6 scrollbar-thin">
           {stages.map((st) => {

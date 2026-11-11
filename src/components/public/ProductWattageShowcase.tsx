@@ -8,6 +8,7 @@ import { getCleanPublicImage } from "@/lib/image-fallback";
 import { defaultSolarPanelsPageCms, type SolarPanelsPageCms } from "@/lib/cms-defaults";
 import { OFFICIAL_PANEL_BRANDS, normalizeOfficialPanelBrand } from "@/lib/constants/brands";
 import SolarCardPlaceholder from "@/components/public/SolarCardPlaceholder";
+import { ProductGridSkeleton } from "@/components/ui/SkeletonLoaders";
 
 export interface ShowcaseProductItem {
   _id?: string;
@@ -328,14 +329,7 @@ export default function ProductWattageShowcase({
 
         {/* Loading skeleton or Grid */}
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[0, 1, 2, 3].map((idx) => (
-              <div
-                key={idx}
-                className="h-96 rounded-2xl bg-white border border-slate-border animate-pulse"
-              />
-            ))}
-          </div>
+          <ProductGridSkeleton count={4} />
         ) : filteredProducts.length === 0 ? (
           <div className="bg-white rounded-2xl border border-slate-border p-10 text-center space-y-2">
             <p className="text-base font-bold text-navy-800">

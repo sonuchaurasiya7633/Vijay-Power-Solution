@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import toast from "@/lib/toast";
-import { Image as ImageIcon, Upload, Trash2, Folder, ShieldAlert, CheckCircle2, Loader2 } from "lucide-react";
+import { Image as ImageIcon, Upload, Trash2, Folder, ShieldAlert, CheckCircle2 } from "lucide-react";
+import { SolarEmblemSpinner } from "@/components/ui/SolarLoader";
 
 export default function AdminMediaPage() {
   const [folder, setFolder] = useState("all");
@@ -135,7 +136,7 @@ export default function AdminMediaPage() {
           )}
           <label className="px-4 py-2 rounded-xl text-xs font-bold bg-solar-green text-white hover:bg-solar-green-hover cursor-pointer flex items-center gap-1.5 transition-colors shadow-sm">
             {uploading ? (
-              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              <SolarEmblemSpinner size="xs" variant="white" label="Uploading asset" />
             ) : (
               <Upload className="w-3.5 h-3.5" />
             )}

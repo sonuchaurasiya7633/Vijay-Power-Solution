@@ -5,6 +5,7 @@ import Link from "next/link";
 import toast from "@/lib/toast";
 import { Clock, CheckCircle2, AlertCircle, Phone, MessageCircle, Calendar, Loader2 } from "lucide-react";
 import { formatDateIST, formatDateTimeIST } from "@/lib/utils/formatters";
+import { AdminTableSkeleton } from "@/components/ui/SkeletonLoaders";
 
 export default function FollowUpsPage() {
   const [followUps, setFollowUps] = useState<any[]>([]);
@@ -85,10 +86,7 @@ export default function FollowUpsPage() {
 
       <div className="bg-white rounded-2xl border border-slate-border shadow-sm overflow-hidden">
         {loading ? (
-          <div className="p-16 text-center text-xs text-slate-muted flex items-center justify-center gap-2">
-            <Loader2 className="w-5 h-5 animate-spin text-solar-green" />
-            <span>Loading follow-up tasks...</span>
-          </div>
+          <AdminTableSkeleton rows={5} />
         ) : followUps.length === 0 ? (
           <div className="p-16 text-center space-y-2">
             <Clock className="w-10 h-10 text-slate-300 mx-auto" />

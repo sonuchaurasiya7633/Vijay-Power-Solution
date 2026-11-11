@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Lock, Mail, ArrowRight, Loader2, ShieldCheck, AlertCircle } from "lucide-react";
+import { Lock, Mail, ArrowRight, ShieldCheck, AlertCircle } from "lucide-react";
 import toast from "@/lib/toast";
+import { SolarEmblemSpinner } from "@/components/ui/SolarLoader";
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState("");
@@ -109,11 +110,12 @@ export default function AdminLoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 px-4 rounded-xl font-bold text-sm bg-navy-800 hover:bg-navy-900 text-white shadow-lg flex items-center justify-center gap-2 transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-70 cursor-pointer"
+            aria-busy={loading}
+            className="w-full py-3.5 px-4 rounded-xl font-bold text-sm bg-navy-800 hover:bg-navy-900 text-white shadow-lg flex items-center justify-center gap-2.5 transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-75 cursor-pointer"
           >
             {loading ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin text-solar-yellow" />
+                <SolarEmblemSpinner size="sm" variant="gold" label="Authenticating credentials" />
                 <span>Authenticating Credentials...</span>
               </>
             ) : (

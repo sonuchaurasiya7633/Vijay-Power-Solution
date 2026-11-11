@@ -2,8 +2,9 @@
 
 import { useState, useRef } from "react";
 import Image from "next/image";
-import { Upload, X, Loader2, Image as ImageIcon, RefreshCw, Eye, CheckCircle2 } from "lucide-react";
+import { Upload, X, Image as ImageIcon, RefreshCw, Eye, CheckCircle2 } from "lucide-react";
 import toast from "@/lib/toast";
+import { SolarPanelLoader } from "@/components/ui/SolarLoader";
 
 interface CmsImageUploaderProps {
   label?: string;
@@ -226,9 +227,12 @@ export default function CmsImageUploader({
               </div>
 
               {uploading && (
-                <div className="absolute inset-0 bg-navy-950/80 flex flex-col items-center justify-center gap-2 text-white">
-                  <Loader2 className="w-6 h-6 animate-spin text-solar-yellow" />
-                  <span className="text-xs font-semibold">Uploading to Cloudinary CDN...</span>
+                <div className="absolute inset-0 bg-navy-950/85 backdrop-blur-[1px] flex items-center justify-center">
+                  <SolarPanelLoader
+                    variant="dark"
+                    title="Uploading to Cloudinary CDN..."
+                    subtitle="Optimizing image for fast delivery"
+                  />
                 </div>
               )}
             </div>
@@ -264,10 +268,7 @@ export default function CmsImageUploader({
             className="flex flex-col items-center justify-center py-8 px-4 text-center cursor-pointer hover:bg-white rounded-xl transition-colors"
           >
             {uploading ? (
-              <div className="flex flex-col items-center gap-2">
-                <Loader2 className="w-8 h-8 animate-spin text-solar-green" />
-                <p className="text-xs font-bold text-navy-800">Uploading to Cloudinary CDN...</p>
-              </div>
+              <SolarPanelLoader variant="compact" title="Uploading to Cloudinary CDN..." />
             ) : (
               <>
                 <div className="w-12 h-12 rounded-2xl bg-solar-green-light flex items-center justify-center text-solar-green mb-2">
