@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import CmsImageUploader from "@/components/admin/CmsImageUploader";
 import CmsLivePreviewModal from "@/components/admin/CmsLivePreviewModal";
+import { DEFAULT_SOCIAL_LINKS } from "@/lib/constants/social";
 
 export default function AdminHeaderFooterCmsPage() {
   const [activeTab, setActiveTab] = useState<"notice" | "header" | "footer" | "badges">("notice");
@@ -58,6 +59,7 @@ export default function AdminHeaderFooterCmsPage() {
       "DISCOM Net-Metering Liaison Across India",
       "Strict Private Quotation Policy (Non-Ecommerce)",
     ],
+    socialLinks: { ...DEFAULT_SOCIAL_LINKS },
   });
 
   useEffect(() => {
@@ -73,6 +75,7 @@ export default function AdminHeaderFooterCmsPage() {
             topBar: { ...prev.topBar, ...(d.setting.topBar || {}) },
             footer: { ...prev.footer, ...(d.setting.footer || {}) },
             badges: d.setting.badges || prev.badges,
+            socialLinks: { ...prev.socialLinks, ...(d.setting.socialLinks || {}) },
           }));
         }
       })
@@ -439,6 +442,56 @@ export default function AdminHeaderFooterCmsPage() {
                 onChange={(e) => setForm({ ...form, footer: { ...form.footer, copyright: e.target.value } })}
                 className="w-full text-xs px-3 py-2.5 rounded-xl border border-slate-border focus:border-solar-green outline-none"
               />
+            </div>
+
+            {/* Official Social Media Profiles */}
+            <div className="pt-4 border-t border-slate-100 space-y-3">
+              <div>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-navy-800">
+                  Official Social Media Links (Footer, Mobile Drawer &amp; Contact Page)
+                </h3>
+                <p className="text-[11px] text-slate-muted">
+                  Leave empty to hide a specific platform icon from public pages.
+                </p>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-muted mb-1">YouTube Channel URL</label>
+                  <input
+                    type="url"
+                    placeholder="https://youtube.com/@..."
+                    value={form.socialLinks.youtube}
+                    onChange={(e) =>
+                      setForm({ ...form, socialLinks: { ...form.socialLinks, youtube: e.target.value } })
+                    }
+                    className="w-full text-xs px-3 py-2.5 rounded-xl border border-slate-border focus:border-solar-green outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-muted mb-1">Instagram Profile URL</label>
+                  <input
+                    type="url"
+                    placeholder="https://www.instagram.com/..."
+                    value={form.socialLinks.instagram}
+                    onChange={(e) =>
+                      setForm({ ...form, socialLinks: { ...form.socialLinks, instagram: e.target.value } })
+                    }
+                    className="w-full text-xs px-3 py-2.5 rounded-xl border border-slate-border focus:border-solar-green outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-muted mb-1">Facebook Page URL</label>
+                  <input
+                    type="url"
+                    placeholder="https://www.facebook.com/..."
+                    value={form.socialLinks.facebook}
+                    onChange={(e) =>
+                      setForm({ ...form, socialLinks: { ...form.socialLinks, facebook: e.target.value } })
+                    }
+                    className="w-full text-xs px-3 py-2.5 rounded-xl border border-slate-border focus:border-solar-green outline-none"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         )}

@@ -22,6 +22,8 @@ import {
   Compass,
   FileText,
 } from "lucide-react";
+import SocialLinksBar from "@/components/public/SocialLinksBar";
+import { DEFAULT_SOCIAL_LINKS } from "@/lib/constants/social";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -46,6 +48,7 @@ export default function Navbar() {
       whatsapp: "919431000000",
       email: "contact@vijoypowersolution.com",
     },
+    socialLinks: DEFAULT_SOCIAL_LINKS,
   });
 
   useEffect(() => {
@@ -57,6 +60,7 @@ export default function Navbar() {
             logoUrl: d.setting.logoUrl || prev.logoUrl,
             noticeBar: { ...prev.noticeBar, ...(d.setting.noticeBar || {}) },
             topBar: { ...prev.topBar, ...(d.setting.topBar || {}) },
+            socialLinks: { ...prev.socialLinks, ...(d.setting.socialLinks || {}) },
           }));
         }
       })
@@ -640,6 +644,8 @@ export default function Navbar() {
               <span>WhatsApp Desk</span>
             </a>
           </div>
+
+          <SocialLinksBar links={headerCms.socialLinks} variant="compact" />
         </div>
           </aside>
         </>

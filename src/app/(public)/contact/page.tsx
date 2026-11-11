@@ -4,6 +4,7 @@ import LeadCaptureForm from "@/components/forms/LeadCaptureForm";
 import connectDB from "@/lib/db/connection";
 import Setting from "@/models/Setting";
 import Page from "@/models/Page";
+import SocialLinksBar from "@/components/public/SocialLinksBar";
 
 export const metadata: Metadata = {
   title: "Contact Us & Regional Offices | VIJOY POWER SOLUTION",
@@ -24,13 +25,15 @@ export default async function ContactPage() {
   };
   let pageContent: any = null;
   let cmsContact: any = null;
+  let socialLinks: any = null;
 
   try {
     await connectDB();
-    const [generalDoc, contactDoc, pageDoc] = await Promise.all([
+    const [generalDoc, contactDoc, pageDoc, hfDoc] = await Promise.all([
       Setting.findOne({ key: "general" }).lean(),
       Setting.findOne({ key: "contact_page" }).lean(),
       Page.findOne({ slug: "contact", isPublished: true }).lean(),
+      Setting.findOne({ key: "header_footer" }).lean(),
     ]);
 
     if (generalDoc && generalDoc.value) {
@@ -41,6 +44,9 @@ export default async function ContactPage() {
     }
     if (pageDoc) {
       pageContent = pageDoc;
+    }
+    if (hfDoc && hfDoc.value && (hfDoc.value as any).socialLinks) {
+      socialLinks = (hfDoc.value as any).socialLinks;
     }
   } catch (err) {
     console.error("Error loading dynamic contact settings:", err);
@@ -186,6 +192,16 @@ export default async function ContactPage() {
                     {hq.operatingHours}
                   </p>
                 </div>
+              </div>
+
+              <div className="p-4 rounded-2xl border border-slate-border space-y-3 bg-slate-bg/40">
+                <div>
+                  <h4 className="font-bold text-navy-800">Follow Us on Social Media</h4>
+                  <p className="text-[11px] text-slate-muted mt-0.5">
+                    Watch completed solar installations, customer stories &amp; updates
+                  </p>
+                </div>
+                <SocialLinksBar links={socialLinks} variant="light" showLabels />
               </div>
             </div>
           </div>

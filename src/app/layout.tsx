@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Manrope } from "next/font/google";
 import "./globals.css";
 import ToastProvider from "@/components/ui/ToastProvider";
+import { DEFAULT_SOCIAL_LINKS } from "@/lib/constants/social";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -79,6 +80,11 @@ export default function RootLayout({
       addressCountry: "IN",
     },
     areaServed: "India",
+    sameAs: [
+      DEFAULT_SOCIAL_LINKS.youtube,
+      DEFAULT_SOCIAL_LINKS.instagram,
+      DEFAULT_SOCIAL_LINKS.facebook,
+    ],
     description:
       "Solar EPC contractor providing rooftop solar installations, solar panels from 10W to 730W, and PM Surya Ghar subsidy assistance across India.",
     priceRange: "Consultation-Based",

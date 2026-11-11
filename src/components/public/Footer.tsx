@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Phone, Mail, MapPin, MessageCircle, ShieldCheck, Sun } from "lucide-react";
 import connectDB from "@/lib/db/connection";
 import Setting from "@/models/Setting";
+import SocialLinksBar from "@/components/public/SocialLinksBar";
 
 export default async function Footer() {
   const currentYear = new Date().getFullYear();
@@ -92,6 +93,12 @@ export default async function Footer() {
                   {contact.email}
                 </a>
               </div>
+            </div>
+            <div className="pt-3 space-y-2">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                Follow Us
+              </p>
+              <SocialLinksBar links={headerFooterCms?.socialLinks} variant="dark" showLabels />
             </div>
           </div>
 
