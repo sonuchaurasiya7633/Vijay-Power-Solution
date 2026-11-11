@@ -7,6 +7,8 @@ import CtaBanner from "@/components/public/CtaBanner";
 import connectDB from "@/lib/db/connection";
 import Page from "@/models/Page";
 import Setting from "@/models/Setting";
+import { getCleanPublicImage } from "@/lib/image-fallback";
+import SolarCardPlaceholder from "@/components/public/SolarCardPlaceholder";
 
 export const metadata: Metadata = {
   title: "About Us | VIJOY POWER SOLUTION Solar EPC",
@@ -41,10 +43,8 @@ export default async function AboutPage() {
     cmsAbout?.hero?.subtitle ||
     dynamicPage?.heroSubtitle ||
     "Delivering clean, dependable solar rooftop engineering, ALMM-compliant panel supply, and seamless DISCOM net-metering across India.";
-  const heroImage =
-    cmsAbout?.hero?.imageUrl ||
-    dynamicPage?.heroImage ||
-    "/images/gallery/customer-solar-01.jpg";
+  const rawHeroImage = cmsAbout?.hero?.imageUrl || dynamicPage?.heroImage || "";
+  const heroImage = getCleanPublicImage(rawHeroImage);
 
   const storyBadge = cmsAbout?.narrative?.badge || "Engineering Heritage";
   const storyHeadline =
@@ -147,13 +147,17 @@ export default async function AboutPage() {
             </div>
 
             <div className="lg:col-span-6">
-              <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-slate-border h-96 sm:h-[450px]">
-                <Image
-                  src={heroImage}
-                  alt="Solar installation engineering"
-                  fill
-                  className="object-cover"
-                />
+              <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-slate-border h-96 sm:h-[450px] bg-navy-900">
+                {heroImage ? (
+                  <Image
+                    src={heroImage}
+                    alt="Solar installation engineering"
+                    fill
+                    className="object-cover"
+                  />
+                ) : (
+                  <SolarCardPlaceholder title={title} subtitle={heroBadge} />
+                )}
               </div>
             </div>
           </div>

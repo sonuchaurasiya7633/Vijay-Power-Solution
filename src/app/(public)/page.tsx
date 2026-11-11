@@ -2,7 +2,6 @@ import HeroSection from "@/components/public/HeroSection";
 import StatsSection from "@/components/public/StatsSection";
 import SolutionsGrid from "@/components/public/SolutionsGrid";
 import ProductWattageShowcase from "@/components/public/ProductWattageShowcase";
-import HomepageCustomerGallery from "@/components/public/HomepageCustomerGallery";
 import WhyChooseUs from "@/components/public/WhyChooseUs";
 import InstallationProcess from "@/components/public/InstallationProcess";
 import RecentProjectsSection from "@/components/public/RecentProjectsSection";
@@ -13,16 +12,14 @@ import CalculatorWidget from "@/components/public/CalculatorWidget";
 import FaqAccordion from "@/components/public/FaqAccordion";
 import CtaBanner from "@/components/public/CtaBanner";
 import connectDB from "@/lib/db/connection";
-import InstallationGallery from "@/models/InstallationGallery";
 import SolarProduct from "@/models/SolarProduct";
 import SolarSolution from "@/models/SolarSolution";
 import { getPublicPagesCms, getSolarPanelsPageCms } from "@/lib/cms-server";
-import { getSafeSolarImage } from "@/lib/image-fallback";
+import { getCleanPublicImage } from "@/lib/image-fallback";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  let galleryItems: any[] = [];
   let products: any[] = [];
   let solutions: any[] = [];
   const [solarPanelsCms, publicPagesCms] = await Promise.all([
@@ -32,20 +29,18 @@ export default async function HomePage() {
 
   try {
     await connectDB();
-    const [rawGallery, rawProducts, rawSolutions] = await Promise.all([
-      InstallationGallery.find({ isPublished: true }).sort({ sortOrder: 1, createdAt: -1 }).lean(),
+    const [rawProducts, rawSolutions] = await Promise.all([
       SolarProduct.find({ isPublished: true }).sort({ ratedPowerWp: 1 }).lean(),
       SolarSolution.find({ isPublished: true }).sort({ sortOrder: 1, createdAt: 1 }).lean(),
     ]);
-    galleryItems = rawGallery;
     products = rawProducts;
-    solutions = rawSolutions.map((doc: any, idx: number) => ({
+    solutions = rawSolutions.map((doc: any) => ({
       slug: doc.slug,
       title: doc.title,
       category: doc.category || "Solar Architecture",
       tagline: doc.tagline || doc.description || "",
       capacity: doc.typicalCapacityRange || "Custom kW",
-      image: getSafeSolarImage(doc.image, idx),
+      image: getCleanPublicImage(doc.image),
       benefits:
         Array.isArray(doc.keyBenefits) && doc.keyBenefits.length > 0
           ? doc.keyBenefits.slice(0, 3)
@@ -55,7 +50,6 @@ export default async function HomePage() {
     // Graceful fallback
   }
 
-  const cleanGalleryItems = JSON.parse(JSON.stringify(galleryItems));
   const cleanProducts = JSON.parse(JSON.stringify(products));
 
   return (
@@ -77,9 +71,6 @@ export default async function HomePage() {
         initialProducts={cleanProducts.length > 0 ? cleanProducts : undefined}
         cms={solarPanelsCms}
       />
-
-      {/* 5.5. Real Customer Solar Installation Gallery */}
-      <HomepageCustomerGallery initialItems={cleanGalleryItems} />
 
       {/* 6. Why Choose VIJOY POWER SOLUTION */}
       <WhyChooseUs />

@@ -6,6 +6,8 @@ import { Zap, ShieldCheck, CheckCircle2, FileText, ArrowLeft, Phone } from "luci
 import LeadCaptureForm from "@/components/forms/LeadCaptureForm";
 import connectDB from "@/lib/db/connection";
 import SolarProduct from "@/models/SolarProduct";
+import { getCleanPublicImage } from "@/lib/image-fallback";
+import SolarCardPlaceholder from "@/components/public/SolarCardPlaceholder";
 
 export async function generateMetadata({
   params,
@@ -53,15 +55,22 @@ export default async function ProductDetailPage({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           {/* Left Column: Images & Specifications */}
           <div className="lg:col-span-7 space-y-8">
-            {/* Main Product Image */}
-            <div className="relative h-96 sm:h-[450px] w-full bg-navy-50 rounded-3xl border border-slate-border overflow-hidden shadow-sm">
-              <Image
-                src={product.coverImage}
-                alt={product.name}
-                fill
-                className="object-contain p-6"
-                priority
-              />
+            {/* Main Product Image or Title Box Card */}
+            <div className="relative h-96 sm:h-[450px] w-full bg-navy-900 rounded-3xl border border-slate-border overflow-hidden shadow-sm">
+              {getCleanPublicImage(product.coverImage) ? (
+                <Image
+                  src={getCleanPublicImage(product.coverImage)}
+                  alt={product.name}
+                  fill
+                  className="object-contain p-6 bg-navy-50"
+                  priority
+                />
+              ) : (
+                <SolarCardPlaceholder
+                  title={product.name}
+                  subtitle={`${product.brand} • ${product.ratedPowerWp} Wp`}
+                />
+              )}
               <div className="absolute top-4 left-4 bg-solar-green text-white font-extrabold text-sm px-3.5 py-1.5 rounded-xl shadow flex items-center gap-1.5">
                 <Zap className="w-4 h-4 fill-current" />
                 <span>{product.ratedPowerWp} Wp Rated Power</span>

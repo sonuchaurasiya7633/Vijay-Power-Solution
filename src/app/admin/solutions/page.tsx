@@ -36,7 +36,7 @@ export default function AdminSolutionsPage() {
     tagline: "",
     typicalCapacityRange: "3kW - 10kW",
     description: "",
-    image: "/images/gallery/customer-solar-01.jpg",
+    image: "",
     isPublished: true,
   });
 
@@ -61,7 +61,7 @@ export default function AdminSolutionsPage() {
       tagline: "",
       typicalCapacityRange: "3kW - 10kW",
       description: "",
-      image: "/images/gallery/customer-solar-01.jpg",
+      image: "",
       isPublished: true,
     });
     setShowModal(true);
@@ -76,7 +76,7 @@ export default function AdminSolutionsPage() {
       tagline: s.tagline || "",
       typicalCapacityRange: s.typicalCapacityRange || "3kW - 10kW",
       description: s.description || "",
-      image: s.image || "/images/gallery/customer-solar-01.jpg",
+      image: s.image || "",
       isPublished: s.isPublished !== undefined ? s.isPublished : true,
     });
     setShowModal(true);

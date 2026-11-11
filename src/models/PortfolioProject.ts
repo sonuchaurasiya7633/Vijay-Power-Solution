@@ -74,7 +74,7 @@ const PortfolioProjectSchema = new Schema<IPortfolioProject>(
     recommendedSolution: { type: String },
     installationChallenges: { type: String },
     projectOutcome: { type: String },
-    coverImage: { type: String, required: true },
+    coverImage: { type: String, default: "" },
     beforePhotos: [{ type: String }],
     duringPhotos: [{ type: String }],
     afterPhotos: [{ type: String }],

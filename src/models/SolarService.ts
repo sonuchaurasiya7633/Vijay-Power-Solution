@@ -37,7 +37,7 @@ const SolarServiceSchema = new Schema<ISolarService>(
       },
     ],
     serviceableStates: [{ type: String }],
-    image: { type: String, required: true },
+    image: { type: String, default: "" },
     sortOrder: { type: Number, default: 0 },
     isAvailable: { type: Boolean, default: true },
     isFeatured: { type: Boolean, default: false },

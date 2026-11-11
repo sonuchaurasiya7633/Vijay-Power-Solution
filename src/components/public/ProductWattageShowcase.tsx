@@ -4,8 +4,9 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, BatteryCharging, Check, Cpu, ShieldCheck, Zap } from "lucide-react";
-import { getLocalSolarGalleryImage, getSafeSolarImage } from "@/lib/image-fallback";
+import { getCleanPublicImage } from "@/lib/image-fallback";
 import { defaultSolarPanelsPageCms, type SolarPanelsPageCms } from "@/lib/cms-defaults";
+import SolarCardPlaceholder from "@/components/public/SolarCardPlaceholder";
 
 export interface ShowcaseProductItem {
   _id?: string;
@@ -47,7 +48,7 @@ const fallbackCatalog: ShowcaseProductItem[] = [
     technology: "Mono PERC",
     efficiency: "18.5%",
     warranty: "10 Years",
-    image: getLocalSolarGalleryImage(0),
+    image: "",
     features: ["Compact rural lighting", "Battery charging", "Weatherproof aluminum frame"],
   },
   {
@@ -58,7 +59,7 @@ const fallbackCatalog: ShowcaseProductItem[] = [
     technology: "Polycrystalline",
     efficiency: "17.2%",
     warranty: "10 Years",
-    image: getLocalSolarGalleryImage(1),
+    image: "",
     features: ["Street lighting & DC fans", "Low-light performance", "Rugged tempered glass"],
   },
   {
@@ -69,7 +70,7 @@ const fallbackCatalog: ShowcaseProductItem[] = [
     technology: "Mono PERC",
     efficiency: "19.8%",
     warranty: "25 Years",
-    image: getLocalSolarGalleryImage(2),
+    image: "",
     features: ["12V battery bank charging", "IP68 junction box", "Hail & wind resistant"],
   },
   {
@@ -80,7 +81,7 @@ const fallbackCatalog: ShowcaseProductItem[] = [
     technology: "Mono PERC",
     efficiency: "20.2%",
     warranty: "25 Years",
-    image: getLocalSolarGalleryImage(3),
+    image: "",
     features: ["Off-grid home UPS pairing", "Anti-PID technology", "High conversion efficiency"],
   },
   {
@@ -91,7 +92,7 @@ const fallbackCatalog: ShowcaseProductItem[] = [
     technology: "Mono PERC Half-Cut",
     efficiency: "21.0%",
     warranty: "25 Years",
-    image: getLocalSolarGalleryImage(4),
+    image: "",
     features: ["Residential 3kW-5kW roofs", "Reduced hot-spot risk", "MNRE ALMM approved"],
   },
   {
@@ -102,7 +103,7 @@ const fallbackCatalog: ShowcaseProductItem[] = [
     technology: "N-Type TOPCon Bifacial",
     efficiency: "22.3%",
     warranty: "30 Years",
-    image: getLocalSolarGalleryImage(5),
+    image: "",
     features: ["Bifacial rear energy gain", "PM Surya Ghar compliant", "Ultra-low LID degradation"],
   },
   {
@@ -113,7 +114,7 @@ const fallbackCatalog: ShowcaseProductItem[] = [
     technology: "N-Type TOPCon Bifacial",
     efficiency: "22.5%",
     warranty: "30 Years",
-    image: getLocalSolarGalleryImage(6),
+    image: "",
     features: ["Commercial & factory roofs", "Heavy snow & wind load", "Dual-glass moisture seal"],
   },
   {
@@ -124,7 +125,7 @@ const fallbackCatalog: ShowcaseProductItem[] = [
     technology: "Heterojunction (HJT)",
     efficiency: "23.4%",
     warranty: "30 Years",
-    image: getLocalSolarGalleryImage(7),
+    image: "",
     features: ["Highest module power density", "Superior 45°C+ summer coefficient", "Utility & industrial plants"],
   },
 ];
@@ -163,7 +164,7 @@ function normalizeProduct(raw: any, index: number): ShowcaseProductItem {
     technology: tech,
     efficiency,
     warranty,
-    image: getSafeSolarImage(raw.coverImage || raw.image, index),
+    image: getCleanPublicImage(raw.coverImage || raw.image),
     features: features.slice(0, 3),
   };
 }
@@ -311,13 +312,17 @@ export default function ProductWattageShowcase({
                 key={p._id || p.slug}
                 className="group bg-white rounded-2xl border border-slate-border hover:border-solar-green/50 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col overflow-hidden"
               >
-                <div className="relative h-48 w-full bg-navy-900/5 overflow-hidden">
-                  <Image
-                    src={p.image}
-                    alt={p.name}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
+                <div className="relative h-48 w-full bg-navy-900 overflow-hidden">
+                  {getCleanPublicImage(p.image) ? (
+                    <Image
+                      src={getCleanPublicImage(p.image)}
+                      alt={p.name}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  ) : (
+                    <SolarCardPlaceholder title={p.name} subtitle={p.technology} compact />
+                  )}
                   <div className="absolute top-3 left-3 bg-solar-green text-white text-xs font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 shadow">
                     <Zap className="w-3.5 h-3.5" />
                     <span>{p.ratedPowerWp} Wp</span>

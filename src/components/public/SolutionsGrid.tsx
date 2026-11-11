@@ -5,7 +5,8 @@ import connectDB from "@/lib/db/connection";
 import SolarSolution from "@/models/SolarSolution";
 import Setting from "@/models/Setting";
 import { defaultPublicPagesCms, mergeWithDefaults } from "@/lib/cms-defaults";
-import { getLocalSolarGalleryImage, getSafeSolarImage } from "@/lib/image-fallback";
+import { getCleanPublicImage } from "@/lib/image-fallback";
+import SolarCardPlaceholder from "@/components/public/SolarCardPlaceholder";
 
 export interface SolutionItem {
   slug: string;
@@ -24,7 +25,7 @@ const defaultSolutions: SolutionItem[] = [
     category: "Homes & Villas",
     tagline: "Slash your home electricity bills by 70-90% with clean solar energy.",
     capacity: "1 kW – 10 kW",
-    image: getLocalSolarGalleryImage(0),
+    image: "",
     benefits: ["PM Surya Ghar subsidy assistance", "Net metering credit on power bills", "Elevated structures available"],
   },
   {
@@ -33,7 +34,7 @@ const defaultSolutions: SolutionItem[] = [
     category: "Schools, Hospitals & Retail",
     tagline: "Reduce peak daytime operating expenditures with accelerated tax depreciation.",
     capacity: "10 kW – 100 kW",
-    image: getLocalSolarGalleryImage(1),
+    image: "",
     benefits: ["Significant reduction in daytime tariffs", "Fast ROI within 3-4 years", "Remote cloud generation monitoring"],
   },
   {
@@ -42,7 +43,7 @@ const defaultSolutions: SolutionItem[] = [
     category: "Mills, Factories & Storages",
     tagline: "Heavy-duty high-voltage power generation for manufacturing plants and cold storages.",
     capacity: "50 kW – 500+ kW",
-    image: getLocalSolarGalleryImage(2),
+    image: "",
     benefits: ["Mitigate costly industrial tariff peaks", "HT synchronization", "Heavy wind-resistant engineering"],
   },
   {
@@ -51,7 +52,7 @@ const defaultSolutions: SolutionItem[] = [
     category: "Utility Grid-Tied",
     tagline: "Export excess solar power back to the grid and receive DISCOM credit adjustments.",
     capacity: "2 kW – 50 kW",
-    image: getLocalSolarGalleryImage(3),
+    image: "",
     benefits: ["Lowest initial cost per kW", "Zero recurring battery expenses", "Full utility net-metering approvals"],
   },
   {
@@ -60,7 +61,7 @@ const defaultSolutions: SolutionItem[] = [
     category: "Uninterrupted Power",
     tagline: "Continuous 24x7 electricity for areas subject to power cuts and load shedding.",
     capacity: "1 kW – 20 kW",
-    image: getLocalSolarGalleryImage(4),
+    image: "",
     benefits: ["100% independence from grid blackouts", "Clean & silent alternative to diesel", "Tubular or Lithium storage"],
   },
   {
@@ -69,7 +70,7 @@ const defaultSolutions: SolutionItem[] = [
     category: "Farming & Irrigation",
     tagline: "Reliable daytime irrigation without expensive diesel fuels or erratic grid power.",
     capacity: "3 HP – 10 HP",
-    image: getLocalSolarGalleryImage(5),
+    image: "",
     benefits: ["Zero ongoing fuel expenditure", "High discharge flow in full sunlight", "Dry run sensor protections"],
   },
 ];
@@ -100,13 +101,13 @@ export default async function SolutionsGrid({
           .sort({ sortOrder: 1, createdAt: 1 })
           .lean();
         if (docs && docs.length > 0) {
-          solutions = docs.map((doc: any, idx: number) => ({
+          solutions = docs.map((doc: any) => ({
             slug: doc.slug,
             title: doc.title,
             category: doc.category || "Solar Architecture",
             tagline: doc.tagline || doc.description || "",
             capacity: doc.typicalCapacityRange || "Custom kW",
-            image: getSafeSolarImage(doc.image, idx),
+            image: getCleanPublicImage(doc.image),
             benefits: Array.isArray(doc.keyBenefits) && doc.keyBenefits.length > 0
               ? doc.keyBenefits.slice(0, 3)
               : ["Custom EPC engineering", "MNRE compliant hardware"],
@@ -151,15 +152,19 @@ export default async function SolutionsGrid({
               key={sol.slug}
               className="group bg-white rounded-3xl border border-slate-border hover:border-solar-green/40 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden"
             >
-              {/* Image Banner */}
-              <div className="relative h-52 w-full overflow-hidden bg-navy-100">
-                <Image
-                  src={sol.image}
-                  alt={sol.title}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute top-4 left-4 bg-navy-900/85 text-white text-[11px] font-bold px-3 py-1 rounded-full backdrop-blur-sm">
+              {/* Image Banner or Title Box Card */}
+              <div className="relative h-52 w-full overflow-hidden bg-navy-900">
+                {getCleanPublicImage(sol.image) ? (
+                  <Image
+                    src={getCleanPublicImage(sol.image)}
+                    alt={sol.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                ) : (
+                  <SolarCardPlaceholder title={sol.title} subtitle={sol.category} />
+                )}
+                <div className="absolute top-4 left-4 bg-navy-900/85 text-white text-[11px] font-bold px-3 py-1 rounded-full backdrop-blur-sm border border-white/10">
                   {sol.category}
                 </div>
                 <div className="absolute bottom-4 right-4 bg-solar-green text-white text-[11px] font-bold px-2.5 py-1 rounded-lg shadow">

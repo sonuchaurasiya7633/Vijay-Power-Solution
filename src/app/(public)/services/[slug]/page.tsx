@@ -6,6 +6,8 @@ import { Check, ArrowRight, ShieldCheck } from "lucide-react";
 import LeadCaptureForm from "@/components/forms/LeadCaptureForm";
 import connectDB from "@/lib/db/connection";
 import SolarService from "@/models/SolarService";
+import { getCleanPublicImage } from "@/lib/image-fallback";
+import SolarCardPlaceholder from "@/components/public/SolarCardPlaceholder";
 
 export async function generateMetadata({
   params,
@@ -49,14 +51,18 @@ export default async function ServiceDetailPage({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           {/* Main Service Description */}
           <div className="lg:col-span-7 space-y-8">
-            <div className="relative h-96 w-full rounded-3xl overflow-hidden shadow-sm border border-slate-border">
-              <Image
-                src={serv.image}
-                alt={serv.title}
-                fill
-                className="object-cover"
-                priority
-              />
+            <div className="relative h-96 w-full rounded-3xl overflow-hidden shadow-sm border border-slate-border bg-navy-900">
+              {getCleanPublicImage(serv.image) ? (
+                <Image
+                  src={getCleanPublicImage(serv.image)}
+                  alt={serv.title}
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              ) : (
+                <SolarCardPlaceholder title={serv.title} subtitle="Turnkey Solar Service" />
+              )}
             </div>
 
             <div className="space-y-3">

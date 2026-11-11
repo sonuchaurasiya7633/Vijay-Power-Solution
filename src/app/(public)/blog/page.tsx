@@ -7,7 +7,8 @@ import Blog from "@/models/Blog";
 import { formatDateIST } from "@/lib/utils/formatters";
 import CtaBanner from "@/components/public/CtaBanner";
 import { getPublicPagesCms } from "@/lib/cms-server";
-import { getLocalSolarGalleryImage, getSafeSolarImage } from "@/lib/image-fallback";
+import { getCleanPublicImage } from "@/lib/image-fallback";
+import SolarCardPlaceholder from "@/components/public/SolarCardPlaceholder";
 
 export const metadata: Metadata = {
   title: "Solar Knowledge Hub & Blog | VIJOY POWER SOLUTION",
@@ -23,7 +24,7 @@ const defaultArticles = [
     category: "Government Schemes",
     readTime: "5 min read",
     date: "2024-04-10",
-    coverImage: getLocalSolarGalleryImage(0),
+    coverImage: "",
   },
   {
     slug: "on-grid-vs-hybrid-solar-systems-comparison",
@@ -32,7 +33,7 @@ const defaultArticles = [
     category: "Technical Guide",
     readTime: "6 min read",
     date: "2024-05-18",
-    coverImage: getLocalSolarGalleryImage(1),
+    coverImage: "",
   },
   {
     slug: "how-to-calculate-solar-panel-capacity-for-home",
@@ -41,7 +42,7 @@ const defaultArticles = [
     category: "Solar Engineering",
     readTime: "4 min read",
     date: "2024-06-02",
-    coverImage: getLocalSolarGalleryImage(2),
+    coverImage: "",
   },
 ];
 
@@ -84,14 +85,18 @@ export default async function BlogIndexPage() {
               className="bg-white rounded-3xl border border-slate-border hover:border-solar-green/40 shadow-sm hover:shadow-xl transition-all flex flex-col justify-between overflow-hidden group"
             >
               <div>
-                <div className="relative h-48 w-full bg-navy-100 overflow-hidden">
-                  <Image
-                    src={getSafeSolarImage(a.coverImage, idx)}
-                    alt={a.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute top-4 left-4 bg-navy-900/85 text-white text-[11px] font-bold px-3 py-1 rounded-full backdrop-blur-sm">
+                <div className="relative h-48 w-full bg-navy-900 overflow-hidden">
+                  {getCleanPublicImage(a.coverImage) ? (
+                    <Image
+                      src={getCleanPublicImage(a.coverImage)}
+                      alt={a.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  ) : (
+                    <SolarCardPlaceholder title={a.title} subtitle={a.category} />
+                  )}
+                  <div className="absolute top-4 left-4 bg-navy-900/85 text-white text-[11px] font-bold px-3 py-1 rounded-full backdrop-blur-sm border border-white/10">
                     {a.category}
                   </div>
                 </div>

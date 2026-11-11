@@ -1,34 +1,47 @@
-const LOCAL_SOLAR_GALLERY = [
-  "/images/gallery/customer-solar-01.jpg",
-  "/images/gallery/customer-solar-02.jpg",
-  "/images/gallery/customer-solar-03.jpg",
-  "/images/gallery/customer-solar-04.jpg",
-  "/images/gallery/customer-solar-05.jpg",
-  "/images/gallery/customer-solar-06.jpg",
-  "/images/gallery/customer-solar-07.jpg",
-  "/images/gallery/customer-solar-08.jpg",
-  "/images/gallery/customer-solar-09.jpg",
-  "/images/gallery/customer-solar-10.jpg",
+const POSTER_CLOUDINARY_IDS = [
+  "peclb2xlnhrgnee80gtr",
+  "skumqggyxv2l9nangrk3",
+  "obng8nqkacglehvotc82",
+  "zqtztnkzlqtojla8xfdk",
+  "zbxvqrnzjwizdsqbe6pg",
+  "ejt2wgjnovmcjtb7pg8t",
+  "otjhhooannci70rhv89l",
+  "te4aru2gy5shlfdijjs1",
+  "veijlr67s47m9diwbubk",
+  "e3v9r53sqydmn0cf9udi",
 ];
 
 const BROKEN_OR_OFFTOPIC_UNSPLASH_IDS = [
-  "photo-1509391365360-2e959784a276", // 404
-  "photo-1508873696983-2df5293cb32f", // 404
-  "photo-1548337138-e87d889cc369", // offshore wind turbines, not solar
+  "photo-1509391365360-2e959784a276",
+  "photo-1508873696983-2df5293cb32f",
+  "photo-1548337138-e87d889cc369",
 ];
 
-export function getSafeSolarImage(url?: string | null, index = 0): string {
-  const fallback = LOCAL_SOLAR_GALLERY[Math.abs(index) % LOCAL_SOLAR_GALLERY.length];
+/**
+ * Returns "" (empty string) if the URL is empty, a broken/off-topic Unsplash URL,
+ * or one of the VPS customer handover posters (which belong ONLY on /projects).
+ */
+export function getCleanPublicImage(url?: string | null): string {
   if (!url || typeof url !== "string" || !url.trim()) {
-    return fallback;
+    return "";
   }
   const trimmed = url.trim();
+  if (trimmed.includes("/images/gallery/customer-solar-")) {
+    return "";
+  }
+  if (POSTER_CLOUDINARY_IDS.some((id) => trimmed.includes(id))) {
+    return "";
+  }
   if (BROKEN_OR_OFFTOPIC_UNSPLASH_IDS.some((id) => trimmed.includes(id))) {
-    return fallback;
+    return "";
   }
   return trimmed;
 }
 
-export function getLocalSolarGalleryImage(index = 0): string {
-  return LOCAL_SOLAR_GALLERY[Math.abs(index) % LOCAL_SOLAR_GALLERY.length];
+/**
+ * Kept for backwards compatibility with imports — resolves non-poster, non-broken image URLs
+ * or returns "" so components render the clean Title Box Card placeholder.
+ */
+export function getSafeSolarImage(url?: string | null): string {
+  return getCleanPublicImage(url);
 }

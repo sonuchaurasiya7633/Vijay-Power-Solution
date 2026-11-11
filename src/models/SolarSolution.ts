@@ -29,7 +29,7 @@ const SolarSolutionSchema = new Schema<ISolarSolution>(
     keyBenefits: [{ type: String }],
     suitableFor: [{ type: String }],
     typicalCapacityRange: { type: String, required: true },
-    image: { type: String, required: true },
+    image: { type: String, default: "" },
     sortOrder: { type: Number, default: 0 },
     isFeatured: { type: Boolean, default: false },
     isPublished: { type: Boolean, default: true },

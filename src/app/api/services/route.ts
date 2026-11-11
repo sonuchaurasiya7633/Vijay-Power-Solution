@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await req.json();
-    body.image = body.image || "/images/gallery/customer-solar-01.jpg";
+    body.image = body.image || "";
     body.fullDescription = body.fullDescription || body.shortDescription;
     await connectDB();
     const service = await SolarService.create(body);

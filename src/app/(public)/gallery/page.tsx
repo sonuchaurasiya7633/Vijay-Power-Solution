@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import connectDB from "@/lib/db/connection";
 import InstallationGallery from "@/models/InstallationGallery";
 import DedicatedGalleryView from "@/components/public/DedicatedGalleryView";
 import CtaBanner from "@/components/public/CtaBanner";
-import { Sparkles } from "lucide-react";
+import { Sparkles, ArrowRight } from "lucide-react";
 import { getPublicPagesCms } from "@/lib/cms-server";
+import { getCleanPublicImage } from "@/lib/image-fallback";
 
 export const metadata: Metadata = {
   title: "Installation Photo Gallery | Real Customers | VIJOY POWER SOLUTION",
@@ -21,9 +23,11 @@ export default async function GalleryPage() {
 
   try {
     await connectDB();
-    galleryItems = await InstallationGallery.find({ isPublished: true })
+    const rawItems = await InstallationGallery.find({ isPublished: true })
       .sort({ sortOrder: 1, createdAt: -1 })
       .lean();
+    // Customer handover posters stay exclusively on /projects; gallery renders only newly uploaded non-poster photos
+    galleryItems = rawItems.filter((item: any) => Boolean(getCleanPublicImage(item.imageUrl)));
   } catch (err) {
     console.warn("Database not reachable during build, using fallback gallery");
   }
@@ -47,8 +51,29 @@ export default async function GalleryPage() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <DedicatedGalleryView items={cleanGalleryItems} />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-6">
+        {cleanGalleryItems.length > 0 ? (
+          <DedicatedGalleryView items={cleanGalleryItems} />
+        ) : (
+          <div className="text-center py-16 px-6 bg-slate-bg rounded-3xl border border-slate-border space-y-4">
+            <Sparkles className="w-8 h-8 text-solar-green mx-auto" />
+            <h2 className="text-xl font-display font-bold text-navy-800">
+              Gallery Photos Will Appear Here
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-muted max-w-xl mx-auto">
+              Upload new site photographs from Admin → Projects & Gallery, or view all completed customer project posters on our Completed Solar Projects page.
+            </p>
+            <div>
+              <Link
+                href="/projects"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-navy-900 hover:bg-solar-green text-white text-xs font-bold transition-colors"
+              >
+                <span>View Our Completed Solar Projects</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
 
       <CtaBanner />

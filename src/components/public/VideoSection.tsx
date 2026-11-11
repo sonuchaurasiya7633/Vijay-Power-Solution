@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Play, X } from "lucide-react";
+import { getCleanPublicImage } from "@/lib/image-fallback";
+import SolarCardPlaceholder from "@/components/public/SolarCardPlaceholder";
 
 interface VideoStory {
   title: string;
@@ -17,14 +19,14 @@ const defaultVideos: VideoStory[] = [
     title: "10 kW Elevated Rooftop Solar Walkthrough in Patna",
     location: "Kankarbagh, Patna",
     duration: "1:05",
-    thumbnail: "/images/gallery/customer-solar-04.jpg",
+    thumbnail: "",
     videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
   },
   {
     title: "25 kW Bodh Gaya Hotel Solar Commissioning & SBPDCL Inspection",
     location: "Bodh Gaya, Bihar",
     duration: "1:42",
-    thumbnail: "/images/gallery/customer-solar-05.jpg",
+    thumbnail: "",
     videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
   },
 ];
@@ -77,14 +79,18 @@ export default function VideoSection() {
               className="group bg-white rounded-3xl overflow-hidden border border-slate-border shadow-sm hover:shadow-xl transition-all cursor-pointer"
               onClick={() => setActiveVideo(v.videoUrl)}
             >
-              <div className="relative h-60 w-full overflow-hidden">
-                <Image
-                  src={v.thumbnail && !v.thumbnail.includes("photo-1509391365360") && !v.thumbnail.includes("photo-1548337138") ? v.thumbnail : "/images/gallery/customer-solar-04.jpg"}
-                  alt={v.title}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-navy-950/40 group-hover:bg-navy-950/20 transition-colors" />
+              <div className="relative h-60 w-full overflow-hidden bg-navy-900">
+                {getCleanPublicImage(v.thumbnail) ? (
+                  <Image
+                    src={getCleanPublicImage(v.thumbnail)}
+                    alt={v.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                ) : (
+                  <SolarCardPlaceholder title={v.title} subtitle={v.location} />
+                )}
+                <div className="absolute inset-0 bg-navy-950/35 group-hover:bg-navy-950/20 transition-colors" />
 
                 {/* Play Button Overlay */}
                 <div className="absolute inset-0 flex items-center justify-center">

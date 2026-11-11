@@ -6,6 +6,8 @@ import CtaBanner from "@/components/public/CtaBanner";
 import connectDB from "@/lib/db/connection";
 import SolarService from "@/models/SolarService";
 import { getPublicPagesCms } from "@/lib/cms-server";
+import { getCleanPublicImage } from "@/lib/image-fallback";
+import SolarCardPlaceholder from "@/components/public/SolarCardPlaceholder";
 
 export const metadata: Metadata = {
   title: "Solar Installation Services & EPC | VIJOY POWER SOLUTION",
@@ -53,13 +55,17 @@ export default async function ServicesPage() {
               className="bg-white rounded-3xl border border-slate-border hover:border-solar-green/40 shadow-sm hover:shadow-xl transition-all flex flex-col justify-between overflow-hidden"
             >
               <div>
-                <div className="relative h-48 w-full bg-navy-100">
-                  <Image
-                    src={s.image}
-                    alt={s.title}
-                    fill
-                    className="object-cover"
-                  />
+                <div className="relative h-48 w-full bg-navy-900 overflow-hidden">
+                  {getCleanPublicImage(s.image) ? (
+                    <Image
+                      src={getCleanPublicImage(s.image)}
+                      alt={s.title}
+                      fill
+                      className="object-cover"
+                    />
+                  ) : (
+                    <SolarCardPlaceholder title={s.title} subtitle="Turnkey Solar Service" />
+                  )}
                 </div>
                 <div className="p-6 space-y-3">
                   <h3 className="text-xl font-bold font-display text-navy-800">

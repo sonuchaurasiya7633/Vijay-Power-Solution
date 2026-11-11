@@ -8,6 +8,8 @@ import InstallationGallery from "@/models/InstallationGallery";
 import DedicatedGalleryView from "@/components/public/DedicatedGalleryView";
 import CtaBanner from "@/components/public/CtaBanner";
 import { getPublicPagesCms } from "@/lib/cms-server";
+import { getCleanPublicImage } from "@/lib/image-fallback";
+import SolarCardPlaceholder from "@/components/public/SolarCardPlaceholder";
 
 export const metadata: Metadata = {
   title: "Our Solar Installation Projects | Customer Photo Gallery",
@@ -95,14 +97,18 @@ export default async function ProjectsPage() {
                   className="group bg-white rounded-3xl border border-slate-border hover:border-solar-green/40 shadow-sm hover:shadow-xl transition-all flex flex-col justify-between overflow-hidden"
                 >
                   <div>
-                    <div className="relative h-60 w-full bg-navy-100 overflow-hidden">
-                      <Image
-                        src={p.coverImage}
-                        alt={p.title}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                      <div className="absolute top-4 left-4 bg-navy-900/80 backdrop-blur-md text-white text-xs px-3 py-1 rounded-full font-bold">
+                    <div className="relative h-60 w-full bg-navy-900 overflow-hidden">
+                      {getCleanPublicImage(p.coverImage) ? (
+                        <Image
+                          src={getCleanPublicImage(p.coverImage)}
+                          alt={p.title}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      ) : (
+                        <SolarCardPlaceholder title={p.title} subtitle={p.systemCategory} />
+                      )}
+                      <div className="absolute top-4 left-4 bg-navy-900/80 backdrop-blur-md text-white text-xs px-3 py-1 rounded-full font-bold border border-white/10">
                         {p.systemCapacityKw} kW Plant
                       </div>
                       <div className="absolute bottom-4 right-4 bg-solar-green text-white text-[11px] font-bold px-2.5 py-1 rounded-md shadow-sm">

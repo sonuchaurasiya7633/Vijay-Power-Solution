@@ -39,7 +39,7 @@ export default function AdminProductsPage() {
     cellTechnology: "Mono PERC",
     wattageGroup: "351W - 550W",
     moduleEfficiencyPercent: 21.5,
-    coverImage: "/images/gallery/customer-solar-01.jpg",
+    coverImage: "",
     description: "",
     isPublished: true,
   });
@@ -72,7 +72,7 @@ export default function AdminProductsPage() {
       cellTechnology: "Mono PERC",
       wattageGroup: "351W - 550W",
       moduleEfficiencyPercent: 21.5,
-      coverImage: "/images/gallery/customer-solar-01.jpg",
+      coverImage: "",
       description: "",
       isPublished: true,
     });
@@ -89,7 +89,7 @@ export default function AdminProductsPage() {
       cellTechnology: p.cellTechnology || "Mono PERC",
       wattageGroup: p.wattageGroup || "351W - 550W",
       moduleEfficiencyPercent: p.moduleEfficiencyPercent || 21.5,
-      coverImage: p.coverImage || "/images/gallery/customer-solar-01.jpg",
+      coverImage: p.coverImage || "",
       description: p.description || "",
       isPublished: p.isPublished !== undefined ? p.isPublished : true,
     });

@@ -206,22 +206,15 @@ export default function AdminMediaPage() {
           </div>
         ))}
 
-        {/* Fallback Sample Assets */}
-        {assets.length === 0 &&
-          [
-            { name: "rooftop-patna-10kw.jpg", folder: "projects", size: "340 KB", url: "/images/gallery/customer-solar-01.jpg" },
-            { name: "commercial-gaya-25kw.jpg", folder: "projects", size: "420 KB", url: "/images/gallery/customer-solar-02.jpg" },
-            { name: "hybrid-ranchi-5kw.jpg", folder: "projects", size: "290 KB", url: "/images/gallery/customer-solar-03.jpg" },
-            { name: "550w-waaree-bifacial.jpg", folder: "products", size: "180 KB", url: "/images/gallery/customer-solar-04.jpg" },
-          ].map((a, i) => (
-            <div key={i} className="p-3 bg-white rounded-2xl border border-slate-border shadow-sm space-y-2 group">
-              <div className="relative h-28 w-full bg-slate-100 rounded-xl overflow-hidden">
-                <Image src={a.url} alt={a.name} fill className="object-cover group-hover:scale-105 transition-transform" />
-              </div>
-              <p className="text-[11px] font-bold text-navy-800 truncate">{a.name}</p>
-              <span className="text-[10px] text-slate-muted uppercase block">{a.folder} • {a.size}</span>
-            </div>
-          ))}
+        {/* Empty State */}
+        {assets.length === 0 && (
+          <div className="col-span-full p-8 bg-white rounded-2xl border border-dashed border-slate-300 text-center space-y-2">
+            <p className="text-sm font-bold text-navy-800">No Media Assets Uploaded Yet</p>
+            <p className="text-xs text-slate-muted">
+              Upload new product, solution, service, or blog photos using the upload button above or directly inside each Admin CMS module.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

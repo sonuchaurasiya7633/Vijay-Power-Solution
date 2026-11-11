@@ -6,6 +6,8 @@ import { Check, ShieldCheck, Zap, ArrowRight } from "lucide-react";
 import LeadCaptureForm from "@/components/forms/LeadCaptureForm";
 import connectDB from "@/lib/db/connection";
 import SolarSolution from "@/models/SolarSolution";
+import { getCleanPublicImage } from "@/lib/image-fallback";
+import SolarCardPlaceholder from "@/components/public/SolarCardPlaceholder";
 
 export async function generateMetadata({
   params,
@@ -49,14 +51,18 @@ export default async function SolutionDetailPage({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           {/* Main content */}
           <div className="lg:col-span-7 space-y-8">
-            <div className="relative h-96 w-full rounded-3xl overflow-hidden shadow-sm border border-slate-border">
-              <Image
-                src={sol.image}
-                alt={sol.title}
-                fill
-                className="object-cover"
-                priority
-              />
+            <div className="relative h-96 w-full rounded-3xl overflow-hidden shadow-sm border border-slate-border bg-navy-900">
+              {getCleanPublicImage(sol.image) ? (
+                <Image
+                  src={getCleanPublicImage(sol.image)}
+                  alt={sol.title}
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              ) : (
+                <SolarCardPlaceholder title={sol.title} subtitle={sol.category} />
+              )}
               <div className="absolute top-4 left-4 bg-navy-900/85 text-white text-xs font-bold px-3 py-1.5 rounded-full backdrop-blur-sm">
                 {sol.category}
               </div>

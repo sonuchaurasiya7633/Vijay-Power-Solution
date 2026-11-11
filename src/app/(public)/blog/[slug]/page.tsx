@@ -7,6 +7,8 @@ import connectDB from "@/lib/db/connection";
 import Blog from "@/models/Blog";
 import { formatDateIST } from "@/lib/utils/formatters";
 import LeadCaptureForm from "@/components/forms/LeadCaptureForm";
+import { getCleanPublicImage } from "@/lib/image-fallback";
+import SolarCardPlaceholder from "@/components/public/SolarCardPlaceholder";
 
 export async function generateMetadata({
   params,
@@ -57,7 +59,7 @@ export default async function BlogPostPage({
         category: "Government Schemes",
         authorName: "Er. Vijoy Kumar",
         authorRole: "Principal Solar Engineer",
-        coverImage: "/images/gallery/customer-solar-01.jpg",
+        coverImage: "",
         publishedAt: new Date(),
         estimatedReadTimeMin: 5,
       };
@@ -110,14 +112,18 @@ export default async function BlogPostPage({
           </div>
         </div>
 
-        <div className="relative h-96 sm:h-[420px] w-full rounded-3xl overflow-hidden shadow-sm border border-slate-border">
-          <Image
-            src={article.coverImage}
-            alt={article.title}
-            fill
-            className="object-cover"
-            priority
-          />
+        <div className="relative h-96 sm:h-[420px] w-full rounded-3xl overflow-hidden shadow-sm border border-slate-border bg-navy-900">
+          {getCleanPublicImage(article.coverImage) ? (
+            <Image
+              src={getCleanPublicImage(article.coverImage)}
+              alt={article.title}
+              fill
+              className="object-cover"
+              priority
+            />
+          ) : (
+            <SolarCardPlaceholder title={article.title} subtitle={article.category} />
+          )}
         </div>
 
         {/* Article Body */}

@@ -26,7 +26,7 @@ const BlogSchema = new Schema<IBlog>(
     slug: { type: String, required: true, unique: true, lowercase: true, trim: true, index: true },
     excerpt: { type: String, required: true },
     content: { type: String, required: true },
-    coverImage: { type: String, required: true },
+    coverImage: { type: String, default: "" },
     category: { type: String, required: true, index: true },
     tags: [{ type: String }],
     authorName: { type: String, default: "Solar Engineering Team" },

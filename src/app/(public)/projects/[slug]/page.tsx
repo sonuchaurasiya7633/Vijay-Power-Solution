@@ -7,6 +7,8 @@ import LeadCaptureForm from "@/components/forms/LeadCaptureForm";
 import connectDB from "@/lib/db/connection";
 import PortfolioProject from "@/models/PortfolioProject";
 import { formatDateIST } from "@/lib/utils/formatters";
+import { getCleanPublicImage } from "@/lib/image-fallback";
+import SolarCardPlaceholder from "@/components/public/SolarCardPlaceholder";
 
 export async function generateMetadata({
   params,
@@ -50,14 +52,18 @@ export default async function ProjectDetailPage({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           {/* Main Case Study */}
           <div className="lg:col-span-8 space-y-8">
-            <div className="relative h-96 sm:h-[450px] w-full rounded-3xl overflow-hidden shadow-sm border border-slate-border">
-              <Image
-                src={proj.coverImage}
-                alt={proj.title}
-                fill
-                className="object-cover"
-                priority
-              />
+            <div className="relative h-96 sm:h-[450px] w-full rounded-3xl overflow-hidden shadow-sm border border-slate-border bg-navy-900">
+              {getCleanPublicImage(proj.coverImage) ? (
+                <Image
+                  src={getCleanPublicImage(proj.coverImage)}
+                  alt={proj.title}
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              ) : (
+                <SolarCardPlaceholder title={proj.title} subtitle={proj.systemCategory} />
+              )}
               <div className="absolute top-4 left-4 bg-solar-green text-white font-extrabold text-sm px-3.5 py-1.5 rounded-xl shadow flex items-center gap-1.5">
                 <Zap className="w-4 h-4 fill-current" />
                 <span>{proj.systemCapacityKw} kW System</span>

@@ -68,7 +68,7 @@ const SolarProductSchema = new Schema<ISolarProduct>(
     productWarrantyYears: { type: Number },
     performanceWarrantyYears: { type: Number },
     datasheetUrl: { type: String },
-    coverImage: { type: String, required: true },
+    coverImage: { type: String, default: "" },
     galleryImages: [{ type: String }],
     keyFeatures: [{ type: String }],
     typicalApplications: [{ type: String }],
