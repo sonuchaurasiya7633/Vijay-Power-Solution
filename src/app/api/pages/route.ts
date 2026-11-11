@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db/connection";
 import Page from "@/models/Page";
 import { getSession } from "@/lib/auth/session";
+import { revalidatePublicSite } from "@/lib/revalidate-public";
 
 export async function GET(req: NextRequest) {
   try {
@@ -52,6 +53,7 @@ export async function POST(req: NextRequest) {
       publishedAt: body.isPublished ? new Date() : undefined,
     });
 
+    revalidatePublicSite();
     return NextResponse.json({ success: true, page }, { status: 201 });
   } catch (error: any) {
     console.error("[Create Page Error]", error);

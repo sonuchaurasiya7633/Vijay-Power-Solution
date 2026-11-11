@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     "Explore real solar installations completed by Vijoy Power Solution for our valued customers across India. Authentic customer photographs and verified case studies.",
 };
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function ProjectsPage() {
   let projects: any[] = [];

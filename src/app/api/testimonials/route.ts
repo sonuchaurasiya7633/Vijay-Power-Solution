@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db/connection";
 import Testimonial from "@/models/Testimonial";
 import { getSession } from "@/lib/auth/session";
+import { revalidatePublicSite } from "@/lib/revalidate-public";
 
 export async function GET(req: NextRequest) {
   try {
@@ -32,6 +33,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     await connectDB();
     const testimonial = await Testimonial.create(body);
+    revalidatePublicSite(["/testimonials"]);
     return NextResponse.json({ success: true, testimonial });
   } catch (error) {
     console.error("[Create Testimonial Error]", error);

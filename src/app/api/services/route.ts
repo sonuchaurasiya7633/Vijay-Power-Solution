@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db/connection";
 import SolarService from "@/models/SolarService";
 import { getSession } from "@/lib/auth/session";
+import { revalidatePublicSite } from "@/lib/revalidate-public";
 
 export async function GET(req: NextRequest) {
   try {
@@ -27,6 +28,7 @@ export async function POST(req: NextRequest) {
     body.fullDescription = body.fullDescription || body.shortDescription;
     await connectDB();
     const service = await SolarService.create(body);
+    revalidatePublicSite(["/services"]);
     return NextResponse.json({ success: true, service });
   } catch (error) {
     console.error("[Create Service Error]", error);

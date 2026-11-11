@@ -2,8 +2,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { ShieldCheck, CheckCircle2, ArrowRight } from "lucide-react";
 import connectDB from "@/lib/db/connection";
-import Setting from "@/models/Setting";
 import Page from "@/models/Page";
+import { getHomepageSetting } from "@/lib/cms-server";
+import { optimizeCloudinaryUrl } from "@/lib/image-optimize";
 
 export default async function HeroSection() {
   let heroData = {
@@ -27,24 +28,22 @@ export default async function HeroSection() {
   };
 
   try {
-    await connectDB();
-    const [homeSetting, homePage] = await Promise.all([
-      Setting.findOne({ key: "homepage" }).lean(),
-      Page.findOne({ slug: "home", isPublished: true }).lean(),
-    ]);
-
-    if (homeSetting && homeSetting.value) {
-      const val: any = homeSetting.value;
-      if (val.hero) {
-        heroData = { ...heroData, ...val.hero };
+    const homeSettingVal = await getHomepageSetting();
+    if (homeSettingVal) {
+      if (homeSettingVal.hero) {
+        heroData = { ...heroData, ...homeSettingVal.hero };
       } else {
-        if (val.headline) heroData.headline = val.headline;
-        if (val.subheading) heroData.subheading = val.subheading;
+        if (homeSettingVal.headline) heroData.headline = homeSettingVal.headline;
+        if (homeSettingVal.subheading) heroData.subheading = homeSettingVal.subheading;
       }
-    } else if (homePage) {
-      if (homePage.heroHeading) heroData.headline = homePage.heroHeading;
-      if (homePage.heroSubtitle) heroData.subheading = homePage.heroSubtitle;
-      if (homePage.sections?.[0]?.badgeText) heroData.badge = homePage.sections[0].badgeText;
+    } else {
+      await connectDB();
+      const homePage = await Page.findOne({ slug: "home", isPublished: true }).lean();
+      if (homePage) {
+        if (homePage.heroHeading) heroData.headline = homePage.heroHeading;
+        if (homePage.heroSubtitle) heroData.subheading = homePage.heroSubtitle;
+        if (homePage.sections?.[0]?.badgeText) heroData.badge = homePage.sections[0].badgeText;
+      }
     }
   } catch (e) {
     // fallback gracefully
@@ -53,7 +52,7 @@ export default async function HeroSection() {
   const heroHeading = heroData.headline;
   const heroSubtitle = heroData.subheading;
   const checkpoints = heroData.checkpoints || [];
-  const bgImage = heroData.backgroundImage || "/images/hero-solar-banner.jpg";
+  const bgImage = optimizeCloudinaryUrl(heroData.backgroundImage || "/images/hero-solar-banner.jpg", 1600);
 
   return (
     <section className="relative overflow-hidden bg-navy-800 text-white py-6 sm:py-8 lg:py-0 lg:h-[52vh] lg:min-h-[480px] lg:max-h-[560px] flex items-center">

@@ -1,11 +1,15 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Phone, Mail, MapPin, MessageCircle, ShieldCheck, Sun } from "lucide-react";
-import connectDB from "@/lib/db/connection";
-import Setting from "@/models/Setting";
 import SocialLinksBar from "@/components/public/SocialLinksBar";
 
-export default async function Footer() {
+import { getPublicShellSettings, type PublicShellSettings } from "@/lib/cms-server";
+
+export default async function Footer({
+  initialShell,
+}: {
+  initialShell?: PublicShellSettings;
+} = {}) {
   const currentYear = new Date().getFullYear();
   let contact = {
     phone: "+91 94310 00000",
@@ -16,17 +20,12 @@ export default async function Footer() {
   let headerFooterCms: any = null;
 
   try {
-    await connectDB();
-    const [generalDoc, hfDoc] = await Promise.all([
-      Setting.findOne({ key: "general" }).lean(),
-      Setting.findOne({ key: "header_footer" }).lean(),
-    ]);
-
-    if (generalDoc && generalDoc.value) {
-      contact = { ...contact, ...(generalDoc.value as object) };
+    const shell = initialShell || (await getPublicShellSettings());
+    if (shell.general && Object.keys(shell.general).length > 0) {
+      contact = { ...contact, ...shell.general };
     }
-    if (hfDoc && hfDoc.value) {
-      headerFooterCms = hfDoc.value;
+    if (shell.headerFooter && Object.keys(shell.headerFooter).length > 0) {
+      headerFooterCms = shell.headerFooter;
       if (headerFooterCms.footer) {
         contact = {
           ...contact,

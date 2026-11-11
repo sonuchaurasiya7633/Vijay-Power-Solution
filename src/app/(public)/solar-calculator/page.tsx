@@ -4,7 +4,7 @@ import CtaBanner from "@/components/public/CtaBanner";
 import { ShieldAlert, Sun } from "lucide-react";
 import { getPublicPagesCms } from "@/lib/cms-server";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Solar Savings Calculator | Rooftop Feasibility Across India",

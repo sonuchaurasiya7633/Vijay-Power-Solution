@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db/connection";
 import SolarSolution from "@/models/SolarSolution";
 import { getSession } from "@/lib/auth/session";
+import { revalidatePublicSite } from "@/lib/revalidate-public";
 
 export async function GET(req: NextRequest) {
   try {
@@ -26,6 +27,7 @@ export async function POST(req: NextRequest) {
     body.image = body.image || "";
     await connectDB();
     const solution = await SolarSolution.create(body);
+    revalidatePublicSite(["/solar-solutions"]);
     return NextResponse.json({ success: true, solution });
   } catch (error) {
     console.error("[Create Solution Error]", error);

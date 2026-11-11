@@ -47,6 +47,8 @@ const SolarServiceSchema = new Schema<ISolarService>(
   { timestamps: true }
 );
 
+SolarServiceSchema.index({ isAvailable: 1, sortOrder: 1, createdAt: 1 });
+
 export const SolarService: Model<ISolarService> =
   mongoose.models.SolarService ||
   mongoose.model<ISolarService>("SolarService", SolarServiceSchema);

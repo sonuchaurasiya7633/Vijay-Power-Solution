@@ -26,6 +26,8 @@ const FAQSchema = new Schema<IFAQ>(
   { timestamps: true }
 );
 
+FAQSchema.index({ isPublished: 1, category: 1, sortOrder: 1 });
+
 export const FAQ: Model<IFAQ> =
   mongoose.models.FAQ || mongoose.model<IFAQ>("FAQ", FAQSchema);
 export default FAQ;

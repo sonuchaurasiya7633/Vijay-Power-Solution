@@ -39,6 +39,8 @@ const SolarSolutionSchema = new Schema<ISolarSolution>(
   { timestamps: true }
 );
 
+SolarSolutionSchema.index({ isPublished: 1, sortOrder: 1, createdAt: 1 });
+
 export const SolarSolution: Model<ISolarSolution> =
   mongoose.models.SolarSolution ||
   mongoose.model<ISolarSolution>("SolarSolution", SolarSolutionSchema);

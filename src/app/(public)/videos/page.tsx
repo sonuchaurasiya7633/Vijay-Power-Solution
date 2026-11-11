@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import VideoSection from "@/components/public/VideoSection";
 import CtaBanner from "@/components/public/CtaBanner";
-import { getPublicPagesCms } from "@/lib/cms-server";
+import { getHomepageSetting, getPublicPagesCms } from "@/lib/cms-server";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Installation Videos & Client Stories | VIJOY POWER SOLUTION",
@@ -12,7 +12,10 @@ export const metadata: Metadata = {
 };
 
 export default async function VideosPage() {
-  const cms = await getPublicPagesCms();
+  const [cms, homepageSetting] = await Promise.all([
+    getPublicPagesCms(),
+    getHomepageSetting(),
+  ]);
   const h = cms.videosPage;
 
   return (
@@ -31,7 +34,7 @@ export default async function VideosPage() {
         </div>
       </div>
 
-      <VideoSection />
+      <VideoSection initialData={homepageSetting?.videos || null} />
       <CtaBanner />
     </div>
   );

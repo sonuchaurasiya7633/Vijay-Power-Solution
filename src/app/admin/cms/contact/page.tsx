@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import toast from "@/lib/toast";
 import {
@@ -19,7 +20,7 @@ import {
   Plus,
   Trash2,
 } from "lucide-react";
-import CmsLivePreviewModal from "@/components/admin/CmsLivePreviewModal";
+const CmsLivePreviewModal = dynamic(() => import("@/components/admin/CmsLivePreviewModal"), { ssr: false });
 
 export default function AdminContactCmsPage() {
   const [activeTab, setActiveTab] = useState<"headquarters" | "branches" | "channels" | "map">("headquarters");
@@ -597,12 +598,14 @@ export default function AdminContactCmsPage() {
       </form>
 
       {/* Live Preview Modal */}
-      <CmsLivePreviewModal
-        isOpen={previewOpen}
-        onClose={() => setPreviewOpen(false)}
-        url="/contact"
-        pageTitle="Contact & Regional Desks Live Preview"
-      />
+      {previewOpen && (
+        <CmsLivePreviewModal
+          isOpen={previewOpen}
+          onClose={() => setPreviewOpen(false)}
+          url="/contact"
+          pageTitle="Contact & Regional Desks Live Preview"
+        />
+      )}
     </div>
   );
 }

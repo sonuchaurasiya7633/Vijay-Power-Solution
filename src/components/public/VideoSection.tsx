@@ -36,16 +36,33 @@ const defaultVideos: VideoStory[] = [
   },
 ];
 
-export default function VideoSection() {
+export interface VideoSectionConfig {
+  badge?: string;
+  title?: string;
+  subtitle?: string;
+  items?: VideoStory[];
+}
+
+export default function VideoSection({
+  initialData,
+}: {
+  initialData?: VideoSectionConfig | null;
+} = {}) {
   const [activeVideo, setActiveVideo] = useState<VideoStory | null>(null);
-  const [videoList, setVideoList] = useState<VideoStory[]>(defaultVideos);
-  const [badge, setBadge] = useState("Video Stories & Walkthroughs");
-  const [title, setTitle] = useState("See Our Installations in Action");
+  const [videoList, setVideoList] = useState<VideoStory[]>(
+    Array.isArray(initialData?.items) && initialData.items.length > 0
+      ? initialData.items
+      : defaultVideos
+  );
+  const [badge, setBadge] = useState(initialData?.badge || "Video Stories & Walkthroughs");
+  const [title, setTitle] = useState(initialData?.title || "See Our Installations in Action");
   const [subtitle, setSubtitle] = useState(
-    "Watch real site surveys, rooftop mounting structure erections, inverter synchronization, and client reviews."
+    initialData?.subtitle ||
+      "Watch real site surveys, rooftop mounting structure erections, inverter synchronization, and client reviews."
   );
 
   useEffect(() => {
+    if (initialData) return;
     fetch("/api/settings?key=homepage")
       .then((res) => res.json())
       .then((data) => {
@@ -60,7 +77,7 @@ export default function VideoSection() {
         }
       })
       .catch(() => {});
-  }, []);
+  }, [initialData]);
 
   useEffect(() => {
     if (!activeVideo) return;

@@ -3,6 +3,7 @@ import connectDB from "@/lib/db/connection";
 import PortfolioProject from "@/models/PortfolioProject";
 import { getSession } from "@/lib/auth/session";
 import { hasPermission } from "@/lib/auth/permissions";
+import { revalidatePublicSite } from "@/lib/revalidate-public";
 
 export async function GET(
   req: NextRequest,
@@ -39,6 +40,7 @@ export async function PATCH(
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
 
+    revalidatePublicSite(["/projects"]);
     return NextResponse.json({ success: true, project });
   } catch (error) {
     console.error("[Update Project Error]", error);
@@ -58,6 +60,7 @@ export async function DELETE(
 
     await connectDB();
     await PortfolioProject.findByIdAndDelete(params.id);
+    revalidatePublicSite(["/projects"]);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("[Delete Project Error]", error);

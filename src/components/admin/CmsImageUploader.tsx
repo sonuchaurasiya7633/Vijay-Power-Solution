@@ -187,6 +187,8 @@ export default function CmsImageUploader({
               <img
                 src={value}
                 alt={altText || "CMS Image"}
+                loading="lazy"
+                decoding="async"
                 onError={(e) => {
                   e.currentTarget.src = "/images/hero-solar-rooftop.jpg";
                 }}

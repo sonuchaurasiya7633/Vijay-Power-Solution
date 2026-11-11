@@ -3,7 +3,7 @@ import { Compass, CheckCircle2, ShieldCheck } from "lucide-react";
 import LeadCaptureForm from "@/components/forms/LeadCaptureForm";
 import { getPublicPagesCms } from "@/lib/cms-server";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Request Rooftop Solar Site Survey | VIJOY POWER SOLUTION",

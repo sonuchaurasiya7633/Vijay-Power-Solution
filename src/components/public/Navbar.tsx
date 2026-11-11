@@ -25,31 +25,42 @@ import {
 import SocialLinksBar from "@/components/public/SocialLinksBar";
 import { DEFAULT_SOCIAL_LINKS } from "@/lib/constants/social";
 
-export default function Navbar() {
+export default function Navbar({
+  initialCms,
+}: {
+  initialCms?: Record<string, any>;
+} = {}) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Accordion toggle state in mobile drawer
   const [mobileProjectsOpen, setMobileProjectsOpen] = useState(false);
 
-  const [headerCms, setHeaderCms] = useState({
-    logoUrl: "/images/logo.png",
+  const [headerCms, setHeaderCms] = useState(() => ({
+    logoUrl: initialCms?.logoUrl || "/images/logo.png",
     noticeBar: {
       enabled: false,
       badge: "PM Surya Ghar 2026",
       text: "Serving Customers Across India | Solar Modules 10W to 730W",
       linkText: "Check Subsidy",
       linkUrl: "/subsidy-information",
+      ...(initialCms?.noticeBar || {}),
     },
     topBar: {
       phone: "+91 94310 00000",
       whatsapp: "919431000000",
       email: "contact@vijoypowersolution.com",
+      ...(initialCms?.topBar || {}),
     },
-    socialLinks: DEFAULT_SOCIAL_LINKS,
-  });
+    socialLinks: {
+      ...DEFAULT_SOCIAL_LINKS,
+      ...(initialCms?.socialLinks || {}),
+    },
+  }));
 
   useEffect(() => {
+    // Skip redundant client fetch when server layout already supplied header_footer CMS
+    if (initialCms) return;
     fetch("/api/settings?key=header_footer")
       .then((r) => r.json())
       .then((d) => {
@@ -63,7 +74,7 @@ export default function Navbar() {
         }
       })
       .catch(() => {});
-  }, []);
+  }, [initialCms]);
 
   // Lock background body scroll when mobile drawer is open
   useEffect(() => {

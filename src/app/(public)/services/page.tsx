@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     "End-to-end solar services: Roof feasibility surveys, turnkey rooftop installation, DISCOM net metering liaison, subsidy guidance, and annual maintenance across India.",
 };
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function ServicesPage() {
   let services: any[] = [];

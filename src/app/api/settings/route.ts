@@ -3,6 +3,7 @@ import connectDB from "@/lib/db/connection";
 import Setting from "@/models/Setting";
 import { getSession } from "@/lib/auth/session";
 import { hasPermission } from "@/lib/auth/permissions";
+import { revalidatePublicSite } from "@/lib/revalidate-public";
 
 export async function GET(req: NextRequest) {
   try {
@@ -12,7 +13,14 @@ export async function GET(req: NextRequest) {
 
     if (key) {
       const setting = await Setting.findOne({ key }).lean();
-      return NextResponse.json({ setting: setting?.value || {} });
+      return NextResponse.json(
+        { setting: setting?.value || {} },
+        {
+          headers: {
+            "Cache-Control": "public, s-maxage=30, stale-while-revalidate=120",
+          },
+        }
+      );
     }
 
     const settings = await Setting.find().lean();
@@ -45,6 +53,7 @@ export async function POST(req: NextRequest) {
       { upsert: true, new: true }
     );
 
+    revalidatePublicSite();
     return NextResponse.json({ success: true, setting: updated });
   } catch (error) {
     console.error("[Save Setting Error]", error);

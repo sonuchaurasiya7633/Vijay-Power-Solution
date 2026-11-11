@@ -3,6 +3,7 @@ import connectDB from "@/lib/db/connection";
 import PortfolioProject from "@/models/PortfolioProject";
 import { getSession } from "@/lib/auth/session";
 import { hasPermission } from "@/lib/auth/permissions";
+import { revalidatePublicSite } from "@/lib/revalidate-public";
 
 export async function GET(req: NextRequest) {
   try {
@@ -125,6 +126,7 @@ export async function POST(req: NextRequest) {
       seoDescription,
     });
 
+    revalidatePublicSite(["/projects"]);
     return NextResponse.json({ success: true, project });
   } catch (error) {
     console.error("[Create Project Error]", error);

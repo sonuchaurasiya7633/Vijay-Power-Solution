@@ -5,7 +5,7 @@ import connectDB from "@/lib/db/connection";
 import SolarProduct from "@/models/SolarProduct";
 import { getSolarPanelsPageCms } from "@/lib/cms-server";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Solar Panel Catalogue (10W to 730W) | VIJOY POWER SOLUTION",

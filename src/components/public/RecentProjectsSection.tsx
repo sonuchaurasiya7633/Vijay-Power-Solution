@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { MapPin, Zap, ArrowRight, CheckCircle2 } from "lucide-react";
 import { getCleanPublicImage } from "@/lib/image-fallback";
+import { optimizeCloudinaryUrl } from "@/lib/image-optimize";
 import SolarCardPlaceholder from "@/components/public/SolarCardPlaceholder";
 
 interface ProjectCardData {
@@ -81,9 +82,10 @@ export default function RecentProjectsSection() {
                 <div className="relative h-56 w-full bg-navy-900 overflow-hidden">
                   {imgUrl ? (
                     <Image
-                      src={imgUrl}
+                      src={optimizeCloudinaryUrl(imgUrl, 800)}
                       alt={p.title}
                       fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
                       className="object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   ) : (

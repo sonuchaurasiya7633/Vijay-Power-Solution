@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db/connection";
 import Location from "@/models/Location";
 import { getSession } from "@/lib/auth/session";
+import { revalidatePublicSite } from "@/lib/revalidate-public";
 
 export async function GET(req: NextRequest) {
   try {
@@ -28,6 +29,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     await connectDB();
     const location = await Location.create(body);
+    revalidatePublicSite(["/service-areas"]);
     return NextResponse.json({ success: true, location });
   } catch (error) {
     console.error("[Create Location Error]", error);

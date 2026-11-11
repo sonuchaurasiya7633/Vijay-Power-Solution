@@ -3,7 +3,7 @@ import SolutionsGrid from "@/components/public/SolutionsGrid";
 import CtaBanner from "@/components/public/CtaBanner";
 import { getPublicPagesCms } from "@/lib/cms-server";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Solar Power Solutions | Residential, Commercial & Industrial EPC",

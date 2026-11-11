@@ -4,6 +4,7 @@ import SolarProduct from "@/models/SolarProduct";
 import { getSession } from "@/lib/auth/session";
 import { hasPermission } from "@/lib/auth/permissions";
 import { normalizeOfficialPanelBrand } from "@/lib/constants/brands";
+import { revalidatePublicSite } from "@/lib/revalidate-public";
 
 export async function GET(
   req: NextRequest,
@@ -47,6 +48,7 @@ export async function PATCH(
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
+    revalidatePublicSite(["/solar-panels"]);
     return NextResponse.json({ success: true, product });
   } catch (error) {
     console.error("[Update Product Error]", error);
@@ -66,6 +68,7 @@ export async function DELETE(
 
     await connectDB();
     await SolarProduct.findByIdAndDelete(params.id);
+    revalidatePublicSite(["/solar-panels"]);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("[Delete Product Error]", error);

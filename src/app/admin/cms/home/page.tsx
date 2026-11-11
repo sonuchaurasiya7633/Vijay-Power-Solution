@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import toast from "@/lib/toast";
 import {
   Sliders,
@@ -21,7 +22,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import CmsImageUploader from "@/components/admin/CmsImageUploader";
-import CmsLivePreviewModal from "@/components/admin/CmsLivePreviewModal";
+const CmsLivePreviewModal = dynamic(() => import("@/components/admin/CmsLivePreviewModal"), { ssr: false });
 import { extractYouTubeId } from "@/lib/utils/youtube";
 
 export default function AdminHomeCmsPage() {
@@ -1106,12 +1107,14 @@ export default function AdminHomeCmsPage() {
       )}
 
       {/* Responsive Live Preview Modal */}
-      <CmsLivePreviewModal
-        isOpen={previewOpen}
-        onClose={() => setPreviewOpen(false)}
-        url="/"
-        pageTitle="Homepage Live Preview"
-      />
+      {previewOpen && (
+        <CmsLivePreviewModal
+          isOpen={previewOpen}
+          onClose={() => setPreviewOpen(false)}
+          url="/"
+          pageTitle="Homepage Live Preview"
+        />
+      )}
     </div>
   );
 }

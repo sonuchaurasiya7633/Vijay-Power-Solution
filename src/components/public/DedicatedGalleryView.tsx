@@ -1,9 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import { Maximize2, MapPin, Zap, User, Sparkles } from "lucide-react";
-import GalleryLightbox, { GalleryItem } from "@/components/public/GalleryLightbox";
+import type { GalleryItem } from "@/components/public/GalleryLightbox";
+import { optimizeCloudinaryUrl } from "@/lib/image-optimize";
+
+const GalleryLightbox = dynamic(() => import("@/components/public/GalleryLightbox"), {
+  ssr: false,
+});
 
 interface DedicatedGalleryViewProps {
   items: GalleryItem[];
@@ -73,7 +79,7 @@ export default function DedicatedGalleryView({ items = [] }: DedicatedGalleryVie
               {/* Image Frame with neutral background & object-contain to preserve poster/portrait aspect ratios */}
               <div className="relative aspect-[3/4] sm:aspect-[4/5] w-full bg-navy-950/95 overflow-hidden flex items-center justify-center">
                 <Image
-                  src={item.imageUrl}
+                  src={optimizeCloudinaryUrl(item.imageUrl, 700)}
                   alt={item.title || "Solar installation with customer"}
                   fill
                   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
@@ -128,14 +134,16 @@ export default function DedicatedGalleryView({ items = [] }: DedicatedGalleryVie
         })}
       </div>
 
-      {/* Lightbox Modal */}
-      <GalleryLightbox
-        images={filteredItems}
-        currentIndex={activeIdx}
-        isOpen={lightboxOpen}
-        onClose={() => setLightboxOpen(false)}
-        onNavigate={(idx) => setActiveIdx(idx)}
-      />
+      {/* Lightbox Modal - Lazy loaded only on demand */}
+      {lightboxOpen && (
+        <GalleryLightbox
+          images={filteredItems}
+          currentIndex={activeIdx}
+          isOpen={lightboxOpen}
+          onClose={() => setLightboxOpen(false)}
+          onNavigate={(idx) => setActiveIdx(idx)}
+        />
+      )}
     </div>
   );
 }

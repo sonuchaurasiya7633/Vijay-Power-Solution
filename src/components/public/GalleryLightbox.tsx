@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import Image from "next/image";
 import { X, ChevronLeft, ChevronRight, MapPin, Zap, User, Tag } from "lucide-react";
+import { optimizeCloudinaryUrl } from "@/lib/image-optimize";
 
 export interface GalleryItem {
   _id?: string;
@@ -140,7 +141,7 @@ export default function GalleryLightbox({
       >
         <div className="relative w-full h-full flex items-center justify-center">
           <Image
-            src={currentItem.imageUrl}
+            src={optimizeCloudinaryUrl(currentItem.imageUrl, 1600)}
             alt={currentItem.title || "Solar Installation"}
             fill
             priority

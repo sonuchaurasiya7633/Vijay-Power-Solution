@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import toast from "@/lib/toast";
 import {
@@ -16,7 +17,7 @@ import {
   ShieldAlert,
   FileCheck2,
 } from "lucide-react";
-import CmsLivePreviewModal from "@/components/admin/CmsLivePreviewModal";
+const CmsLivePreviewModal = dynamic(() => import("@/components/admin/CmsLivePreviewModal"), { ssr: false });
 
 export default function AdminSubsidyCmsPage() {
   const [activeTab, setActiveTab] = useState<"hero" | "slabs" | "states" | "workflow" | "documents">("hero");
@@ -551,12 +552,14 @@ export default function AdminSubsidyCmsPage() {
       </form>
 
       {/* Live Preview Modal */}
-      <CmsLivePreviewModal
-        isOpen={previewOpen}
-        onClose={() => setPreviewOpen(false)}
-        url="/subsidy-information"
-        pageTitle="PM Surya Ghar Subsidy Guide Live Preview"
-      />
+      {previewOpen && (
+        <CmsLivePreviewModal
+          isOpen={previewOpen}
+          onClose={() => setPreviewOpen(false)}
+          url="/subsidy-information"
+          pageTitle="PM Surya Ghar Subsidy Guide Live Preview"
+        />
+      )}
     </div>
   );
 }

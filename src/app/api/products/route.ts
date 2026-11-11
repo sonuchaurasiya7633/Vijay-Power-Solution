@@ -4,6 +4,7 @@ import SolarProduct from "@/models/SolarProduct";
 import { getSession } from "@/lib/auth/session";
 import { hasPermission } from "@/lib/auth/permissions";
 import { normalizeOfficialPanelBrand } from "@/lib/constants/brands";
+import { revalidatePublicSite } from "@/lib/revalidate-public";
 
 export async function GET(req: NextRequest) {
   try {
@@ -166,6 +167,7 @@ export async function POST(req: NextRequest) {
       seoDescription,
     });
 
+    revalidatePublicSite(["/solar-panels"]);
     return NextResponse.json({ success: true, product });
   } catch (error) {
     console.error("[Create Product Error]", error);

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import toast from "@/lib/toast";
 import {
@@ -20,7 +21,7 @@ import {
   ImageIcon,
 } from "lucide-react";
 import CmsImageUploader from "@/components/admin/CmsImageUploader";
-import CmsLivePreviewModal from "@/components/admin/CmsLivePreviewModal";
+const CmsLivePreviewModal = dynamic(() => import("@/components/admin/CmsLivePreviewModal"), { ssr: false });
 import { DEFAULT_SOCIAL_LINKS } from "@/lib/constants/social";
 
 export default function AdminHeaderFooterCmsPage() {
@@ -536,12 +537,14 @@ export default function AdminHeaderFooterCmsPage() {
       </form>
 
       {/* Live Preview Modal */}
-      <CmsLivePreviewModal
-        isOpen={previewOpen}
-        onClose={() => setPreviewOpen(false)}
-        url="/"
-        pageTitle="Website Shell Live Preview"
-      />
+      {previewOpen && (
+        <CmsLivePreviewModal
+          isOpen={previewOpen}
+          onClose={() => setPreviewOpen(false)}
+          url="/"
+          pageTitle="Website Shell Live Preview"
+        />
+      )}
     </div>
   );
 }

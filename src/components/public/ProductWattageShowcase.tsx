@@ -352,12 +352,13 @@ export default function ProductWattageShowcase({
                 key={p._id || p.slug}
                 className="group bg-white rounded-2xl border border-slate-border hover:border-solar-green/50 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col overflow-hidden"
               >
-                <div className="relative h-48 w-full bg-navy-900 overflow-hidden">
+                <div className="relative h-48 w-full bg-navy-800 overflow-hidden">
                   {getCleanPublicImage(p.image) ? (
                     <Image
                       src={getCleanPublicImage(p.image)}
                       alt={p.name}
                       fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                       className="object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   ) : (

@@ -10,6 +10,8 @@ import SolarProduct from "@/models/SolarProduct";
 import Blog from "@/models/Blog";
 import { getSession } from "@/lib/auth/session";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();

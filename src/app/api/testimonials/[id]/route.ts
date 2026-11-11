@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db/connection";
 import Testimonial from "@/models/Testimonial";
 import { getSession } from "@/lib/auth/session";
+import { revalidatePublicSite } from "@/lib/revalidate-public";
 
 export async function PATCH(
   req: NextRequest,
@@ -17,6 +18,7 @@ export async function PATCH(
     const testimonial = await Testimonial.findByIdAndUpdate(params.id, { $set: body }, { new: true });
     if (!testimonial) return NextResponse.json({ error: "Testimonial not found" }, { status: 404 });
 
+    revalidatePublicSite(["/testimonials"]);
     return NextResponse.json({ success: true, testimonial });
   } catch (error: any) {
     console.error("[Update Testimonial Error]", error);
@@ -36,6 +38,7 @@ export async function DELETE(
     const testimonial = await Testimonial.findByIdAndDelete(params.id);
     if (!testimonial) return NextResponse.json({ error: "Testimonial not found" }, { status: 404 });
 
+    revalidatePublicSite(["/testimonials"]);
     return NextResponse.json({ success: true });
   } catch (error: any) {
     console.error("[Delete Testimonial Error]", error);

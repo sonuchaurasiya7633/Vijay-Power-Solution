@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import {
   Sliders,
@@ -30,7 +31,7 @@ import {
   Settings,
   LayoutGrid,
 } from "lucide-react";
-import CmsLivePreviewModal from "@/components/admin/CmsLivePreviewModal";
+const CmsLivePreviewModal = dynamic(() => import("@/components/admin/CmsLivePreviewModal"), { ssr: false });
 
 interface WebsitePageItem {
   id: string;
@@ -660,12 +661,14 @@ export default function AdminCmsAllPages() {
       </div>
 
       {/* In-App Live Responsive Preview Modal */}
-      <CmsLivePreviewModal
-        isOpen={previewOpen}
-        onClose={() => setPreviewOpen(false)}
-        url={previewUrl}
-        pageTitle={previewTitle}
-      />
+      {previewOpen && (
+        <CmsLivePreviewModal
+          isOpen={previewOpen}
+          onClose={() => setPreviewOpen(false)}
+          url={previewUrl}
+          pageTitle={previewTitle}
+        />
+      )}
     </div>
   );
 }

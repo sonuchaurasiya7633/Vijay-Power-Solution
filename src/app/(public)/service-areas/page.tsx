@@ -3,7 +3,7 @@ import ServiceAreasSection from "@/components/public/ServiceAreasSection";
 import CtaBanner from "@/components/public/CtaBanner";
 import { getPublicPagesCms } from "@/lib/cms-server";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Pan India Solar Service Coverage | All Indian States & UTs",

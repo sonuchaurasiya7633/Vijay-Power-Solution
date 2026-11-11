@@ -3,7 +3,7 @@ import FaqAccordion from "@/components/public/FaqAccordion";
 import CtaBanner from "@/components/public/CtaBanner";
 import { getPublicPagesCms } from "@/lib/cms-server";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Frequently Asked Questions | VIJOY POWER SOLUTION Solar",

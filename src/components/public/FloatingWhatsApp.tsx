@@ -7,10 +7,12 @@ export default function FloatingWhatsApp({
   phone = "+91 94310 00000",
   whatsapp = "919431000000",
   message = "Hello VIJOY POWER SOLUTION, I would like to enquire about rooftop solar installation in India.",
+  skipClientFetch = false,
 }: {
   phone?: string;
   whatsapp?: string;
   message?: string;
+  skipClientFetch?: boolean;
 }) {
   const [contactData, setContactData] = useState({
     phone,
@@ -18,6 +20,7 @@ export default function FloatingWhatsApp({
   });
 
   useEffect(() => {
+    if (skipClientFetch) return;
     fetch("/api/settings?key=general")
       .then((r) => r.json())
       .then((d) => {
@@ -29,7 +32,7 @@ export default function FloatingWhatsApp({
         }
       })
       .catch(() => {});
-  }, [phone, whatsapp]);
+  }, [phone, whatsapp, skipClientFetch]);
 
   const handleWhatsAppClick = () => {
     try {

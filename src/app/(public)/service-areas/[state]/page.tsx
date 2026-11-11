@@ -7,7 +7,7 @@ import Location from "@/models/Location";
 import PortfolioProject from "@/models/PortfolioProject";
 import LeadCaptureForm from "@/components/forms/LeadCaptureForm";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export async function generateMetadata({
   params,

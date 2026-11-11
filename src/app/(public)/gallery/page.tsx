@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     "Browse authentic rooftop solar installation photographs across India. Real customer handovers with verified equipment and documented customer consent.",
 };
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function GalleryPage() {
   let galleryItems: any[] = [];

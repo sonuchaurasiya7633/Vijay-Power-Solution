@@ -39,6 +39,8 @@ const TestimonialSchema = new Schema<ITestimonial>(
   { timestamps: true }
 );
 
+TestimonialSchema.index({ isPublished: 1, isApproved: 1, sortOrder: 1, createdAt: -1 });
+
 export const Testimonial: Model<ITestimonial> =
   mongoose.models.Testimonial ||
   mongoose.model<ITestimonial>("Testimonial", TestimonialSchema);

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db/connection";
 import Blog from "@/models/Blog";
 import { getSession } from "@/lib/auth/session";
+import { revalidatePublicSite } from "@/lib/revalidate-public";
 
 export async function GET(req: NextRequest) {
   try {
@@ -33,6 +34,7 @@ export async function POST(req: NextRequest) {
       ...body,
       publishedAt: body.isPublished ? new Date() : undefined,
     });
+    revalidatePublicSite(["/blog"]);
     return NextResponse.json({ success: true, blog });
   } catch (error) {
     console.error("[Create Blog Error]", error);

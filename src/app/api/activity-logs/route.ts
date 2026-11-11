@@ -3,6 +3,8 @@ import connectDB from "@/lib/db/connection";
 import AuditLog from "@/models/AuditLog";
 import { getSession } from "@/lib/auth/session";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: NextRequest) {
   try {
     const session = await getSession();

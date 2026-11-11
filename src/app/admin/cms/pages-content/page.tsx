@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import toast from "@/lib/toast";
 import {
@@ -25,7 +26,7 @@ import {
   Video,
   Wrench,
 } from "lucide-react";
-import CmsLivePreviewModal from "@/components/admin/CmsLivePreviewModal";
+const CmsLivePreviewModal = dynamic(() => import("@/components/admin/CmsLivePreviewModal"), { ssr: false });
 import {
   defaultPublicPagesCms,
   mergeWithDefaults,
@@ -567,12 +568,14 @@ export default function AdminPublicPagesCmsPage() {
         </form>
       </div>
 
-      <CmsLivePreviewModal
-        isOpen={previewOpen}
-        onClose={() => setPreviewOpen(false)}
-        pageTitle={`${currentTabMeta.label} Live Preview`}
-        url={currentTabMeta.liveRoute}
-      />
+      {previewOpen && (
+        <CmsLivePreviewModal
+          isOpen={previewOpen}
+          onClose={() => setPreviewOpen(false)}
+          pageTitle={`${currentTabMeta.label} Live Preview`}
+          url={currentTabMeta.liveRoute}
+        />
+      )}
     </div>
   );
 }

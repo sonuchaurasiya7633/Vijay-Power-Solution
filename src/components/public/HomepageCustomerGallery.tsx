@@ -1,10 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, MapPin, Zap, Maximize2, ShieldCheck, Sparkles } from "lucide-react";
-import GalleryLightbox, { GalleryItem } from "@/components/public/GalleryLightbox";
+import type { GalleryItem } from "@/components/public/GalleryLightbox";
+import { optimizeCloudinaryUrl } from "@/lib/image-optimize";
+
+const GalleryLightbox = dynamic(() => import("@/components/public/GalleryLightbox"), {
+  ssr: false,
+});
 
 interface HomepageCustomerGalleryProps {
   initialItems: GalleryItem[];
@@ -59,7 +65,7 @@ export default function HomepageCustomerGallery({
                 {/* Image Container with neutral frame to protect portrait/poster aspect ratios */}
                 <div className="relative aspect-[4/5] sm:aspect-[4/3] w-full bg-navy-950/90 overflow-hidden flex items-center justify-center">
                   <Image
-                    src={item.imageUrl}
+                    src={optimizeCloudinaryUrl(item.imageUrl, 800)}
                     alt={item.title || "Solar installation with customer"}
                     fill
                     sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 33vw"
@@ -149,14 +155,16 @@ export default function HomepageCustomerGallery({
         </div>
       </div>
 
-      {/* Lightbox Modal */}
-      <GalleryLightbox
-        images={displayItems}
-        currentIndex={activeIdx}
-        isOpen={lightboxOpen}
-        onClose={() => setLightboxOpen(false)}
-        onNavigate={(idx) => setActiveIdx(idx)}
-      />
+      {/* Lightbox Modal - Lazy loaded only on demand */}
+      {lightboxOpen && (
+        <GalleryLightbox
+          images={displayItems}
+          currentIndex={activeIdx}
+          isOpen={lightboxOpen}
+          onClose={() => setLightboxOpen(false)}
+          onNavigate={(idx) => setActiveIdx(idx)}
+        />
+      )}
     </section>
   );
 }

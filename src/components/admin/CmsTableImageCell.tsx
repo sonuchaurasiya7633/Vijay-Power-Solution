@@ -136,6 +136,8 @@ export default function CmsTableImageCell({
           <img
             src={imageUrl}
             alt={title}
+            loading="lazy"
+            decoding="async"
             onError={(e) => {
               e.currentTarget.src = "/images/hero-solar-rooftop.jpg";
             }}
@@ -222,6 +224,8 @@ export default function CmsTableImageCell({
               <img
                 src={imageUrl}
                 alt={title}
+                loading="lazy"
+                decoding="async"
                 onError={(e) => {
                   e.currentTarget.src = "/images/hero-solar-rooftop.jpg";
                 }}

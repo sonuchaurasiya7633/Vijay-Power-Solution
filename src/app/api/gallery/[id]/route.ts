@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db/connection";
 import InstallationGallery from "@/models/InstallationGallery";
 import { getSession } from "@/lib/auth/session";
+import { revalidatePublicSite } from "@/lib/revalidate-public";
 
 export async function GET(
   req: NextRequest,
@@ -55,6 +56,7 @@ export async function PUT(
       return NextResponse.json({ error: "Item not found" }, { status: 404 });
     }
 
+    revalidatePublicSite(["/gallery"]);
     return NextResponse.json({ success: true, item: updated });
   } catch (error) {
     console.error("[Update Gallery Item Error]", error);
@@ -78,6 +80,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Item not found" }, { status: 404 });
     }
 
+    revalidatePublicSite(["/gallery"]);
     return NextResponse.json({ success: true, message: "Gallery item deleted successfully" });
   } catch (error) {
     console.error("[Delete Gallery Item Error]", error);

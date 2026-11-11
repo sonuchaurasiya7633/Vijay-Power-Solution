@@ -5,7 +5,7 @@ import CtaBanner from "@/components/public/CtaBanner";
 import { ShieldCheck } from "lucide-react";
 import { getPublicPagesCms } from "@/lib/cms-server";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Customer Testimonials & Reviews | VIJOY POWER SOLUTION",

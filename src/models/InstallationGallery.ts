@@ -38,6 +38,9 @@ const InstallationGallerySchema = new Schema<IInstallationGallery>(
   { timestamps: true }
 );
 
+InstallationGallerySchema.index({ isPublished: 1, sortOrder: 1, createdAt: -1 });
+InstallationGallerySchema.index({ isPublished: 1, category: 1, sortOrder: 1 });
+
 const InstallationGallery: Model<IInstallationGallery> =
   mongoose.models.InstallationGallery ||
   mongoose.model<IInstallationGallery>("InstallationGallery", InstallationGallerySchema);

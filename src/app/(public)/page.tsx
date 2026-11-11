@@ -14,17 +14,18 @@ import CtaBanner from "@/components/public/CtaBanner";
 import connectDB from "@/lib/db/connection";
 import SolarProduct from "@/models/SolarProduct";
 import SolarSolution from "@/models/SolarSolution";
-import { getPublicPagesCms, getSolarPanelsPageCms } from "@/lib/cms-server";
+import { getHomepageSetting, getPublicPagesCms, getSolarPanelsPageCms } from "@/lib/cms-server";
 import { getCleanPublicImage } from "@/lib/image-fallback";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function HomePage() {
   let products: any[] = [];
   let solutions: any[] = [];
-  const [solarPanelsCms, publicPagesCms] = await Promise.all([
+  const [solarPanelsCms, publicPagesCms, homepageSetting] = await Promise.all([
     getSolarPanelsPageCms(),
     getPublicPagesCms(),
+    getHomepageSetting(),
   ]);
 
   try {
@@ -82,7 +83,7 @@ export default async function HomePage() {
       <RecentProjectsSection />
 
       {/* 9. Video Stories & Walkthroughs */}
-      <VideoSection />
+      <VideoSection initialData={homepageSetting?.videos || null} />
 
       {/* 10. Service Coverage (Pan India & Regional Hubs) */}
       <ServiceAreasSection />

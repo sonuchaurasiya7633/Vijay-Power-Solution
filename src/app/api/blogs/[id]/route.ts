@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db/connection";
 import Blog from "@/models/Blog";
 import { getSession } from "@/lib/auth/session";
+import { revalidatePublicSite } from "@/lib/revalidate-public";
 
 export async function GET(
   req: NextRequest,
@@ -32,6 +33,7 @@ export async function PATCH(
     const blog = await Blog.findByIdAndUpdate(params.id, { $set: body }, { new: true });
     if (!blog) return NextResponse.json({ error: "Article not found" }, { status: 404 });
 
+    revalidatePublicSite(["/blog"]);
     return NextResponse.json({ success: true, blog });
   } catch (error: any) {
     console.error("[Update Blog Error]", error);
@@ -51,6 +53,7 @@ export async function DELETE(
     const blog = await Blog.findByIdAndDelete(params.id);
     if (!blog) return NextResponse.json({ error: "Article not found" }, { status: 404 });
 
+    revalidatePublicSite(["/blog"]);
     return NextResponse.json({ success: true });
   } catch (error: any) {
     console.error("[Delete Blog Error]", error);

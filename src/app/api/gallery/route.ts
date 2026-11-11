@@ -3,6 +3,7 @@ import connectDB from "@/lib/db/connection";
 import InstallationGallery from "@/models/InstallationGallery";
 import { getSession } from "@/lib/auth/session";
 import { generateUploadSignature } from "@/lib/cloudinary/client";
+import { revalidatePublicSite } from "@/lib/revalidate-public";
 
 export async function GET(req: NextRequest) {
   try {
@@ -64,6 +65,7 @@ export async function POST(req: NextRequest) {
         InstallationGallery.findByIdAndUpdate(it.id, { sortOrder: it.sortOrder })
       );
       await Promise.all(updates);
+      revalidatePublicSite(["/gallery"]);
       return NextResponse.json({ success: true, message: "Order updated successfully" });
     }
 
@@ -71,6 +73,7 @@ export async function POST(req: NextRequest) {
     if (body.action === "batch" && Array.isArray(body.items)) {
       await connectDB();
       const created = await InstallationGallery.insertMany(body.items);
+      revalidatePublicSite(["/gallery"]);
       return NextResponse.json({ success: true, count: created.length, items: created }, { status: 201 });
     }
 
@@ -110,6 +113,7 @@ export async function POST(req: NextRequest) {
       sortOrder: Number(sortOrder) || 0,
     });
 
+    revalidatePublicSite(["/gallery"]);
     return NextResponse.json({ success: true, item }, { status: 201 });
   } catch (error) {
     console.error("[Create Installation Gallery Error]", error);

@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Inter, Manrope } from "next/font/google";
 import "./globals.css";
 import ToastProvider from "@/components/ui/ToastProvider";
+import NavigationProgress from "@/components/ui/NavigationProgress";
 import { DEFAULT_SOCIAL_LINKS } from "@/lib/constants/social";
 
 const inter = Inter({
@@ -93,12 +95,17 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${manrope.variable}`}>
       <head>
+        <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://i.ytimg.com" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
       <body className="antialiased min-h-screen flex flex-col font-sans">
+        <Suspense fallback={null}>
+          <NavigationProgress />
+        </Suspense>
         <ToastProvider />
         {children}
       </body>

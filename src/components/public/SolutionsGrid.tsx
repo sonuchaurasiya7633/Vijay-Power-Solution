@@ -6,6 +6,7 @@ import SolarSolution from "@/models/SolarSolution";
 import Setting from "@/models/Setting";
 import { defaultPublicPagesCms, mergeWithDefaults } from "@/lib/cms-defaults";
 import { getCleanPublicImage } from "@/lib/image-fallback";
+import { optimizeCloudinaryUrl } from "@/lib/image-optimize";
 import SolarCardPlaceholder from "@/components/public/SolarCardPlaceholder";
 
 export interface SolutionItem {
@@ -156,9 +157,10 @@ export default async function SolutionsGrid({
               <div className="relative h-52 w-full overflow-hidden bg-navy-900">
                 {getCleanPublicImage(sol.image) ? (
                   <Image
-                    src={getCleanPublicImage(sol.image)}
+                    src={optimizeCloudinaryUrl(getCleanPublicImage(sol.image), 800)}
                     alt={sol.title}
                     fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                 ) : (

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import toast from "@/lib/toast";
 import {
@@ -17,7 +18,7 @@ import {
   ShieldCheck,
   Trash2,
 } from "lucide-react";
-import CmsLivePreviewModal from "@/components/admin/CmsLivePreviewModal";
+const CmsLivePreviewModal = dynamic(() => import("@/components/admin/CmsLivePreviewModal"), { ssr: false });
 import {
   defaultSolarPanelsPageCms,
   mergeWithDefaults,
@@ -441,12 +442,14 @@ export default function AdminSolarPanelsCmsPage() {
         </div>
       </form>
 
-      <CmsLivePreviewModal
-        isOpen={previewOpen}
-        onClose={() => setPreviewOpen(false)}
-        pageTitle="Solar Panels Page Live Preview"
-        url="/solar-panels"
-      />
+      {previewOpen && (
+        <CmsLivePreviewModal
+          isOpen={previewOpen}
+          onClose={() => setPreviewOpen(false)}
+          pageTitle="Solar Panels Page Live Preview"
+          url="/solar-panels"
+        />
+      )}
     </div>
   );
 }

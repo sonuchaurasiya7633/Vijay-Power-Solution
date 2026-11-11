@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db/connection";
 import SolarService from "@/models/SolarService";
 import { getSession } from "@/lib/auth/session";
+import { revalidatePublicSite } from "@/lib/revalidate-public";
 
 export async function PATCH(
   req: NextRequest,
@@ -16,6 +17,7 @@ export async function PATCH(
     const service = await SolarService.findByIdAndUpdate(params.id, { $set: body }, { new: true });
     if (!service) return NextResponse.json({ error: "Service not found" }, { status: 404 });
 
+    revalidatePublicSite(["/services"]);
     return NextResponse.json({ success: true, service });
   } catch (error: any) {
     console.error("[Update Service Error]", error);
@@ -35,6 +37,7 @@ export async function DELETE(
     const service = await SolarService.findByIdAndDelete(params.id);
     if (!service) return NextResponse.json({ error: "Service not found" }, { status: 404 });
 
+    revalidatePublicSite(["/services"]);
     return NextResponse.json({ success: true });
   } catch (error: any) {
     console.error("[Delete Service Error]", error);
