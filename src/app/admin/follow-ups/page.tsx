@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import toast from "@/lib/toast";
 import { Clock, CheckCircle2, AlertCircle, Phone, MessageCircle, Calendar, Loader2 } from "lucide-react";
@@ -12,7 +12,7 @@ export default function FollowUpsPage() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all"); // today, upcoming, overdue, all
 
-  const fetchFollowUps = async () => {
+  const fetchFollowUps = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch(`/api/follow-ups?filter=${filter}`);
@@ -25,11 +25,11 @@ export default function FollowUpsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filter]);
 
   useEffect(() => {
     fetchFollowUps();
-  }, [filter]);
+  }, [fetchFollowUps]);
 
   const markComplete = async (id: string) => {
     const outcome = prompt("Enter follow-up outcome notes:");

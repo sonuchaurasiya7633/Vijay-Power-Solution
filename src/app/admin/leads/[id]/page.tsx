@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import toast from "@/lib/toast";
@@ -31,7 +31,7 @@ export default function LeadDetailPage() {
   const [updatingStage, setUpdatingStage] = useState(false);
   const [submittingNote, setSubmittingNote] = useState(false);
 
-  const fetchDetail = async () => {
+  const fetchDetail = useCallback(async () => {
     try {
       const res = await fetch(`/api/leads/${id}`);
       if (res.ok) {
@@ -43,11 +43,11 @@ export default function LeadDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
     fetchDetail();
-  }, [id]);
+  }, [fetchDetail]);
 
   const handleStageChange = async (newStage: string) => {
     setUpdatingStage(true);

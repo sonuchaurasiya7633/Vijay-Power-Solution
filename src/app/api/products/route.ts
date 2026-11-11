@@ -5,6 +5,7 @@ import { getSession } from "@/lib/auth/session";
 import { hasPermission } from "@/lib/auth/permissions";
 import { normalizeOfficialPanelBrand } from "@/lib/constants/brands";
 import { revalidatePublicSite } from "@/lib/revalidate-public";
+import { escapeRegex, isSafeMediaUrl } from "@/lib/security/sanitize";
 
 export async function GET(req: NextRequest) {
   try {
@@ -16,11 +17,20 @@ export async function GET(req: NextRequest) {
     const minWattage = searchParams.get("minWattage");
     const maxWattage = searchParams.get("maxWattage");
     const search = searchParams.get("search");
-    const adminMode = searchParams.get("adminMode") === "true";
+    const requestedAdminMode = searchParams.get("adminMode") === "true";
 
-        const query: Record<string, any> = {};
+    let allowAdminMode = false;
+    if (requestedAdminMode) {
+      const session = await getSession();
+      if (!session || !hasPermission(session.role, "read:products")) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+      allowAdminMode = true;
+    }
 
-    if (!adminMode) {
+    const query: Record<string, unknown> = {};
+
+    if (!allowAdminMode) {
       query.isPublished = true;
     }
 
@@ -37,16 +47,18 @@ export async function GET(req: NextRequest) {
     }
 
     if (minWattage || maxWattage) {
-      query.ratedPowerWp = {};
-      if (minWattage) query.ratedPowerWp.$gte = Number(minWattage);
-      if (maxWattage) query.ratedPowerWp.$lte = Number(maxWattage);
+      const range: Record<string, number> = {};
+      if (minWattage && Number.isFinite(Number(minWattage))) range.$gte = Number(minWattage);
+      if (maxWattage && Number.isFinite(Number(maxWattage))) range.$lte = Number(maxWattage);
+      if (Object.keys(range).length > 0) query.ratedPowerWp = range;
     }
 
-    if (search) {
+    if (search && search.trim()) {
+      const safeSearch = escapeRegex(search.trim().slice(0, 80));
       query.$or = [
-        { name: { $regex: search, $options: "i" } },
-        { brand: { $regex: search, $options: "i" } },
-        { modelNumber: { $regex: search, $options: "i" } },
+        { name: { $regex: safeSearch, $options: "i" } },
+        { brand: { $regex: safeSearch, $options: "i" } },
+        { modelNumber: { $regex: safeSearch, $options: "i" } },
       ];
     }
 

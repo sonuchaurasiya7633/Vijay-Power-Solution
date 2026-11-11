@@ -4,28 +4,39 @@ import FollowUp from "@/models/FollowUp";
 import Lead from "@/models/Lead";
 import LeadActivity from "@/models/LeadActivity";
 import "@/models/User";
-import { getSession } from "@/lib/auth/session";
+import { requirePermission } from "@/lib/security/api-helpers";
+import { isValidObjectId } from "@/lib/security/sanitize";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   try {
-    const session = await getSession();
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requirePermission("read:leads");
+    if (!auth.ok) return auth.response;
 
     await connectDB();
     const { searchParams } = new URL(req.url);
-    const filter = searchParams.get("filter"); // today, upcoming, overdue, all
+    const filter = searchParams.get("filter");
     const now = new Date();
-    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+    const startOfToday = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate()
+    );
+    const endOfToday = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+      23,
+      59,
+      59,
+      999
+    );
 
-        const query: Record<string, any> = {};
+    const query: Record<string, any> = {};
 
-    if (session.role === "sales_executive") {
-      query.assignedTo = session.userId;
+    if (auth.session.role === "sales_executive") {
+      query.assignedTo = auth.session.userId;
     }
 
     if (filter === "today") {
@@ -48,50 +59,75 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ followUps });
   } catch (error) {
     console.error("[Get Follow-ups Error]", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await getSession();
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requirePermission("write:leads");
+    if (!auth.ok) return auth.response;
 
     const body = await req.json();
     const { leadId, followUpType, scheduledAt, notes, assignedTo } = body;
 
-    if (!leadId || !scheduledAt) {
-      return NextResponse.json({ error: "leadId and scheduledAt are required" }, { status: 400 });
+    if (!leadId || !scheduledAt || !isValidObjectId(leadId)) {
+      return NextResponse.json(
+        { error: "Valid leadId and scheduledAt are required" },
+        { status: 400 }
+      );
+    }
+
+    if (assignedTo && !isValidObjectId(assignedTo)) {
+      return NextResponse.json(
+        { error: "Invalid assignee ID" },
+        { status: 400 }
+      );
+    }
+
+    const scheduledDate = new Date(scheduledAt);
+    if (Number.isNaN(scheduledDate.getTime())) {
+      return NextResponse.json(
+        { error: "Invalid scheduledAt timestamp" },
+        { status: 400 }
+      );
     }
 
     await connectDB();
+    const safeType =
+      typeof followUpType === "string" && followUpType.trim()
+        ? followUpType.trim()
+        : "phone_call";
+    const assignee = assignedTo || auth.session.userId;
 
-    const assignee = assignedTo || session.userId;
     const followUp = await FollowUp.create({
       leadId,
       assignedTo: assignee,
-      followUpType: followUpType || "phone_call",
-      scheduledAt: new Date(scheduledAt),
-      notes,
+      followUpType: safeType,
+      scheduledAt: scheduledDate,
+      notes: typeof notes === "string" ? notes.trim().slice(0, 1000) : undefined,
       status: "pending",
     });
 
-    // Update lead's nextFollowUpDate
-    await Lead.findByIdAndUpdate(leadId, { nextFollowUpDate: new Date(scheduledAt) });
+    await Lead.findByIdAndUpdate(leadId, { nextFollowUpDate: scheduledDate });
 
     await LeadActivity.create({
       leadId,
-      performedBy: session.userId,
+      performedBy: auth.session.userId,
       activityType: "note_added",
-      title: `Scheduled Follow-up: ${followUpType.replace(/_/g, " ").toUpperCase()}`,
-      description: `Follow-up planned for ${new Date(scheduledAt).toLocaleString("en-IN")}. Notes: ${notes || "None"}`,
+      title: `Scheduled Follow-up: ${safeType.replace(/_/g, " ").toUpperCase()}`,
+      description: `Follow-up planned for ${scheduledDate.toLocaleString("en-IN")}. Notes: ${notes || "None"}`,
     });
 
     return NextResponse.json({ success: true, followUp });
   } catch (error) {
     console.error("[Create Follow-up Error]", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }

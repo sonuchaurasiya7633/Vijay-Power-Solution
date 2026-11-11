@@ -11,6 +11,7 @@ import Setting from "@/models/Setting";
 import { getCleanPublicImage } from "@/lib/image-fallback";
 import SolarCardPlaceholder from "@/components/public/SolarCardPlaceholder";
 import { getRouteMetadata } from "@/lib/seo-server";
+import { sanitizeHtmlContent } from "@/lib/security/sanitize";
 
 export async function generateMetadata(): Promise<Metadata> {
   return getRouteMetadata({
@@ -128,7 +129,7 @@ export default async function AboutPage() {
               {dynamicPage?.contentHtml ? (
                 <div
                   className="prose prose-slate max-w-none text-sm sm:text-base text-slate-muted leading-relaxed"
-                  dangerouslySetInnerHTML={{ __html: dynamicPage.contentHtml }}
+                  dangerouslySetInnerHTML={{ __html: sanitizeHtmlContent(dynamicPage.contentHtml) }}
                 />
               ) : (
                 <>
@@ -189,7 +190,7 @@ export default async function AboutPage() {
             {sec.content && (
               <div
                 className="prose prose-slate max-w-none text-sm text-slate-muted"
-                dangerouslySetInnerHTML={{ __html: sec.content }}
+                dangerouslySetInnerHTML={{ __html: sanitizeHtmlContent(sec.content) }}
               />
             )}
             {sec.items && sec.items.length > 0 && (

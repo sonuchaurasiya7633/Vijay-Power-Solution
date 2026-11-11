@@ -7,6 +7,7 @@ import PortfolioProject from "@/models/PortfolioProject";
 import "@/models/User";
 import { getSession } from "@/lib/auth/session";
 import { hasPermission } from "@/lib/auth/permissions";
+import { isValidObjectId } from "@/lib/security/sanitize";
 
 export const dynamic = "force-dynamic";
 
@@ -66,13 +67,25 @@ export async function POST(req: NextRequest) {
       installationNotes,
     } = body;
 
-    if (!leadId || !customerName || !systemCapacityKw || !installationAddress) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    if (!leadId || !isValidObjectId(String(leadId)) || !customerName || !systemCapacityKw || !installationAddress) {
+      return NextResponse.json({ error: "Missing or invalid required fields" }, { status: 400 });
+    }
+
+    if (assignedManager && !isValidObjectId(String(assignedManager))) {
+      return NextResponse.json({ error: "Invalid assignedManager id" }, { status: 400 });
+    }
+    if (leadTechnician && !isValidObjectId(String(leadTechnician))) {
+      return NextResponse.json({ error: "Invalid leadTechnician id" }, { status: 400 });
     }
 
     await connectDB();
-    const count = await InstallationJob.countDocuments();
-    const jobId = `VPS-JOB-${String(1001 + count).padStart(4, "0")}`;
+    const lastJob = await InstallationJob.findOne({}, { jobId: 1 }).sort({ createdAt: -1 }).lean();
+    let nextSeq = 1001;
+    if (lastJob?.jobId) {
+      const m = String(lastJob.jobId).match(/(\d+)$/);
+      if (m) nextSeq = Math.max(1001, Number(m[1]) + 1);
+    }
+    const jobId = `VPS-JOB-${String(nextSeq).padStart(4, "0")}`;
 
     const job = await InstallationJob.create({
       jobId,

@@ -8,11 +8,22 @@ import { LeadCaptureSchema } from "@/lib/validation/lead";
 import { getSession } from "@/lib/auth/session";
 import { hasPermission } from "@/lib/auth/permissions";
 import { sendEmail } from "@/lib/email/mailer";
+import { escapeHtml, escapeRegex, isValidObjectId } from "@/lib/security/sanitize";
+import { checkRateLimit, getClientIp, rateLimitResponse } from "@/lib/security/rate-limit";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = getClientIp(req);
+    const rl = checkRateLimit(`lead-submit:${ip}`, 12, 15 * 60 * 1000);
+    if (!rl.allowed) {
+      return rateLimitResponse(
+        "Too many enquiry requests from this network. Please wait a few minutes or call our helpline directly.",
+        rl.retryAfterSec
+      );
+    }
+
     const body = await req.json();
 
     // Validate with Zod
@@ -58,9 +69,14 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Generate unique Lead ID
-    const count = await Lead.countDocuments();
-    const leadId = `VPS-LD-${String(1001 + count).padStart(4, "0")}`;
+    // Generate collision-safe Lead ID
+    const lastLead = await Lead.findOne({}, { leadId: 1 }).sort({ createdAt: -1 }).lean();
+    let nextSeq = 1001;
+    if (lastLead?.leadId) {
+      const m = String(lastLead.leadId).match(/(\d+)$/);
+      if (m) nextSeq = Math.max(1001, Number(m[1]) + 1);
+    }
+    const leadId = `VPS-LD-${String(nextSeq).padStart(4, "0")}`;
 
     // Create lead
     const newLead = await Lead.create({
@@ -77,7 +93,7 @@ export async function POST(req: NextRequest) {
       customerType: data.customerType,
       enquiryType: data.enquiryType,
       solarSolutionType: data.solarSolutionType,
-      productId: data.productId ? data.productId : undefined,
+      productId: data.productId && isValidObjectId(data.productId) ? data.productId : undefined,
       productName: data.productName,
       wattagePreference: data.wattagePreference,
       requiredSystemSizeKw: data.requiredSystemSizeKw,
@@ -108,20 +124,20 @@ export async function POST(req: NextRequest) {
       metadata: { initialStage: "new_lead", source: data.leadSource },
     });
 
-    // Trigger asynchronous notification email
+    // Trigger asynchronous notification email (HTML-escaped to prevent injection)
     const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || "contact@vijoypowersolution.com";
     sendEmail({
       to: adminEmail,
       subject: `[New Solar Lead] ${newLead.leadId} - ${newLead.fullName} (${newLead.city}, ${newLead.state})`,
       html: `
         <h2>New Solar Consultation Lead Received</h2>
-        <p><strong>Lead ID:</strong> ${newLead.leadId}</p>
-        <p><strong>Customer Name:</strong> ${newLead.fullName}</p>
-        <p><strong>Phone:</strong> ${newLead.phone}</p>
-        <p><strong>Location:</strong> ${newLead.city}, ${newLead.state}</p>
-        <p><strong>Customer Type:</strong> ${newLead.customerType}</p>
-        <p><strong>Solution Interest:</strong> ${newLead.solarSolutionType || 'Not specified'}</p>
-        <p><strong>Message / Requirement:</strong> ${newLead.message || 'None'}</p>
+        <p><strong>Lead ID:</strong> ${escapeHtml(newLead.leadId)}</p>
+        <p><strong>Customer Name:</strong> ${escapeHtml(newLead.fullName)}</p>
+        <p><strong>Phone:</strong> ${escapeHtml(newLead.phone)}</p>
+        <p><strong>Location:</strong> ${escapeHtml(newLead.city)}, ${escapeHtml(newLead.state)}</p>
+        <p><strong>Customer Type:</strong> ${escapeHtml(newLead.customerType)}</p>
+        <p><strong>Solution Interest:</strong> ${escapeHtml(newLead.solarSolutionType || 'Not specified')}</p>
+        <p><strong>Message / Requirement:</strong> ${escapeHtml(newLead.message || 'None')}</p>
         <hr />
         <p>Please log in to the VIJOY POWER SOLUTION Admin CRM to review and assign this lead.</p>
       `,

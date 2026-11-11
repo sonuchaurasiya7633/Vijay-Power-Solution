@@ -2,8 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db/connection";
 import InstallationGallery from "@/models/InstallationGallery";
 import { getSession } from "@/lib/auth/session";
+import { hasPermission } from "@/lib/auth/permissions";
 import { generateUploadSignature } from "@/lib/cloudinary/client";
 import { revalidatePublicSite } from "@/lib/revalidate-public";
+import { requirePermission } from "@/lib/security/api-helpers";
+import { isSafeMediaUrl, isValidObjectId } from "@/lib/security/sanitize";
+
+const ALLOWED_GALLERY_FOLDERS = new Set(["gallery", "products", "projects", "pages", "media"]);
 
 export async function GET(req: NextRequest) {
   try {
@@ -12,14 +17,14 @@ export async function GET(req: NextRequest) {
     const featuredOnly = searchParams.get("featured") === "true";
     const includeUnpublished = searchParams.get("includeUnpublished") === "true";
 
-    const filter: Record<string, any> = {};
+    const filter: Record<string, unknown> = {};
 
     if (!includeUnpublished) {
       filter.isPublished = true;
     } else {
-      // Check admin session before showing unpublished items
+      // Check admin session & permission before showing unpublished items
       const session = await getSession();
-      if (!session) {
+      if (!session || !hasPermission(session.role, "read:cms")) {
         filter.isPublished = true;
       }
     }
@@ -44,26 +49,29 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await getSession();
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
-    }
-
     const body = await req.json();
 
     // 1. Signature request for Cloudinary upload
     if (body.action === "sign") {
-      const folder = body.folder || "gallery";
+      const auth = await requirePermission("write:media");
+      if (!auth.ok) return auth.response;
+      const requestedFolder = typeof body.folder === "string" ? body.folder.trim() : "gallery";
+      const folder = ALLOWED_GALLERY_FOLDERS.has(requestedFolder) ? requestedFolder : "gallery";
       const signatureData = generateUploadSignature(folder);
       return NextResponse.json(signatureData);
     }
 
+    const auth = await requirePermission("write:cms");
+    if (!auth.ok) return auth.response;
+
     // 2. Reorder action
     if (body.action === "reorder" && Array.isArray(body.items)) {
       await connectDB();
-      const updates = body.items.map((it: { id: string; sortOrder: number }) =>
-        InstallationGallery.findByIdAndUpdate(it.id, { sortOrder: it.sortOrder })
-      );
+      const updates = body.items
+        .filter((it: { id?: string; sortOrder?: number }) => it?.id && isValidObjectId(String(it.id)))
+        .map((it: { id: string; sortOrder: number }) =>
+          InstallationGallery.findByIdAndUpdate(it.id, { sortOrder: Number(it.sortOrder) || 0 })
+        );
       await Promise.all(updates);
       revalidatePublicSite(["/gallery"]);
       return NextResponse.json({ success: true, message: "Order updated successfully" });
@@ -71,8 +79,24 @@ export async function POST(req: NextRequest) {
 
     // 3. Batch insert action
     if (body.action === "batch" && Array.isArray(body.items)) {
+      const safeItems = body.items
+        .filter((it: any) => it && typeof it.imageUrl === "string" && isSafeMediaUrl(it.imageUrl))
+        .map((it: any) => ({
+          imageUrl: it.imageUrl,
+          cloudinaryPublicId: it.cloudinaryPublicId,
+          title: it.title || "Customer Solar Installation",
+          customerName: it.customerName,
+          city: it.city,
+          state: it.state,
+          category: it.category || "Residential Rooftop",
+          capacityKw: it.capacityKw ? Number(it.capacityKw) : undefined,
+          description: it.description,
+          isFeatured: Boolean(it.isFeatured),
+          isPublished: it.isPublished !== undefined ? Boolean(it.isPublished) : true,
+          sortOrder: Number(it.sortOrder) || 0,
+        }));
       await connectDB();
-      const created = await InstallationGallery.insertMany(body.items);
+      const created = await InstallationGallery.insertMany(safeItems);
       revalidatePublicSite(["/gallery"]);
       return NextResponse.json({ success: true, count: created.length, items: created }, { status: 201 });
     }
@@ -94,8 +118,8 @@ export async function POST(req: NextRequest) {
       sortOrder = 0,
     } = body;
 
-    if (!imageUrl) {
-      return NextResponse.json({ error: "Image URL is required" }, { status: 400 });
+    if (!imageUrl || typeof imageUrl !== "string" || !isSafeMediaUrl(imageUrl)) {
+      return NextResponse.json({ error: "Valid image URL is required" }, { status: 400 });
     }
 
     const item = await InstallationGallery.create({

@@ -4,6 +4,8 @@ import PortfolioProject from "@/models/PortfolioProject";
 import { getSession } from "@/lib/auth/session";
 import { hasPermission } from "@/lib/auth/permissions";
 import { revalidatePublicSite } from "@/lib/revalidate-public";
+import { requirePermission } from "@/lib/security/api-helpers";
+import { isSafeMediaUrl } from "@/lib/security/sanitize";
 
 export async function GET(req: NextRequest) {
   try {
@@ -13,11 +15,20 @@ export async function GET(req: NextRequest) {
     const city = searchParams.get("city");
     const category = searchParams.get("category");
     const featured = searchParams.get("featured");
-    const adminMode = searchParams.get("adminMode") === "true";
+    const requestedAdminMode = searchParams.get("adminMode") === "true";
 
-        const query: Record<string, any> = {};
+    let allowAdminMode = false;
+    if (requestedAdminMode) {
+      const session = await getSession();
+      if (!session || !hasPermission(session.role, "read:cms")) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+      allowAdminMode = true;
+    }
 
-    if (!adminMode) {
+    const query: Record<string, unknown> = {};
+
+    if (!allowAdminMode) {
       query.isPublished = true;
     }
 

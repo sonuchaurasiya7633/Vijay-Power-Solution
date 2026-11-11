@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import connectDB from "@/lib/db/connection";
 import Page from "@/models/Page";
 import { getRouteMetadata } from "@/lib/seo-server";
+import { sanitizeHtmlContent } from "@/lib/security/sanitize";
 
 export async function generateMetadata(): Promise<Metadata> {
   return getRouteMetadata({
@@ -34,7 +35,7 @@ export default async function DisclaimerPage() {
           )}
           <div
             className="prose prose-slate max-w-none text-sm text-slate-muted leading-relaxed"
-            dangerouslySetInnerHTML={{ __html: dynamicPage.contentHtml }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtmlContent(dynamicPage.contentHtml) }}
           />
         </div>
       </div>

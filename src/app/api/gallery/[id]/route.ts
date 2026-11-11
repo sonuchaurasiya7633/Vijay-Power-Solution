@@ -2,17 +2,29 @@ import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db/connection";
 import InstallationGallery from "@/models/InstallationGallery";
 import { getSession } from "@/lib/auth/session";
+import { hasPermission } from "@/lib/auth/permissions";
 import { revalidatePublicSite } from "@/lib/revalidate-public";
+import { requirePermission, validateIdParam } from "@/lib/security/api-helpers";
+import { isSafeMediaUrl } from "@/lib/security/sanitize";
 
 export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
+    const idErr = validateIdParam(params.id, "gallery item id");
+    if (idErr) return idErr;
+
     await connectDB();
     const item = await InstallationGallery.findById(params.id).lean();
     if (!item) {
       return NextResponse.json({ error: "Item not found" }, { status: 404 });
+    }
+    if (!item.isPublished) {
+      const session = await getSession();
+      if (!session || !hasPermission(session.role, "read:cms")) {
+        return NextResponse.json({ error: "Item not found" }, { status: 404 });
+      }
     }
     return NextResponse.json({ success: true, item });
   } catch (error) {
@@ -25,12 +37,16 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getSession();
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
-    }
+    const auth = await requirePermission("write:cms");
+    if (!auth.ok) return auth.response;
+
+    const idErr = validateIdParam(params.id, "gallery item id");
+    if (idErr) return idErr;
 
     const body = await req.json();
+    if (body.imageUrl !== undefined && !isSafeMediaUrl(String(body.imageUrl))) {
+      return NextResponse.json({ error: "Invalid imageUrl" }, { status: 400 });
+    }
     await connectDB();
 
     const updated = await InstallationGallery.findByIdAndUpdate(
@@ -69,10 +85,11 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getSession();
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
-    }
+    const auth = await requirePermission("write:cms");
+    if (!auth.ok) return auth.response;
+
+    const idErr = validateIdParam(params.id, "gallery item id");
+    if (idErr) return idErr;
 
     await connectDB();
     const deleted = await InstallationGallery.findByIdAndDelete(params.id);

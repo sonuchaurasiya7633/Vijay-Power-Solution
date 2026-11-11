@@ -6,6 +6,7 @@ import LeadActivity from "@/models/LeadActivity";
 import "@/models/User";
 import { getSession } from "@/lib/auth/session";
 import { hasPermission } from "@/lib/auth/permissions";
+import { isValidObjectId } from "@/lib/security/sanitize";
 
 export const dynamic = "force-dynamic";
 
@@ -24,8 +25,13 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const leadId = searchParams.get("leadId");
 
-        const query: Record<string, any> = {};
-    if (leadId) query.leadId = leadId;
+    const query: Record<string, unknown> = {};
+    if (leadId) {
+      if (!isValidObjectId(leadId)) {
+        return NextResponse.json({ error: "Invalid leadId" }, { status: 400 });
+      }
+      query.leadId = leadId;
+    }
 
     const quotations = await Quotation.find(query)
       .sort({ createdAt: -1 })
@@ -75,16 +81,27 @@ export async function POST(req: NextRequest) {
       internalNotes,
     } = body;
 
-    if (!leadId || !customerName || !customerPhone || !proposedSystemCapacityKw || !subtotal) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    if (!leadId || !isValidObjectId(String(leadId)) || !customerName || !customerPhone || !proposedSystemCapacityKw || !subtotal) {
+      return NextResponse.json({ error: "Missing or invalid required fields" }, { status: 400 });
     }
 
     await connectDB();
     const year = new Date().getFullYear();
-    const count = await Quotation.countDocuments();
-    const quotationNumber = `VPS-QT-${year}-${String(1001 + count).padStart(4, "0")}`;
+    const lastQuotation = await Quotation.findOne(
+      { quotationNumber: new RegExp(`^VPS-QT-${year}-`) },
+      { quotationNumber: 1 }
+    )
+      .sort({ createdAt: -1 })
+      .lean();
+    let nextSeq = 1001;
+    if (lastQuotation?.quotationNumber) {
+      const m = String(lastQuotation.quotationNumber).match(/(\d+)$/);
+      if (m) nextSeq = Math.max(1001, Number(m[1]) + 1);
+    }
+    const quotationNumber = `VPS-QT-${year}-${String(nextSeq).padStart(4, "0")}`;
 
-    const validUntil = new Date(Date.now() + validDays * 24 * 60 * 60 * 1000);
+    const clampedDays = Math.min(365, Math.max(1, Number(validDays) || 15));
+    const validUntil = new Date(Date.now() + clampedDays * 24 * 60 * 60 * 1000);
 
     const quotation = await Quotation.create({
       quotationNumber,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import toast from "@/lib/toast";
 import { Image as ImageIcon, Upload, Trash2, Folder, ShieldAlert, CheckCircle2 } from "lucide-react";
@@ -12,15 +12,15 @@ export default function AdminMediaPage() {
   const [uploading, setUploading] = useState(false);
   const [uploadMsg, setUploadMsg] = useState("");
 
-  const loadAssets = () => {
+  const loadAssets = useCallback(() => {
     fetch(`/api/media?folder=${folder}`)
       .then((r) => r.json())
       .then((d) => setAssets(d.assets || []));
-  };
+  }, [folder]);
 
   useEffect(() => {
     loadAssets();
-  }, [folder]);
+  }, [loadAssets]);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

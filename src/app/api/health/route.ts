@@ -11,10 +11,11 @@ export async function GET() {
       service: "VIJOY POWER SOLUTION API",
     });
   } catch (error) {
+    console.error("[Health Check Error]", error);
     return NextResponse.json(
       {
         status: "unhealthy",
-        error: error instanceof Error ? error.message : "Database connection failed",
+        database: "unreachable",
       },
       { status: 503 }
     );
