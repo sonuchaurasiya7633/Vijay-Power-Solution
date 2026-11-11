@@ -7,11 +7,26 @@
   --font-manrope: 'Manrope', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
+html,
 body {
   color: #102A43;
   background-color: #FFFFFF;
   font-family: var(--font-inter);
-  overflow-x: hidden;
+  overflow-x: clip;
+  max-width: 100%;
+}
+
+@keyframes drawerSlideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-drawer-slide-in {
+  animation: drawerSlideIn 0.22s ease-out forwards;
 }
 
 /* Custom scrollbar */

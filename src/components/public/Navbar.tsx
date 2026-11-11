@@ -316,26 +316,24 @@ export default function Navbar() {
 
       {/* =========================================================================
           PREMIUM MOBILE NAVIGATION DRAWER & OVERLAY
+          Mounted only when open so it never leaks outside viewport on mobile zoom
           ========================================================================= */}
+      {mobileMenuOpen && (
+        <>
+          {/* Backdrop Overlay */}
+          <div
+            className="fixed inset-0 bg-navy-950/60 backdrop-blur-sm z-50 lg:hidden"
+            onClick={() => setMobileMenuOpen(false)}
+            aria-hidden="true"
+          />
 
-      {/* Backdrop Overlay */}
-      <div
-        className={`fixed inset-0 bg-navy-950/60 backdrop-blur-sm z-50 transition-opacity duration-300 lg:hidden ${
-          mobileMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-        }`}
-        onClick={() => setMobileMenuOpen(false)}
-        aria-hidden="true"
-      />
-
-      {/* Right-Side Drawer Container */}
-      <aside
-        role="dialog"
-        aria-modal="true"
-        aria-label="Mobile Navigation Menu"
-        className={`fixed top-0 right-0 bottom-0 z-50 w-[min(85vw,360px)] h-[100dvh] max-h-[100dvh] bg-white shadow-2xl flex flex-col transition-transform duration-300 ease-out lg:hidden border-l border-slate-200/80 ${
-          mobileMenuOpen ? "translate-x-0" : "translate-x-full"
-        }`}
-      >
+          {/* Right-Side Drawer Container */}
+          <aside
+            role="dialog"
+            aria-modal="true"
+            aria-label="Mobile Navigation Menu"
+            className="fixed top-0 right-0 bottom-0 z-50 w-[min(85vw,360px)] h-[100dvh] max-h-[100dvh] bg-white shadow-2xl flex flex-col lg:hidden border-l border-slate-200/80 animate-drawer-slide-in"
+          >
         {/* Drawer Header */}
         <div className="shrink-0 h-20 px-5 border-b border-slate-100 flex items-center justify-between bg-white">
           <Link
@@ -643,7 +641,9 @@ export default function Navbar() {
             </a>
           </div>
         </div>
-      </aside>
+          </aside>
+        </>
+      )}
     </header>
   );
 }
