@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Installation Videos & Client Stories | VIJOY POWER SOLUTION",
   description:
-    "Watch authentic video walkthroughs of rooftop solar installations and client feedback across India.",
+    "Watch authentic YouTube video walkthroughs of rooftop solar installations and verified client stories across India.",
 };
 
 export default async function VideosPage() {

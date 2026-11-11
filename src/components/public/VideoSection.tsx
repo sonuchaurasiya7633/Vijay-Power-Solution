@@ -2,10 +2,14 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { Play, X } from "lucide-react";
+import { Play, X, ExternalLink } from "lucide-react";
 import { getCleanPublicImage } from "@/lib/image-fallback";
+import {
+  getYouTubeEmbedUrl,
+  getYouTubeThumbnailUrl,
+  isYouTubeUrl,
+} from "@/lib/utils/youtube";
 import SolarCardPlaceholder from "@/components/public/SolarCardPlaceholder";
-import { getYouTubeEmbedUrl, getYouTubeThumbnailUrl } from "@/lib/utils/youtube";
 
 interface VideoStory {
   title: string;
@@ -33,7 +37,7 @@ const defaultVideos: VideoStory[] = [
 ];
 
 export default function VideoSection() {
-  const [activeVideo, setActiveVideo] = useState<{ url: string; title: string } | null>(null);
+  const [activeVideo, setActiveVideo] = useState<VideoStory | null>(null);
   const [videoList, setVideoList] = useState<VideoStory[]>(defaultVideos);
   const [badge, setBadge] = useState("Video Stories & Walkthroughs");
   const [title, setTitle] = useState("See Our Installations in Action");
@@ -58,6 +62,17 @@ export default function VideoSection() {
       .catch(() => {});
   }, []);
 
+  useEffect(() => {
+    if (!activeVideo) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setActiveVideo(null);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [activeVideo]);
+
+  const activeEmbedUrl = activeVideo ? getYouTubeEmbedUrl(activeVideo.videoUrl, true) : null;
+
   return (
     <section className="py-20 bg-slate-bg border-t border-slate-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -76,26 +91,24 @@ export default function VideoSection() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {videoList.map((v, idx) => {
             const customThumb = getCleanPublicImage(v.thumbnail);
-            const ytThumb = !customThumb ? getYouTubeThumbnailUrl(v.videoUrl) : null;
-            const displayThumb = customThumb || ytThumb || "";
-            const hasPlayableUrl = Boolean(v.videoUrl && v.videoUrl.trim());
+            const autoYtThumb = getYouTubeThumbnailUrl(v.videoUrl) || "";
+            const resolvedThumb = customThumb || autoYtThumb;
+            const hasPlayableVideo = Boolean(getYouTubeEmbedUrl(v.videoUrl, false));
 
             return (
               <div
                 key={idx}
                 className={`group bg-white rounded-3xl overflow-hidden border border-slate-border shadow-sm transition-all ${
-                  hasPlayableUrl ? "hover:shadow-xl cursor-pointer" : "opacity-95"
+                  hasPlayableVideo ? "hover:shadow-xl cursor-pointer" : "opacity-95"
                 }`}
                 onClick={() => {
-                  if (hasPlayableUrl) {
-                    setActiveVideo({ url: v.videoUrl.trim(), title: v.title });
-                  }
+                  if (hasPlayableVideo) setActiveVideo(v);
                 }}
               >
                 <div className="relative h-60 w-full overflow-hidden bg-navy-900">
-                  {displayThumb ? (
+                  {resolvedThumb ? (
                     <Image
-                      src={displayThumb}
+                      src={resolvedThumb}
                       alt={v.title}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -105,18 +118,24 @@ export default function VideoSection() {
                   )}
                   <div className="absolute inset-0 bg-navy-950/35 group-hover:bg-navy-950/20 transition-colors" />
 
-                  {/* Play Button Overlay or Coming Soon badge */}
+                  {/* Play Button Overlay */}
                   <div className="absolute inset-0 flex items-center justify-center">
-                    {hasPlayableUrl ? (
-                      <div className="w-14 h-14 rounded-full bg-white/90 text-solar-green flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:bg-solar-green group-hover:text-white transition-all">
+                    {hasPlayableVideo ? (
+                      <div className="w-14 h-14 rounded-full bg-white/95 text-solar-green flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:bg-solar-green group-hover:text-white transition-all">
                         <Play className="w-6 h-6 ml-1 fill-current" />
                       </div>
                     ) : (
-                      <span className="px-3.5 py-1.5 rounded-full bg-navy-900/85 border border-white/20 text-white text-xs font-bold tracking-wide">
-                        Video Coming Soon
+                      <span className="px-3.5 py-1.5 rounded-full bg-navy-950/80 border border-white/20 text-[11px] font-bold text-slate-200">
+                        YouTube Video URL Pending
                       </span>
                     )}
                   </div>
+
+                  {isYouTubeUrl(v.videoUrl) && (
+                    <span className="absolute top-3 left-3 bg-red-600 text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md shadow">
+                      YouTube
+                    </span>
+                  )}
 
                   <span className="absolute bottom-3 right-3 bg-navy-950/80 backdrop-blur-sm text-white text-[11px] font-mono px-2 py-0.5 rounded-md">
                     {v.duration || "1:00"}
@@ -137,43 +156,60 @@ export default function VideoSection() {
         </div>
       </div>
 
-      {/* Video Modal Player (Supports YouTube & Direct MP4) */}
-      {activeVideo && (() => {
-        const ytEmbedUrl = getYouTubeEmbedUrl(activeVideo.url);
-        return (
+      {/* Video Modal Player (YouTube iframe embed + direct fallback) */}
+      {activeVideo && (
+        <div
+          className="fixed inset-0 z-50 bg-navy-950/80 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={() => setActiveVideo(null)}
+        >
           <div
-            className="fixed inset-0 z-50 bg-navy-950/85 backdrop-blur-sm flex items-center justify-center p-4"
-            onClick={() => setActiveVideo(null)}
+            className="bg-black rounded-3xl overflow-hidden max-w-3xl w-full border border-white/10 relative shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
           >
-            <div
-              className="bg-black rounded-3xl overflow-hidden max-w-3xl w-full border border-white/15 relative shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button
-                type="button"
-                onClick={() => setActiveVideo(null)}
-                aria-label="Close video player"
-                className="absolute top-3 right-3 z-10 p-2 rounded-full bg-black/60 text-white hover:bg-black/85 border border-white/20 transition-colors cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-              <div className="aspect-video w-full bg-black">
-                {ytEmbedUrl ? (
-                  <iframe
-                    src={ytEmbedUrl}
-                    title={activeVideo.title}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowFullScreen
-                    className="w-full h-full border-0"
-                  />
-                ) : (
-                  <video src={activeVideo.url} controls autoPlay className="w-full h-full object-contain" />
-                )}
+            <div className="flex items-center justify-between px-4 py-3 bg-navy-900/95 border-b border-white/10">
+              <div className="min-w-0 pr-3">
+                <p className="text-xs font-bold text-white truncate">{activeVideo.title}</p>
+                <p className="text-[11px] text-slate-300 truncate">{activeVideo.location}</p>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <a
+                  href={activeVideo.videoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold transition-colors"
+                >
+                  <span>Open YouTube</span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setActiveVideo(null)}
+                  aria-label="Close video modal"
+                  className="p-1.5 rounded-full bg-white/15 text-white hover:bg-white/30 transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
               </div>
             </div>
+
+            <div className="aspect-video w-full bg-black">
+              {activeEmbedUrl ? (
+                <iframe
+                  src={activeEmbedUrl}
+                  title={activeVideo.title}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  className="w-full h-full border-0"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-xs text-slate-300 p-6 text-center">
+                  Invalid or unsupported YouTube video link.
+                </div>
+              )}
+            </div>
           </div>
-        );
-      })()}
+        </div>
+      )}
     </section>
   );
 }

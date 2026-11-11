@@ -9,6 +9,7 @@ import PortfolioProject from "@/models/PortfolioProject";
 import { formatDateIST } from "@/lib/utils/formatters";
 import { getCleanPublicImage } from "@/lib/image-fallback";
 import SolarCardPlaceholder from "@/components/public/SolarCardPlaceholder";
+import { getYouTubeEmbedUrl } from "@/lib/utils/youtube";
 
 export async function generateMetadata({
   params,
@@ -146,12 +147,22 @@ export default async function ProjectDetailPage({
               <div className="space-y-3 pt-4 border-t border-slate-border">
                 <h3 className="text-lg font-bold text-navy-800">Installation Walkthrough Video</h3>
                 <div className="rounded-2xl overflow-hidden bg-black aspect-video border border-slate-border">
-                  <video
-                    src={proj.videoUrl}
-                    controls
-                    poster={proj.videoThumbnail || proj.coverImage}
-                    className="w-full h-full object-cover"
-                  />
+                  {getYouTubeEmbedUrl(proj.videoUrl, false) ? (
+                    <iframe
+                      src={getYouTubeEmbedUrl(proj.videoUrl, false)!}
+                      title={`${proj.title} Installation Walkthrough`}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                      className="w-full h-full border-0"
+                    />
+                  ) : (
+                    <video
+                      src={proj.videoUrl}
+                      controls
+                      poster={proj.videoThumbnail || proj.coverImage}
+                      className="w-full h-full object-cover"
+                    />
+                  )}
                 </div>
               </div>
             )}

@@ -124,7 +124,7 @@ export default function AdminHomeCmsPage() {
         videoUrl: "https://www.youtube.com/watch?v=IQS7WYUY2oE",
       },
       {
-        title: "25 kW Commercial Solar Plant Commissioning & DISCOM Inspection",
+        title: "25 kW Commercial Solar Commissioning & DISCOM Inspection",
         location: "Jaipur, Rajasthan",
         duration: "1:42",
         thumbnail: "",
@@ -251,6 +251,16 @@ export default function AdminHomeCmsPage() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    for (let i = 0; i < videos.items.length; i++) {
+      const url = (videos.items[i]?.videoUrl || "").trim();
+      if (url && !extractYouTubeId(url)) {
+        setActiveTab("videos");
+        toast.error(`Video #${i + 1}: Only valid YouTube URLs are allowed (youtube.com or youtu.be).`);
+        return;
+      }
+    }
+
     setSaving(true);
     try {
       const payload = {
@@ -973,10 +983,10 @@ export default function AdminHomeCmsPage() {
 
                       <div>
                         <label className="text-slate-muted block mb-1 text-[11px] font-bold">
-                          YouTube Video URL (or Direct MP4 URL)
+                          YouTube Video URL (watch, youtu.be, shorts, or embed)
                         </label>
                         <input
-                          type="text"
+                          type="url"
                           placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/..."
                           value={v.videoUrl}
                           onChange={(e) => {
@@ -984,15 +994,21 @@ export default function AdminHomeCmsPage() {
                             updated[idx] = { ...updated[idx], videoUrl: e.target.value };
                             setVideos({ ...videos, items: updated });
                           }}
-                          className="w-full p-2.5 rounded-xl border border-slate-border font-mono text-xs outline-none focus:border-solar-green"
+                          className="w-full p-2 rounded-xl border border-slate-border font-mono text-xs outline-none focus:border-solar-green"
                         />
-                        {extractYouTubeId(v.videoUrl) ? (
-                          <p className="mt-1 text-[11px] font-semibold text-solar-green">
-                            ✓ Valid YouTube Video Detected (ID: {extractYouTubeId(v.videoUrl)}) — Plays inside embedded YouTube player; auto-thumbnail active if no custom thumbnail is uploaded.
-                          </p>
+                        {v.videoUrl?.trim() ? (
+                          extractYouTubeId(v.videoUrl) ? (
+                            <p className="text-[11px] text-solar-green font-semibold mt-1">
+                              Valid YouTube Video ID: {extractYouTubeId(v.videoUrl)} (Thumbnail auto-detected if custom image is empty)
+                            </p>
+                          ) : (
+                            <p className="text-[11px] text-red-600 font-semibold mt-1">
+                              Please enter a valid YouTube video URL (youtube.com/watch?v=..., youtu.be/..., or youtube.com/shorts/...).
+                            </p>
+                          )
                         ) : (
-                          <p className="mt-1 text-[11px] text-slate-muted">
-                            Supports any YouTube Watch, Shorts, Share (`youtu.be`), Live, or Embed link, as well as direct `.mp4` video URLs.
+                          <p className="text-[11px] text-slate-400 mt-1">
+                            Paste a YouTube video link here. Leave empty if pending upload.
                           </p>
                         )}
                       </div>

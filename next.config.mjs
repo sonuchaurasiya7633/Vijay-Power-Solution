@@ -17,11 +17,11 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "i.ytimg.com",
+        hostname: "img.youtube.com",
       },
       {
         protocol: "https",
-        hostname: "img.youtube.com",
+        hostname: "i.ytimg.com",
       },
     ],
   },
