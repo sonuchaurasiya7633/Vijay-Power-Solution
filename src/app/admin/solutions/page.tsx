@@ -288,7 +288,7 @@ export default function AdminSolutionsPage() {
                   <button
                     type="button"
                     onClick={() => {
-                      setPreviewUrl(`/solutions/${s.slug}`);
+                      setPreviewUrl("/solar-solutions");
                       setPreviewOpen(true);
                     }}
                     className="font-bold text-navy-800 hover:underline flex items-center gap-1 text-[11px]"
@@ -297,7 +297,7 @@ export default function AdminSolutionsPage() {
                     <span>Preview</span>
                   </button>
                   <Link
-                    href={`/solutions/${s.slug}`}
+                    href="/solar-solutions"
                     target="_blank"
                     className="text-slate-400 hover:text-navy-800"
                     title="Open in new tab"

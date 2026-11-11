@@ -107,32 +107,32 @@ export default async function Footer() {
             <h4 className="text-sm font-bold uppercase tracking-wider text-white">Solar Solutions</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/solar-solutions/residential-rooftop-solar" className="hover:text-solar-green transition-colors">
+                <Link href="/solar-solutions" className="hover:text-solar-green transition-colors">
                   Residential Rooftop Solar
                 </Link>
               </li>
               <li>
-                <Link href="/solar-solutions/commercial-rooftop-solar" className="hover:text-solar-green transition-colors">
+                <Link href="/solar-solutions" className="hover:text-solar-green transition-colors">
                   Commercial Rooftop Solar
                 </Link>
               </li>
               <li>
-                <Link href="/solar-solutions/industrial-solar-systems" className="hover:text-solar-green transition-colors">
+                <Link href="/solar-solutions" className="hover:text-solar-green transition-colors">
                   Industrial Solar Plants
                 </Link>
               </li>
               <li>
-                <Link href="/solar-solutions/on-grid-solar-systems" className="hover:text-solar-green transition-colors">
+                <Link href="/solar-solutions" className="hover:text-solar-green transition-colors">
                   On-Grid Net Metering
                 </Link>
               </li>
               <li>
-                <Link href="/solar-solutions/off-grid-hybrid-solar" className="hover:text-solar-green transition-colors">
-                  Hybrid & Battery Systems
+                <Link href="/solar-solutions" className="hover:text-solar-green transition-colors">
+                  Hybrid &amp; Battery Systems
                 </Link>
               </li>
               <li>
-                <Link href="/solar-solutions/solar-water-pumping" className="hover:text-solar-green transition-colors">
+                <Link href="/solar-solutions" className="hover:text-solar-green transition-colors">
                   Solar Agricultural Pumps
                 </Link>
               </li>

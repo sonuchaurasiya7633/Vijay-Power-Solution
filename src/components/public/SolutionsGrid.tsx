@@ -196,10 +196,10 @@ export default async function SolutionsGrid({
                 {/* Links */}
                 <div className="pt-4 flex items-center justify-between border-t border-slate-100">
                   <Link
-                    href={`/solar-solutions/${sol.slug}`}
+                    href="/request-site-survey"
                     className="text-xs font-bold text-navy-800 hover:text-solar-green flex items-center gap-1 group-hover:underline"
                   >
-                    <span>View Specifications</span>
+                    <span>Book Site Survey</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
 

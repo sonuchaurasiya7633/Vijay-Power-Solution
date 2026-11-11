@@ -1,7 +1,6 @@
 import { MetadataRoute } from "next";
 import connectDB from "@/lib/db/connection";
 import SolarProduct from "@/models/SolarProduct";
-import SolarSolution from "@/models/SolarSolution";
 import SolarService from "@/models/SolarService";
 import PortfolioProject from "@/models/PortfolioProject";
 import Location from "@/models/Location";
@@ -41,9 +40,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   try {
     await connectDB();
-    const [products, solutions, services, projects, locations, blogs] = await Promise.all([
+    const [products, services, projects, locations, blogs] = await Promise.all([
       SolarProduct.find({ isPublished: true }, "slug updatedAt").lean(),
-      SolarSolution.find({ isPublished: true }, "slug updatedAt").lean(),
       SolarService.find({ isAvailable: true }, "slug updatedAt").lean(),
       PortfolioProject.find({ isPublished: true }, "slug updatedAt").lean(),
       Location.find({ isPublished: true }, "stateSlug citySlug updatedAt").lean(),
@@ -56,12 +54,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         lastModified: p.updatedAt || new Date(),
         changeFrequency: "weekly" as const,
         priority: 0.7,
-      })),
-      ...solutions.map((s) => ({
-        url: `${baseUrl}/solar-solutions/${s.slug}`,
-        lastModified: s.updatedAt || new Date(),
-        changeFrequency: "weekly" as const,
-        priority: 0.8,
       })),
       ...services.map((s) => ({
         url: `${baseUrl}/services/${s.slug}`,

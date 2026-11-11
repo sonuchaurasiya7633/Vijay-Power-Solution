@@ -28,10 +28,8 @@ import { DEFAULT_SOCIAL_LINKS } from "@/lib/constants/social";
 export default function Navbar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [solutionsDropdown, setSolutionsDropdown] = useState(false);
 
-  // Accordion toggle states in mobile drawer
-  const [mobileSolutionsOpen, setMobileSolutionsOpen] = useState(false);
+  // Accordion toggle state in mobile drawer
   const [mobileProjectsOpen, setMobileProjectsOpen] = useState(false);
 
   const [headerCms, setHeaderCms] = useState({
@@ -194,56 +192,14 @@ export default function Navbar() {
               Solar Panels
             </Link>
 
-            {/* Desktop Solutions Dropdown */}
-            <div
-              className="relative"
-              onMouseEnter={() => setSolutionsDropdown(true)}
-              onMouseLeave={() => setSolutionsDropdown(false)}
+            <Link
+              href="/solar-solutions"
+              className={`hover:text-solar-green transition-colors ${
+                isLinkActive("/solar-solutions") ? "text-solar-green font-bold" : ""
+              }`}
             >
-              <Link
-                href="/solar-solutions"
-                className={`flex items-center gap-1 hover:text-solar-green transition-colors py-2 ${
-                  isLinkActive("/solar-solutions") ? "text-solar-green font-bold" : ""
-                }`}
-              >
-                <span>Solutions</span>
-                <ChevronDown className="w-4 h-4 text-slate-muted" />
-              </Link>
-              {solutionsDropdown && (
-                <div className="absolute top-full left-0 w-64 bg-white rounded-xl shadow-xl border border-slate-border p-2 space-y-1">
-                  <Link
-                    href="/solar-solutions/residential-rooftop-solar"
-                    className="block px-3 py-2 text-xs font-medium text-navy-800 hover:bg-solar-green-light hover:text-solar-green rounded-lg"
-                  >
-                    Residential Rooftop
-                  </Link>
-                  <Link
-                    href="/solar-solutions/commercial-rooftop-solar"
-                    className="block px-3 py-2 text-xs font-medium text-navy-800 hover:bg-solar-green-light hover:text-solar-green rounded-lg"
-                  >
-                    Commercial & Institutional
-                  </Link>
-                  <Link
-                    href="/solar-solutions/industrial-solar-systems"
-                    className="block px-3 py-2 text-xs font-medium text-navy-800 hover:bg-solar-green-light hover:text-solar-green rounded-lg"
-                  >
-                    Industrial Solar Plants
-                  </Link>
-                  <Link
-                    href="/solar-solutions/on-grid-solar-systems"
-                    className="block px-3 py-2 text-xs font-medium text-navy-800 hover:bg-solar-green-light hover:text-solar-green rounded-lg"
-                  >
-                    On-Grid Net Metering
-                  </Link>
-                  <Link
-                    href="/solar-solutions/off-grid-hybrid-solar"
-                    className="block px-3 py-2 text-xs font-medium text-navy-800 hover:bg-solar-green-light hover:text-solar-green rounded-lg"
-                  >
-                    Hybrid & Battery-Backed
-                  </Link>
-                </div>
-              )}
-            </div>
+              Solutions
+            </Link>
 
             <Link
               href="/services"
@@ -415,75 +371,18 @@ export default function Navbar() {
             <span>Solar Panels (10W – 730W)</span>
           </Link>
 
-          {/* 4. Solar Solutions (Accordion) */}
-          <div className="space-y-1">
-            <div className="flex items-center justify-between rounded-xl hover:bg-slate-50 transition-colors">
-              <Link
-                href="/solar-solutions"
-                onClick={() => setMobileMenuOpen(false)}
-                className={`flex-1 px-3.5 py-3 text-[15px] font-semibold ${
-                  isLinkActive("/solar-solutions")
-                    ? "text-solar-green font-bold"
-                    : "text-navy-800"
-                }`}
-              >
-                <span>Solar Solutions</span>
-              </Link>
-              <button
-                type="button"
-                onClick={() => setMobileSolutionsOpen(!mobileSolutionsOpen)}
-                className="w-11 h-11 flex items-center justify-center text-slate-400 hover:text-navy-800 transition-colors"
-                aria-label="Toggle Solar Solutions Submenu"
-              >
-                <ChevronDown
-                  className={`w-4 h-4 transition-transform duration-200 ${
-                    mobileSolutionsOpen ? "rotate-180 text-solar-green" : ""
-                  }`}
-                />
-              </button>
-            </div>
-
-            {/* Solutions Submenu */}
-            {mobileSolutionsOpen && (
-              <div className="pl-4 pr-1 py-1 space-y-1 border-l-2 border-slate-100 ml-4 animate-in fade-in duration-200">
-                <Link
-                  href="/solar-solutions/residential-rooftop-solar"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-solar-green hover:bg-slate-50"
-                >
-                  Residential Rooftop Solar
-                </Link>
-                <Link
-                  href="/solar-solutions/commercial-rooftop-solar"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-solar-green hover:bg-slate-50"
-                >
-                  Commercial & Institutional
-                </Link>
-                <Link
-                  href="/solar-solutions/industrial-solar-systems"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-solar-green hover:bg-slate-50"
-                >
-                  Industrial Solar Plants
-                </Link>
-                <Link
-                  href="/solar-solutions/on-grid-solar-systems"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-solar-green hover:bg-slate-50"
-                >
-                  On-Grid Net Metering
-                </Link>
-                <Link
-                  href="/solar-solutions/off-grid-hybrid-solar"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-solar-green hover:bg-slate-50"
-                >
-                  Hybrid & Battery-Backed
-                </Link>
-              </div>
-            )}
-          </div>
+          {/* 4. Solar Solutions */}
+          <Link
+            href="/solar-solutions"
+            onClick={() => setMobileMenuOpen(false)}
+            className={`flex items-center justify-between px-3.5 py-3 rounded-xl text-[15px] font-semibold transition-all ${
+              isLinkActive("/solar-solutions")
+                ? "bg-solar-green/10 text-solar-green font-bold"
+                : "text-navy-800 hover:bg-slate-50"
+            }`}
+          >
+            <span>Solar Solutions</span>
+          </Link>
 
           {/* 5. Installation Services */}
           <Link
