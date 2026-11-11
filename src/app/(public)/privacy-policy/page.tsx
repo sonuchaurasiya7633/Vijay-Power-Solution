@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
 import connectDB from "@/lib/db/connection";
 import Page from "@/models/Page";
+import { getRouteMetadata } from "@/lib/seo-server";
 
-export const metadata: Metadata = {
-  title: "Privacy Policy | VIJOY POWER SOLUTION",
-  description: "Privacy policy regarding customer lead information, site survey data, and communications.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getRouteMetadata({
+    routeKey: "privacy-policy",
+    path: "/privacy-policy",
+    fallbackTitle: "Privacy Policy | VIJOY POWER SOLUTION",
+    fallbackDescription:
+      "Privacy policy regarding customer lead information, site survey data, and communications.",
+  });
+}
 
 export const revalidate = 60;
 

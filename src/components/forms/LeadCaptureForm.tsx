@@ -5,6 +5,7 @@ import { CheckCircle2, AlertCircle, ArrowRight, Sparkles } from "lucide-react";
 import toast from "@/lib/toast";
 import { SolarEmblemSpinner } from "@/components/ui/SolarLoader";
 import { INDIAN_STATES_AND_UTS } from "@/lib/constants/states";
+import { trackConversionEvent } from "@/lib/analytics-client";
 
 interface LeadCaptureFormProps {
   defaultEnquiryType?: string;
@@ -97,6 +98,12 @@ export default function LeadCaptureForm({
       }
 
       toast.submitted("Submitted successfully!", `Our solar engineer will contact you shortly. Ref: ${data.leadId}`);
+      trackConversionEvent("generate_lead", {
+        enquiryType: defaultEnquiryType,
+        solarSolutionType: formData.solarSolutionType,
+        state: formData.state,
+        source: compact ? "hero_compact_form" : "website_consultation_form",
+      });
       setSubmittedLeadId(data.leadId);
       if (onSuccess) onSuccess(data.leadId);
     } catch (err: unknown) {

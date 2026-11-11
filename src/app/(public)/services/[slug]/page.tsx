@@ -4,10 +4,16 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Check, ArrowRight, ShieldCheck } from "lucide-react";
 import LeadCaptureForm from "@/components/forms/LeadCaptureForm";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
+import JsonLd from "@/components/seo/JsonLd";
 import connectDB from "@/lib/db/connection";
 import SolarService from "@/models/SolarService";
 import { getCleanPublicImage } from "@/lib/image-fallback";
 import SolarCardPlaceholder from "@/components/public/SolarCardPlaceholder";
+import { getRouteMetadata } from "@/lib/seo-server";
+import { buildServiceSchema } from "@/lib/seo-schema";
+
+export const revalidate = 60;
 
 export async function generateMetadata({
   params,
@@ -15,13 +21,20 @@ export async function generateMetadata({
   params: { slug: string };
 }): Promise<Metadata> {
   await connectDB();
-  const serv = await SolarService.findOne({ slug: params.slug }).lean();
-  if (!serv) return { title: "Service Not Found" };
+  const serv: any = await SolarService.findOne({ slug: params.slug }).lean();
+  if (!serv) return { title: "Service Not Found", robots: { index: false, follow: false } };
 
-  return {
-    title: `${serv.title} | VIJOY POWER SOLUTION Services`,
-    description: serv.shortDescription,
-  };
+  return getRouteMetadata({
+    path: `/services/${params.slug}`,
+    fallbackTitle: `${serv.title} | VIJOY POWER SOLUTION Services`,
+    fallbackDescription: serv.shortDescription,
+    keywords: [serv.title, "Solar EPC service India", "Rooftop solar installation"],
+    dynamicOverride: {
+      title: serv.seoTitle,
+      description: serv.seoDescription,
+      ogImage: getCleanPublicImage(serv.image) || undefined,
+    },
+  });
 }
 
 export default async function ServiceDetailPage({
@@ -34,16 +47,30 @@ export default async function ServiceDetailPage({
 
   if (!serv) notFound();
 
+  const serviceSchema = buildServiceSchema({
+    name: serv.title,
+    description: serv.shortDescription || serv.fullDescription,
+    path: `/services/${serv.slug}`,
+    image: getCleanPublicImage(serv.image) || undefined,
+    areaServedNames:
+      Array.isArray(serv.serviceableStates) && serv.serviceableStates.length > 0
+        ? serv.serviceableStates
+        : undefined,
+  });
+
   return (
     <div className="bg-white">
+      <JsonLd data={serviceSchema} />
       {/* Breadcrumb Bar */}
       <div className="bg-slate-bg border-b border-slate-border py-3">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-xs text-slate-muted flex items-center gap-2">
-          <Link href="/" className="hover:text-navy-800">Home</Link>
-          <span>/</span>
-          <Link href="/services" className="hover:text-navy-800">Services</Link>
-          <span>/</span>
-          <span className="text-navy-800 font-bold">{serv.title}</span>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Breadcrumbs
+            items={[
+              { name: "Services", path: "/services" },
+              { name: serv.title, path: `/services/${serv.slug}` },
+            ]}
+            variant="light"
+          />
         </div>
       </div>
 

@@ -7,15 +7,21 @@ import PortfolioProject from "@/models/PortfolioProject";
 import InstallationGallery from "@/models/InstallationGallery";
 import DedicatedGalleryView from "@/components/public/DedicatedGalleryView";
 import CtaBanner from "@/components/public/CtaBanner";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import { getPublicPagesCms } from "@/lib/cms-server";
 import { getCleanPublicImage } from "@/lib/image-fallback";
 import SolarCardPlaceholder from "@/components/public/SolarCardPlaceholder";
+import { getRouteMetadata } from "@/lib/seo-server";
 
-export const metadata: Metadata = {
-  title: "Our Solar Installation Projects | Customer Photo Gallery",
-  description:
-    "Explore real solar installations completed by Vijoy Power Solution for our valued customers across India. Authentic customer photographs and verified case studies.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getRouteMetadata({
+    routeKey: "projects",
+    path: "/projects",
+    fallbackTitle: "Our Solar Installation Projects | Customer Photo Gallery",
+    fallbackDescription:
+      "Explore real solar installations completed by Vijoy Power Solution for our valued customers across India. Authentic customer photographs and verified case studies.",
+  });
+}
 
 export const revalidate = 60;
 
@@ -44,6 +50,7 @@ export default async function ProjectsPage() {
       {/* Header */}
       <div className="bg-navy-800 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+          <Breadcrumbs items={[{ name: "Projects", path: "/projects" }]} variant="dark" />
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-solar-green/20 border border-solar-green/30 text-solar-yellow text-xs font-bold uppercase tracking-wider">
             <Sparkles className="w-3.5 h-3.5" />
             <span>{h.badge}</span>

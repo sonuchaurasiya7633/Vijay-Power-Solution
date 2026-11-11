@@ -3,15 +3,23 @@ import Link from "next/link";
 import { ShieldAlert, ExternalLink, CheckCircle2, FileText, Landmark, ArrowRight } from "lucide-react";
 import LeadCaptureForm from "@/components/forms/LeadCaptureForm";
 import CtaBanner from "@/components/public/CtaBanner";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
+import JsonLd from "@/components/seo/JsonLd";
 import connectDB from "@/lib/db/connection";
 import Page from "@/models/Page";
 import Setting from "@/models/Setting";
+import { getRouteMetadata } from "@/lib/seo-server";
+import { buildFaqSchema } from "@/lib/seo-schema";
 
-export const metadata: Metadata = {
-  title: "PM Surya Ghar Subsidy Guide | Rooftop Solar Across India",
-  description:
-    "Comprehensive educational guide on PM Surya Ghar: Muft Bijli Yojana subsidies (up to ₹78,000), DISCOM net metering requirements, eligibility, and application procedure across India.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getRouteMetadata({
+    routeKey: "subsidy-information",
+    path: "/subsidy-information",
+    fallbackTitle: "PM Surya Ghar Subsidy Guide | Rooftop Solar Across India",
+    fallbackDescription:
+      "Comprehensive educational guide on PM Surya Ghar: Muft Bijli Yojana subsidies (up to ₹78,000), DISCOM net metering requirements, eligibility, and application procedure across India.",
+  });
+}
 
 export const revalidate = 60;
 
@@ -118,12 +126,37 @@ export default async function SubsidyInformationPage() {
     cmsSubsidy?.disclaimer ||
     "Subsidy eligibility, benefits, documentation, and approval depend strictly on applicable government rules, quota availability, and DISCOM requirements under the PM Surya Ghar scheme. VIJOY POWER SOLUTION does not guarantee subsidy approval, which is solely determined by utility and central nodal agencies. Always verify latest official guidelines through the official national government portal.";
 
+  const subsidyFaqs = [
+    {
+      question: "How much residential solar subsidy is available under PM Surya Ghar: Muft Bijli Yojana?",
+      answer:
+        "Residential grid-connected rooftop solar systems receive ₹30,000 for 1 kW, ₹60,000 for 2 kW, and a maximum cap of ₹78,000 for 3 kW to 10 kW systems. Group Housing Societies (GHS/RWA) receive ₹18,000 per kW up to 500 kW.",
+    },
+    {
+      question: "How is the PM Surya Ghar subsidy credited across Indian states?",
+      answer:
+        "After registering on pmsuryaghar.gov.in, receiving DISCOM technical feasibility clearance, installing ALMM-compliant panels, and bi-directional net meter commissioning, the central subsidy is transferred directly to the homeowner's bank account via PFMS Direct Benefit Transfer (DBT).",
+    },
+    {
+      question: "What documents are required for PM Surya Ghar rooftop solar subsidy?",
+      answer:
+        "You need your latest electricity bill in the consumer's name, Aadhaar card linked with your bank account and mobile number, a cancelled cheque or bank passbook, and a rooftop photograph.",
+    },
+  ];
+
+  const faqSchema = buildFaqSchema(subsidyFaqs);
+
   return (
     <div className="bg-white">
+      {faqSchema && <JsonLd data={faqSchema} />}
       {/* Header */}
       <div className="bg-navy-800 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-solar-yellow bg-white/10 px-3 py-1 rounded-full">
+          <Breadcrumbs
+            items={[{ name: "PM Surya Ghar Subsidy", path: "/subsidy-information" }]}
+            variant="dark"
+          />
+          <span className="inline-block text-xs font-bold uppercase tracking-wider text-solar-yellow bg-white/10 px-3 py-1 rounded-full">
             {heroBadge}
           </span>
           <h1 className="text-3xl sm:text-5xl font-display font-extrabold text-white tracking-tight">

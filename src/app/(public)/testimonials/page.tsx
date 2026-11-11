@@ -2,16 +2,22 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import TestimonialsSection from "@/components/public/TestimonialsSection";
 import CtaBanner from "@/components/public/CtaBanner";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import { ShieldCheck } from "lucide-react";
 import { getPublicPagesCms } from "@/lib/cms-server";
+import { getRouteMetadata } from "@/lib/seo-server";
 
 export const revalidate = 60;
 
-export const metadata: Metadata = {
-  title: "Customer Testimonials & Reviews | VIJOY POWER SOLUTION",
-  description:
-    "Read genuine, customer-confirmed reviews from residential and commercial solar clients across India.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getRouteMetadata({
+    routeKey: "testimonials",
+    path: "/testimonials",
+    fallbackTitle: "Customer Testimonials & Reviews | VIJOY POWER SOLUTION",
+    fallbackDescription:
+      "Read genuine, customer-confirmed reviews from residential and commercial solar clients across India.",
+  });
+}
 
 export default async function TestimonialsPage() {
   const cms = await getPublicPagesCms();
@@ -21,6 +27,10 @@ export default async function TestimonialsPage() {
     <div className="bg-white">
       <div className="bg-navy-800 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+          <Breadcrumbs
+            items={[{ name: "Testimonials", path: "/testimonials" }]}
+            variant="dark"
+          />
           <span className="inline-block text-xs font-bold uppercase tracking-wider text-solar-yellow bg-white/10 px-3 py-1 rounded-full">
             {h.badge}
           </span>

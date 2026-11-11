@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
 import connectDB from "@/lib/db/connection";
 import Page from "@/models/Page";
+import { getRouteMetadata } from "@/lib/seo-server";
 
-export const metadata: Metadata = {
-  title: "Terms and Conditions | VIJOY POWER SOLUTION",
-  description: "Terms and conditions governing solar consultation, engineering quotations, and installation contracts.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getRouteMetadata({
+    routeKey: "terms-and-conditions",
+    path: "/terms-and-conditions",
+    fallbackTitle: "Terms and Conditions | VIJOY POWER SOLUTION",
+    fallbackDescription:
+      "Terms and conditions governing solar consultation, engineering quotations, and installation contracts.",
+  });
+}
 
 export const revalidate = 60;
 

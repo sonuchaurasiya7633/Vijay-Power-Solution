@@ -4,17 +4,23 @@ import Link from "next/link";
 import { ShieldCheck, Award, Compass, Sparkles, Quote, ArrowRight } from "lucide-react";
 import StatsSection from "@/components/public/StatsSection";
 import CtaBanner from "@/components/public/CtaBanner";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import connectDB from "@/lib/db/connection";
 import Page from "@/models/Page";
 import Setting from "@/models/Setting";
 import { getCleanPublicImage } from "@/lib/image-fallback";
 import SolarCardPlaceholder from "@/components/public/SolarCardPlaceholder";
+import { getRouteMetadata } from "@/lib/seo-server";
 
-export const metadata: Metadata = {
-  title: "About Us | VIJOY POWER SOLUTION Solar EPC",
-  description:
-    "Learn about VIJOY POWER SOLUTION, leading solar engineering and installation contractor operating across India.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getRouteMetadata({
+    routeKey: "about",
+    path: "/about",
+    fallbackTitle: "About Us | VIJOY POWER SOLUTION Solar EPC",
+    fallbackDescription:
+      "Learn about VIJOY POWER SOLUTION, leading solar engineering and installation contractor operating across India.",
+  });
+}
 
 export const revalidate = 60;
 
@@ -95,7 +101,8 @@ export default async function AboutPage() {
       {/* Page Header */}
       <div className="bg-navy-800 text-white py-16 sm:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-solar-yellow bg-white/10 px-3 py-1 rounded-full">
+          <Breadcrumbs items={[{ name: "About Us", path: "/about" }]} variant="dark" />
+          <span className="inline-block text-xs font-bold uppercase tracking-wider text-solar-yellow bg-white/10 px-3 py-1 rounded-full">
             {heroBadge}
           </span>
           <h1 className="text-3xl sm:text-5xl font-display font-extrabold text-white tracking-tight">

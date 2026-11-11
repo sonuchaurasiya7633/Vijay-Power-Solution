@@ -5,6 +5,12 @@ import { MapPin, Phone, CheckCircle2, ShieldCheck, ArrowRight } from "lucide-rea
 import connectDB from "@/lib/db/connection";
 import Location from "@/models/Location";
 import LeadCaptureForm from "@/components/forms/LeadCaptureForm";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
+import JsonLd from "@/components/seo/JsonLd";
+import { getRouteMetadata } from "@/lib/seo-server";
+import { buildFaqSchema, buildServiceSchema } from "@/lib/seo-schema";
+
+export const revalidate = 60;
 
 export async function generateMetadata({
   params,
@@ -12,18 +18,29 @@ export async function generateMetadata({
   params: { state: string; city: string };
 }): Promise<Metadata> {
   await connectDB();
-  const loc = await Location.findOne({
+  const loc: any = await Location.findOne({
     stateSlug: params.state.toLowerCase(),
     citySlug: params.city.toLowerCase(),
     isPublished: true,
   }).lean();
 
-  if (!loc) return { title: "City Not Found" };
+  if (!loc) return { title: "City Not Found", robots: { index: false, follow: false } };
 
-  return {
-    title: `Solar Panel Installation in ${loc.city}, ${loc.state} | VIJOY POWER SOLUTION`,
-    description: `Turnkey rooftop solar installation in ${loc.city}, ${loc.state}. Net metering assistance, subsidy guidance, and engineering site survey.`,
-  };
+  return getRouteMetadata({
+    path: `/service-areas/${params.state.toLowerCase()}/${params.city.toLowerCase()}`,
+    fallbackTitle: `Solar Panel Installation in ${loc.city}, ${loc.state} | VPS Solar`,
+    fallbackDescription: `Turnkey rooftop solar installation in ${loc.city}, ${loc.state}. Net metering assistance, PM Surya Ghar subsidy guidance, ALMM panels, and site survey.`,
+    keywords: [
+      `Solar panel installation in ${loc.city}`,
+      `Solar installer ${loc.city} ${loc.state}`,
+      `Rooftop solar ${loc.district}`,
+      `PM Surya Ghar ${loc.city}`,
+    ],
+    dynamicOverride: {
+      title: loc.seoTitle,
+      description: loc.seoDescription,
+    },
+  });
 }
 
 export default async function CityServiceAreaPage({
@@ -40,18 +57,35 @@ export default async function CityServiceAreaPage({
 
   if (!loc) notFound();
 
+  const cityPath = `/service-areas/${params.state.toLowerCase()}/${params.city.toLowerCase()}`;
+  const cityServiceSchema = buildServiceSchema({
+    name: `Solar Panel Installation in ${loc.city}, ${loc.state}`,
+    description:
+      loc.overviewText ||
+      `Rooftop solar EPC, DISCOM net metering approvals, and technical site surveys in ${loc.city}, ${loc.district}, ${loc.state}.`,
+    path: cityPath,
+    areaServedNames: [loc.city, loc.district, loc.state].filter(Boolean),
+  });
+  const localFaqSchema =
+    Array.isArray(loc.localSolarFaqs) && loc.localSolarFaqs.length > 0
+      ? buildFaqSchema(loc.localSolarFaqs)
+      : null;
+
   return (
     <div className="bg-white">
+      <JsonLd data={cityServiceSchema} />
+      {localFaqSchema && <JsonLd data={localFaqSchema} />}
       {/* Header */}
       <div className="bg-navy-800 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
-          <div className="flex items-center gap-2 text-xs text-solar-yellow">
-            <Link href="/service-areas" className="hover:underline">Service Areas</Link>
-            <span>/</span>
-            <Link href={`/service-areas/${params.state}`} className="hover:underline">{loc.state}</Link>
-            <span>/</span>
-            <span>{loc.city}</span>
-          </div>
+          <Breadcrumbs
+            items={[
+              { name: "Service Areas", path: "/service-areas" },
+              { name: loc.state, path: `/service-areas/${params.state.toLowerCase()}` },
+              { name: loc.city, path: cityPath },
+            ]}
+            variant="dark"
+          />
           <h1 className="text-3xl sm:text-5xl font-display font-extrabold text-white tracking-tight">
             Solar Panel Installation in {loc.city}, {loc.state}
           </h1>

@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
 import connectDB from "@/lib/db/connection";
 import Page from "@/models/Page";
+import { getRouteMetadata } from "@/lib/seo-server";
 
-export const metadata: Metadata = {
-  title: "Regulatory Disclaimer | VIJOY POWER SOLUTION",
-  description: "Official disclaimers on solar generation estimates, government subsidies, and pricing.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getRouteMetadata({
+    routeKey: "disclaimer",
+    path: "/disclaimer",
+    fallbackTitle: "Regulatory Disclaimer | VIJOY POWER SOLUTION",
+    fallbackDescription:
+      "Official disclaimers on solar generation estimates, government subsidies, and pricing.",
+  });
+}
 
 export const revalidate = 60;
 

@@ -6,6 +6,10 @@ import connectDB from "@/lib/db/connection";
 import Location from "@/models/Location";
 import PortfolioProject from "@/models/PortfolioProject";
 import LeadCaptureForm from "@/components/forms/LeadCaptureForm";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
+import JsonLd from "@/components/seo/JsonLd";
+import { getRouteMetadata } from "@/lib/seo-server";
+import { buildServiceSchema } from "@/lib/seo-schema";
 
 export const revalidate = 60;
 
@@ -14,15 +18,33 @@ export async function generateMetadata({
 }: {
   params: { state: string };
 }): Promise<Metadata> {
-  const stateName = params.state
-    .split("-")
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(" ");
+  await connectDB();
+  const locs = await Location.find(
+    { stateSlug: params.state.toLowerCase(), isPublished: true },
+    "state city"
+  ).lean();
 
-  return {
-    title: `Solar Panel Installation in ${stateName} | Subsidy & Net Metering`,
-    description: `Professional rooftop solar installation, DISCOM net metering approvals, and PM Surya Ghar subsidy guidance across ${stateName}.`,
-  };
+  if (!locs || locs.length === 0) {
+    return { title: "Service Area Not Found", robots: { index: false, follow: false } };
+  }
+
+  const stateName = locs[0].state;
+  const cityList = locs
+    .slice(0, 4)
+    .map((l) => l.city)
+    .join(", ");
+
+  return getRouteMetadata({
+    path: `/service-areas/${params.state.toLowerCase()}`,
+    fallbackTitle: `Solar Panel Installation in ${stateName} | Subsidy & Net Metering`,
+    fallbackDescription: `Turnkey residential, commercial & industrial solar installation across ${stateName}${cityList ? ` (${cityList})` : ""}. DISCOM net metering, ALMM panels & PM Surya Ghar assistance.`,
+    keywords: [
+      `Solar panel installation in ${stateName}`,
+      `Best solar company in ${stateName}`,
+      `Rooftop solar subsidy ${stateName}`,
+      ...locs.slice(0, 5).map((l) => `Solar installation ${l.city}`),
+    ],
+  });
 }
 
 export default async function StateServiceAreaPage({
@@ -46,16 +68,26 @@ export default async function StateServiceAreaPage({
     isPublished: true,
   }).limit(3).lean();
 
+  const stateServiceSchema = buildServiceSchema({
+    name: `Solar Panel Installation & EPC in ${stateName}`,
+    description: `Residential rooftop solar, commercial EPC, and DISCOM net metering across ${stateName}.`,
+    path: `/service-areas/${params.state.toLowerCase()}`,
+    areaServedNames: [stateName, ...stateLocations.map((l) => l.city)],
+  });
+
   return (
     <div className="bg-white">
+      <JsonLd data={stateServiceSchema} />
       {/* Header */}
       <div className="bg-navy-800 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
-          <div className="flex items-center gap-2 text-xs text-solar-yellow">
-            <Link href="/service-areas" className="hover:underline">Service Areas</Link>
-            <span>/</span>
-            <span>{stateName}</span>
-          </div>
+          <Breadcrumbs
+            items={[
+              { name: "Service Areas", path: "/service-areas" },
+              { name: stateName, path: `/service-areas/${params.state.toLowerCase()}` },
+            ]}
+            variant="dark"
+          />
           <h1 className="text-3xl sm:text-5xl font-display font-extrabold text-white tracking-tight">
             Solar Panel Installation in {stateName}
           </h1>

@@ -4,12 +4,18 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Zap, MapPin, Calendar, CheckCircle2, ShieldCheck, ArrowRight, Play } from "lucide-react";
 import LeadCaptureForm from "@/components/forms/LeadCaptureForm";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
+import JsonLd from "@/components/seo/JsonLd";
 import connectDB from "@/lib/db/connection";
 import PortfolioProject from "@/models/PortfolioProject";
 import { formatDateIST } from "@/lib/utils/formatters";
 import { getCleanPublicImage } from "@/lib/image-fallback";
 import SolarCardPlaceholder from "@/components/public/SolarCardPlaceholder";
 import { getYouTubeEmbedUrl } from "@/lib/utils/youtube";
+import { getRouteMetadata } from "@/lib/seo-server";
+import { buildVideoObjectSchema } from "@/lib/seo-schema";
+
+export const revalidate = 60;
 
 export async function generateMetadata({
   params,
@@ -17,13 +23,25 @@ export async function generateMetadata({
   params: { slug: string };
 }): Promise<Metadata> {
   await connectDB();
-  const proj = await PortfolioProject.findOne({ slug: params.slug }).lean();
-  if (!proj) return { title: "Project Not Found" };
+  const proj: any = await PortfolioProject.findOne({ slug: params.slug }).lean();
+  if (!proj) return { title: "Project Not Found", robots: { index: false, follow: false } };
 
-  return {
-    title: `${proj.title} | Case Study`,
-    description: proj.shortDescription,
-  };
+  return getRouteMetadata({
+    path: `/projects/${params.slug}`,
+    fallbackTitle: `${proj.title} | Solar Case Study (${proj.generalLocation})`,
+    fallbackDescription: proj.shortDescription,
+    keywords: [
+      `${proj.systemCapacityKw} kW solar installation`,
+      `${proj.city} solar project`,
+      `${proj.state} solar installation`,
+      proj.systemCategory,
+    ],
+    dynamicOverride: {
+      title: proj.seoTitle,
+      description: proj.seoDescription,
+      ogImage: proj.ogImage || getCleanPublicImage(proj.coverImage) || undefined,
+    },
+  });
 }
 
 export default async function ProjectDetailPage({
@@ -36,16 +54,33 @@ export default async function ProjectDetailPage({
 
   if (!proj) notFound();
 
+  const videoSchemas = proj.videoUrl
+    ? buildVideoObjectSchema([
+        {
+          title: proj.title,
+          description: proj.shortDescription,
+          videoUrl: proj.videoUrl,
+          thumbnailUrl: proj.videoThumbnail || getCleanPublicImage(proj.coverImage),
+          uploadDate: proj.completionDate
+            ? new Date(proj.completionDate).toISOString()
+            : undefined,
+        },
+      ])
+    : [];
+
   return (
     <div className="bg-white">
+      {videoSchemas.length > 0 && <JsonLd data={videoSchemas} />}
       {/* Breadcrumb Bar */}
       <div className="bg-slate-bg border-b border-slate-border py-3">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-xs text-slate-muted flex items-center gap-2">
-          <Link href="/" className="hover:text-navy-800">Home</Link>
-          <span>/</span>
-          <Link href="/projects" className="hover:text-navy-800">Projects</Link>
-          <span>/</span>
-          <span className="text-navy-800 font-bold truncate">{proj.title}</span>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Breadcrumbs
+            items={[
+              { name: "Projects", path: "/projects" },
+              { name: proj.title, path: `/projects/${proj.slug}` },
+            ]}
+            variant="light"
+          />
         </div>
       </div>
 

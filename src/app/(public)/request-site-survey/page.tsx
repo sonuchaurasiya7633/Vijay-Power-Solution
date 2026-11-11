@@ -1,15 +1,21 @@
 import type { Metadata } from "next";
 import { Compass, CheckCircle2, ShieldCheck } from "lucide-react";
 import LeadCaptureForm from "@/components/forms/LeadCaptureForm";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import { getPublicPagesCms } from "@/lib/cms-server";
+import { getRouteMetadata } from "@/lib/seo-server";
 
 export const revalidate = 60;
 
-export const metadata: Metadata = {
-  title: "Request Rooftop Solar Site Survey | VIJOY POWER SOLUTION",
-  description:
-    "Book an on-site rooftop feasibility inspection by our certified solar technicians across India. Precise shadow analysis and structural evaluation.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getRouteMetadata({
+    routeKey: "request-site-survey",
+    path: "/request-site-survey",
+    fallbackTitle: "Request Rooftop Solar Site Survey | VIJOY POWER SOLUTION",
+    fallbackDescription:
+      "Book an on-site rooftop feasibility inspection by our certified solar technicians across India. Precise shadow analysis and structural evaluation.",
+  });
+}
 
 export default async function RequestSiteSurveyPage() {
   const cms = await getPublicPagesCms();
@@ -19,6 +25,10 @@ export default async function RequestSiteSurveyPage() {
     <div className="bg-white">
       <div className="bg-navy-800 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+          <Breadcrumbs
+            items={[{ name: "Request Site Survey", path: "/request-site-survey" }]}
+            variant="dark"
+          />
           <span className="inline-block text-xs font-bold uppercase tracking-wider text-solar-yellow bg-white/10 px-3 py-1 rounded-full">
             {h.badge}
           </span>

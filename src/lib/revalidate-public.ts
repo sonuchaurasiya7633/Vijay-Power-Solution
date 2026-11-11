@@ -7,6 +7,8 @@ import { revalidatePath } from "next/cache";
 export function revalidatePublicSite(extraPaths: string[] = []): void {
   try {
     revalidatePath("/", "layout");
+    revalidatePath("/sitemap.xml");
+    revalidatePath("/robots.txt");
     for (const p of extraPaths) {
       revalidatePath(p);
     }

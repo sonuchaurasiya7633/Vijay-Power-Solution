@@ -6,15 +6,21 @@ import connectDB from "@/lib/db/connection";
 import Blog from "@/models/Blog";
 import { formatDateIST } from "@/lib/utils/formatters";
 import CtaBanner from "@/components/public/CtaBanner";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import { getPublicPagesCms } from "@/lib/cms-server";
 import { getCleanPublicImage } from "@/lib/image-fallback";
 import SolarCardPlaceholder from "@/components/public/SolarCardPlaceholder";
+import { getRouteMetadata } from "@/lib/seo-server";
 
-export const metadata: Metadata = {
-  title: "Solar Knowledge Hub & Blog | VIJOY POWER SOLUTION",
-  description:
-    "Educational articles, technical solar guides, PM Surya Ghar updates, and rooftop maintenance tips for solar consumers across India.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getRouteMetadata({
+    routeKey: "blog",
+    path: "/blog",
+    fallbackTitle: "Solar Knowledge Hub & Blog | VIJOY POWER SOLUTION",
+    fallbackDescription:
+      "Educational articles, technical solar guides, PM Surya Ghar updates, and rooftop maintenance tips for solar consumers across India.",
+  });
+}
 
 const defaultArticles = [
   {
@@ -65,6 +71,7 @@ export default async function BlogIndexPage() {
     <div className="bg-white">
       <div className="bg-navy-800 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+          <Breadcrumbs items={[{ name: "Blog & Guides", path: "/blog" }]} variant="dark" />
           <span className="inline-block text-xs font-bold uppercase tracking-wider text-solar-yellow bg-white/10 px-3 py-1 rounded-full">
             {h.badge}
           </span>

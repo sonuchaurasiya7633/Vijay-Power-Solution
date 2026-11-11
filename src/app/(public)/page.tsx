@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import HeroSection from "@/components/public/HeroSection";
 import StatsSection from "@/components/public/StatsSection";
 import SolutionsGrid from "@/components/public/SolutionsGrid";
@@ -16,8 +17,20 @@ import SolarProduct from "@/models/SolarProduct";
 import SolarSolution from "@/models/SolarSolution";
 import { getHomepageSetting, getPublicPagesCms, getSolarPanelsPageCms } from "@/lib/cms-server";
 import { getCleanPublicImage } from "@/lib/image-fallback";
+import { getRouteMetadata } from "@/lib/seo-server";
 
 export const revalidate = 60;
+
+export async function generateMetadata(): Promise<Metadata> {
+  return getRouteMetadata({
+    routeKey: "home",
+    path: "/",
+    fallbackTitle:
+      "Solar Panel Installation Across India | VIJOY POWER SOLUTION (VPS Solar)",
+    fallbackDescription:
+      "Pan-India turnkey rooftop solar installation, industrial EPC & ALMM solar panels (10W–730W) from Vikram Solar, Adani Solar, Waaree & Loom Solar.",
+  });
+}
 
 export default async function HomePage() {
   let products: any[] = [];

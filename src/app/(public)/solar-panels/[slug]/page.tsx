@@ -4,11 +4,17 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Zap, ShieldCheck, CheckCircle2, FileText, ArrowLeft, Phone } from "lucide-react";
 import LeadCaptureForm from "@/components/forms/LeadCaptureForm";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
+import JsonLd from "@/components/seo/JsonLd";
 import connectDB from "@/lib/db/connection";
 import SolarProduct from "@/models/SolarProduct";
 import { getCleanPublicImage } from "@/lib/image-fallback";
 import SolarCardPlaceholder from "@/components/public/SolarCardPlaceholder";
 import { normalizeOfficialPanelBrand } from "@/lib/constants/brands";
+import { getRouteMetadata } from "@/lib/seo-server";
+import { buildProductSchema } from "@/lib/seo-schema";
+
+export const revalidate = 60;
 
 export async function generateMetadata({
   params,
@@ -16,15 +22,28 @@ export async function generateMetadata({
   params: { slug: string };
 }): Promise<Metadata> {
   await connectDB();
-  const product = await SolarProduct.findOne({ slug: params.slug }).lean();
+  const product: any = await SolarProduct.findOne({ slug: params.slug }).lean();
   if (!product) {
-    return { title: "Product Not Found" };
+    return { title: "Product Not Found", robots: { index: false, follow: false } };
   }
 
-  return {
-    title: `${product.name} (${product.ratedPowerWp}Wp) | Specifications & Quote`,
-    description: `Technical specifications for ${product.name}. Rated at ${product.ratedPowerWp}Wp with ${product.moduleEfficiencyPercent || 'high'}% efficiency. Request a site survey and quotation across India.`,
-  };
+  const brand = normalizeOfficialPanelBrand(product.brand);
+  return getRouteMetadata({
+    path: `/solar-panels/${params.slug}`,
+    fallbackTitle: `${product.name} (${product.ratedPowerWp}Wp) | ${brand} India`,
+    fallbackDescription: `Technical specifications for ${brand} ${product.name} (${product.ratedPowerWp}Wp, ${product.moduleEfficiencyPercent || "high"}% efficiency). Pan-India supply & rooftop installation by VIJOY POWER SOLUTION.`,
+    keywords: [
+      `${brand} ${product.ratedPowerWp}W solar panel`,
+      `${product.ratedPowerWp}Wp solar module India`,
+      "ALMM certified solar panels India",
+      brand,
+    ],
+    dynamicOverride: {
+      title: product.seoTitle,
+      description: product.seoDescription,
+      ogImage: product.ogImage || getCleanPublicImage(product.coverImage) || undefined,
+    },
+  });
 }
 
 export default async function ProductDetailPage({
@@ -39,16 +58,34 @@ export default async function ProductDetailPage({
     notFound();
   }
 
+  const brand = normalizeOfficialPanelBrand(product.brand);
+  const cleanCover = getCleanPublicImage(product.coverImage);
+  const productSchema = buildProductSchema({
+    name: product.name,
+    description: product.description,
+    brand,
+    sku: product.productId || product.modelNumber || product.slug,
+    slug: product.slug,
+    image: cleanCover || undefined,
+    ratedPowerWp: product.ratedPowerWp,
+    technologyCategories: product.technologyCategories,
+    certifications: product.certifications,
+    performanceWarrantyYears: product.performanceWarrantyYears,
+  });
+
   return (
     <div className="bg-white">
+      <JsonLd data={productSchema} />
       {/* Breadcrumb Bar */}
       <div className="bg-slate-bg border-b border-slate-border py-3">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-xs text-slate-muted flex items-center gap-2">
-          <Link href="/" className="hover:text-navy-800">Home</Link>
-          <span>/</span>
-          <Link href="/solar-panels" className="hover:text-navy-800">Solar Panels</Link>
-          <span>/</span>
-          <span className="text-navy-800 font-bold truncate">{product.name}</span>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Breadcrumbs
+            items={[
+              { name: "Solar Panels", path: "/solar-panels" },
+              { name: product.name, path: `/solar-panels/${product.slug}` },
+            ]}
+            variant="light"
+          />
         </div>
       </div>
 

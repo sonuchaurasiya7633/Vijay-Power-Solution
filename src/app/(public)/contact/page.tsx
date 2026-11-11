@@ -1,16 +1,22 @@
 import type { Metadata } from "next";
 import { Phone, Mail, MapPin, Clock, MessageCircle, Building2, ShieldCheck } from "lucide-react";
 import LeadCaptureForm from "@/components/forms/LeadCaptureForm";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import connectDB from "@/lib/db/connection";
 import Setting from "@/models/Setting";
 import Page from "@/models/Page";
 import SocialLinksBar from "@/components/public/SocialLinksBar";
+import { getRouteMetadata } from "@/lib/seo-server";
 
-export const metadata: Metadata = {
-  title: "Contact Us & Regional Offices | VIJOY POWER SOLUTION",
-  description:
-    "Contact VIJOY POWER SOLUTION for rooftop solar consultation, engineering surveys, and net metering assistance across India.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getRouteMetadata({
+    routeKey: "contact",
+    path: "/contact",
+    fallbackTitle: "Contact Us & Regional Offices | VIJOY POWER SOLUTION",
+    fallbackDescription:
+      "Contact VIJOY POWER SOLUTION for rooftop solar consultation, engineering surveys, and net metering assistance across India.",
+  });
+}
 
 export const revalidate = 60;
 
@@ -108,7 +114,8 @@ export default async function ContactPage() {
       {/* Header */}
       <div className="bg-navy-800 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-solar-yellow bg-white/10 px-3 py-1 rounded-full">
+          <Breadcrumbs items={[{ name: "Contact Us", path: "/contact" }]} variant="dark" />
+          <span className="inline-block text-xs font-bold uppercase tracking-wider text-solar-yellow bg-white/10 px-3 py-1 rounded-full">
             {heroBadge}
           </span>
           <h1 className="text-3xl sm:text-5xl font-display font-extrabold text-white tracking-tight">

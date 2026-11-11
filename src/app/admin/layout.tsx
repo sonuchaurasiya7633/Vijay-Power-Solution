@@ -1,5 +1,20 @@
+import type { Metadata } from "next";
 import { getSession } from "@/lib/auth/session";
 import AdminShell from "@/components/admin/AdminShell";
+
+export const metadata: Metadata = {
+  title: "Admin Command Center | VIJOY POWER SOLUTION",
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+    googleBot: {
+      index: false,
+      follow: false,
+      noimageindex: true,
+    },
+  },
+};
 
 export default async function AdminLayout({
   children,

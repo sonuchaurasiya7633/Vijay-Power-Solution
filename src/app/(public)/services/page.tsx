@@ -3,17 +3,25 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, CheckCircle2, Wrench } from "lucide-react";
 import CtaBanner from "@/components/public/CtaBanner";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
+import JsonLd from "@/components/seo/JsonLd";
 import connectDB from "@/lib/db/connection";
 import SolarService from "@/models/SolarService";
 import { getPublicPagesCms } from "@/lib/cms-server";
 import { getCleanPublicImage } from "@/lib/image-fallback";
 import SolarCardPlaceholder from "@/components/public/SolarCardPlaceholder";
+import { getRouteMetadata } from "@/lib/seo-server";
+import { buildServiceSchema } from "@/lib/seo-schema";
 
-export const metadata: Metadata = {
-  title: "Solar Installation Services & EPC | VIJOY POWER SOLUTION",
-  description:
-    "End-to-end solar services: Roof feasibility surveys, turnkey rooftop installation, DISCOM net metering liaison, subsidy guidance, and annual maintenance across India.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getRouteMetadata({
+    routeKey: "services",
+    path: "/services",
+    fallbackTitle: "Solar Installation Services & EPC | VIJOY POWER SOLUTION",
+    fallbackDescription:
+      "End-to-end solar services: Roof feasibility surveys, turnkey rooftop installation, DISCOM net metering liaison, subsidy guidance, and annual maintenance across India.",
+  });
+}
 
 export const revalidate = 60;
 
@@ -31,9 +39,19 @@ export default async function ServicesPage() {
 
   return (
     <div className="bg-white">
+      <JsonLd
+        data={buildServiceSchema({
+          name: h.title || "Turnkey Solar Installation & EPC Services",
+          description:
+            h.subtitle ||
+            "End-to-end solar services including site survey, rooftop engineering, net metering, PM Surya Ghar assistance, and maintenance across India.",
+          path: "/services",
+        })}
+      />
       {/* Header */}
       <div className="bg-navy-800 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+          <Breadcrumbs items={[{ name: "Services", path: "/services" }]} variant="dark" />
           <span className="inline-block text-xs font-bold uppercase tracking-wider text-solar-yellow bg-white/10 px-3 py-1 rounded-full">
             {h.badge}
           </span>

@@ -7,8 +7,14 @@ import connectDB from "@/lib/db/connection";
 import Blog from "@/models/Blog";
 import { formatDateIST } from "@/lib/utils/formatters";
 import LeadCaptureForm from "@/components/forms/LeadCaptureForm";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
+import JsonLd from "@/components/seo/JsonLd";
 import { getCleanPublicImage } from "@/lib/image-fallback";
 import SolarCardPlaceholder from "@/components/public/SolarCardPlaceholder";
+import { getRouteMetadata } from "@/lib/seo-server";
+import { buildArticleSchema } from "@/lib/seo-schema";
+
+export const revalidate = 60;
 
 export async function generateMetadata({
   params,
@@ -16,13 +22,41 @@ export async function generateMetadata({
   params: { slug: string };
 }): Promise<Metadata> {
   await connectDB();
-  const blog = await Blog.findOne({ slug: params.slug }).lean();
-  if (!blog) return { title: "Article Not Found" };
+  const blog: any = await Blog.findOne({ slug: params.slug }).lean();
+  if (!blog) {
+    if (
+      params.slug === "pm-surya-ghar-subsidy-guide-pan-india" ||
+      params.slug === "pm-surya-ghar-subsidy-guide-bihar-jharkhand-up"
+    ) {
+      return getRouteMetadata({
+        path: `/blog/${params.slug}`,
+        fallbackTitle: "Complete PM Surya Ghar Subsidy Guide — Pan India Coverage",
+        fallbackDescription:
+          "Everything residential consumers need to know about the ₹78,000 central rooftop subsidy, DISCOM portal registration, and net meter commissioning across India.",
+        type: "article",
+      });
+    }
+    return { title: "Article Not Found", robots: { index: false, follow: false } };
+  }
 
-  return {
-    title: `${blog.title} | VIJOY POWER SOLUTION Blog`,
-    description: blog.excerpt,
-  };
+  return getRouteMetadata({
+    path: `/blog/${params.slug}`,
+    fallbackTitle: `${blog.title} | VIJOY POWER SOLUTION Blog`,
+    fallbackDescription: blog.excerpt,
+    keywords: Array.isArray(blog.tags) ? blog.tags : [],
+    type: "article",
+    publishedTime: blog.publishedAt
+      ? new Date(blog.publishedAt).toISOString()
+      : undefined,
+    modifiedTime: blog.updatedAt
+      ? new Date(blog.updatedAt).toISOString()
+      : undefined,
+    dynamicOverride: {
+      title: blog.seoTitle,
+      description: blog.seoDescription,
+      ogImage: blog.ogImage || getCleanPublicImage(blog.coverImage) || undefined,
+    },
+  });
 }
 
 export default async function BlogPostPage({
@@ -75,16 +109,31 @@ export default async function BlogPostPage({
     notFound();
   }
 
+  const cleanCover = getCleanPublicImage(article.coverImage);
+  const articleSchema = buildArticleSchema({
+    title: article.title,
+    description: article.excerpt,
+    slug: params.slug,
+    image: cleanCover || undefined,
+    authorName: article.authorName,
+    publishedAt: article.publishedAt,
+    updatedAt: article.updatedAt,
+    category: article.category,
+  });
+
   return (
     <div className="bg-white">
+      <JsonLd data={articleSchema} />
       {/* Breadcrumb Bar */}
       <div className="bg-slate-bg border-b border-slate-border py-3">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-xs text-slate-muted flex items-center gap-2">
-          <Link href="/" className="hover:text-navy-800">Home</Link>
-          <span>/</span>
-          <Link href="/blog" className="hover:text-navy-800">Blog</Link>
-          <span>/</span>
-          <span className="text-navy-800 font-bold truncate">{article.title}</span>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Breadcrumbs
+            items={[
+              { name: "Blog", path: "/blog" },
+              { name: article.title, path: `/blog/${params.slug}` },
+            ]}
+            variant="light"
+          />
         </div>
       </div>
 

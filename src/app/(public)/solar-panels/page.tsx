@@ -1,17 +1,23 @@
 import type { Metadata } from "next";
 import ProductWattageShowcase from "@/components/public/ProductWattageShowcase";
 import CtaBanner from "@/components/public/CtaBanner";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import connectDB from "@/lib/db/connection";
 import SolarProduct from "@/models/SolarProduct";
 import { getSolarPanelsPageCms } from "@/lib/cms-server";
+import { getRouteMetadata } from "@/lib/seo-server";
 
 export const revalidate = 60;
 
-export const metadata: Metadata = {
-  title: "Solar Panel Catalogue (10W to 730W) | VIJOY POWER SOLUTION",
-  description:
-    "Explore our complete range of certified solar panels from 10W up to 730W. Monocrystalline, Mono PERC, Bifacial, N-Type TOPCon, and Heterojunction modules delivered across India.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getRouteMetadata({
+    routeKey: "solar-panels",
+    path: "/solar-panels",
+    fallbackTitle: "Solar Panel Catalogue (10W to 730W) | VIJOY POWER SOLUTION",
+    fallbackDescription:
+      "Explore our complete range of certified solar panels from 10W up to 730W. Monocrystalline, Mono PERC, Bifacial, N-Type TOPCon, and Heterojunction modules delivered across India.",
+  });
+}
 
 const badgeStyles: Record<string, string> = {
   navy: "bg-navy-800/10 text-navy-800",
@@ -38,6 +44,10 @@ export default async function SolarPanelsPage() {
       {/* Page Header */}
       <div className="bg-navy-800 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+          <Breadcrumbs
+            items={[{ name: "Solar Panels (10W–730W)", path: "/solar-panels" }]}
+            variant="dark"
+          />
           <span className="inline-block text-xs font-bold uppercase tracking-wider text-solar-yellow bg-white/10 px-3 py-1 rounded-full">
             {cms.heroBadge}
           </span>

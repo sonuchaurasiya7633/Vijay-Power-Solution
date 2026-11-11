@@ -1,16 +1,22 @@
 import type { Metadata } from "next";
 import CalculatorWidget from "@/components/public/CalculatorWidget";
 import CtaBanner from "@/components/public/CtaBanner";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import { ShieldAlert, Sun } from "lucide-react";
 import { getPublicPagesCms } from "@/lib/cms-server";
+import { getRouteMetadata } from "@/lib/seo-server";
 
 export const revalidate = 60;
 
-export const metadata: Metadata = {
-  title: "Solar Savings Calculator | Rooftop Feasibility Across India",
-  description:
-    "Calculate your recommended rooftop solar system capacity, annual energy generation, and estimated electricity bill savings across India.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getRouteMetadata({
+    routeKey: "solar-calculator",
+    path: "/solar-calculator",
+    fallbackTitle: "Solar Savings Calculator | Rooftop Feasibility Across India",
+    fallbackDescription:
+      "Calculate your recommended rooftop solar system capacity, annual energy generation, and estimated electricity bill savings across India.",
+  });
+}
 
 export default async function SolarCalculatorPage() {
   const cms = await getPublicPagesCms();
@@ -20,6 +26,10 @@ export default async function SolarCalculatorPage() {
     <div className="bg-white">
       <div className="bg-navy-800 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+          <Breadcrumbs
+            items={[{ name: "Solar Calculator", path: "/solar-calculator" }]}
+            variant="dark"
+          />
           <span className="inline-block text-xs font-bold uppercase tracking-wider text-solar-yellow bg-white/10 px-3 py-1 rounded-full">
             {h.badge}
           </span>

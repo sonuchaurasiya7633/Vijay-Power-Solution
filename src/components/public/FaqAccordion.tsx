@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 
-interface FAQItem {
+export interface FAQItem {
   question: string;
   answer: string;
 }
 
-const defaultFaqs: FAQItem[] = [
+export const DEFAULT_SOLAR_FAQS: FAQItem[] = [
   {
     question: "How much roof area is required for a 3 kW solar rooftop system?",
     answer: "A standard 3 kW solar rooftop plant using modern high-efficiency 550W modules requires approximately 180 to 220 square feet of shadow-free rooftop space. If you require usable terrace space below, we can install elevated galvanized structures.",
@@ -31,8 +31,13 @@ const defaultFaqs: FAQItem[] = [
   },
 ];
 
-export default function FaqAccordion() {
+export default function FaqAccordion({
+  items,
+}: {
+  items?: FAQItem[];
+} = {}) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const faqList = items && items.length > 0 ? items : DEFAULT_SOLAR_FAQS;
 
   const toggle = (idx: number) => {
     setOpenIndex(openIndex === idx ? null : idx);
@@ -54,7 +59,7 @@ export default function FaqAccordion() {
         </div>
 
         <div className="space-y-3">
-          {defaultFaqs.map((faq, idx) => {
+          {faqList.map((faq, idx) => {
             const isOpen = openIndex === idx;
             return (
               <div
