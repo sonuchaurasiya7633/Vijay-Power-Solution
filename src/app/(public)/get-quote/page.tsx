@@ -1,28 +1,44 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
-import { ShieldCheck, Zap, CheckCircle2 } from "lucide-react";
+import { Suspense, useEffect, useState } from "react";
+import { CheckCircle2 } from "lucide-react";
 import LeadCaptureForm from "@/components/forms/LeadCaptureForm";
+import { defaultPublicPagesCms, mergeWithDefaults } from "@/lib/cms-defaults";
 
 function GetQuoteContent() {
   const searchParams = useSearchParams();
-  const defaultProduct = searchParams.get("product") || "";
+  const defaultProduct = searchParams.get("product") || searchParams.get("module") || "";
   const defaultSolution = searchParams.get("solution") || "Residential Rooftop Solar";
   const defaultWattage = searchParams.get("wattage") ? Number(searchParams.get("wattage")) : undefined;
+
+  const [cms, setCms] = useState(defaultPublicPagesCms.getQuotePage);
+
+  useEffect(() => {
+    fetch("/api/settings?key=public_pages_cms")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.setting?.getQuotePage) {
+          setCms(mergeWithDefaults(defaultPublicPagesCms.getQuotePage, data.setting.getQuotePage));
+        }
+      })
+      .catch(() => {
+        // Fallback to defaults
+      });
+  }, []);
 
   return (
     <div className="bg-white">
       <div className="bg-navy-900 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-solar-yellow bg-white/10 px-3 py-1 rounded-full">
-            Personalized Proposal
+          <span className="inline-block text-xs font-bold uppercase tracking-wider text-solar-yellow bg-white/10 px-3 py-1 rounded-full">
+            {cms.badge}
           </span>
           <h1 className="text-3xl sm:text-5xl font-display font-extrabold text-white tracking-tight">
-            Request an Itemized Solar Quotation
+            {cms.title}
           </h1>
           <p className="text-sm sm:text-base text-slate-300 max-w-3xl leading-relaxed">
-            Get a transparent, private commercial proposal tailored to your roof specifications, panel preference (10W to 730W), and DISCOM net-metering rules.
+            {cms.subtitle}
           </p>
         </div>
       </div>
@@ -49,18 +65,27 @@ function GetQuoteContent() {
             buttonText="Generate My Private Quotation"
           />
 
-          <div className="pt-4 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-slate-muted">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-solar-green shrink-0" />
-              <span>No Public Price Fabrication</span>
+          <div className="pt-4 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-slate-muted">
+            <div className="flex items-start gap-2">
+              <CheckCircle2 className="w-4 h-4 text-solar-green shrink-0 mt-0.5" />
+              <div>
+                <strong className="text-navy-800 block">{cms.guarantee1Title}</strong>
+                <span>{cms.guarantee1Subtitle}</span>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-solar-green shrink-0" />
-              <span>Certified ALMM Panels</span>
+            <div className="flex items-start gap-2">
+              <CheckCircle2 className="w-4 h-4 text-solar-green shrink-0 mt-0.5" />
+              <div>
+                <strong className="text-navy-800 block">{cms.guarantee2Title}</strong>
+                <span>{cms.guarantee2Subtitle}</span>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-solar-green shrink-0" />
-              <span>Net Metering Assistance</span>
+            <div className="flex items-start gap-2">
+              <CheckCircle2 className="w-4 h-4 text-solar-green shrink-0 mt-0.5" />
+              <div>
+                <strong className="text-navy-800 block">{cms.guarantee3Title}</strong>
+                <span>{cms.guarantee3Subtitle}</span>
+              </div>
             </div>
           </div>
         </div>

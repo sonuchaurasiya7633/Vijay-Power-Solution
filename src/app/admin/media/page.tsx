@@ -209,10 +209,10 @@ export default function AdminMediaPage() {
         {/* Fallback Sample Assets */}
         {assets.length === 0 &&
           [
-            { name: "rooftop-patna-10kw.jpg", folder: "projects", size: "340 KB", url: "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=400&q=80" },
-            { name: "commercial-gaya-25kw.jpg", folder: "projects", size: "420 KB", url: "https://images.unsplash.com/photo-1548337138-e87d889cc369?w=400&q=80" },
-            { name: "hybrid-ranchi-5kw.jpg", folder: "projects", size: "290 KB", url: "https://images.unsplash.com/photo-1497440001374-f26997328c1b?w=400&q=80" },
-            { name: "550w-waaree-bifacial.jpg", folder: "products", size: "180 KB", url: "https://images.unsplash.com/photo-1508873696983-2df5293cb32f?w=400&q=80" },
+            { name: "rooftop-patna-10kw.jpg", folder: "projects", size: "340 KB", url: "/images/gallery/customer-solar-01.jpg" },
+            { name: "commercial-gaya-25kw.jpg", folder: "projects", size: "420 KB", url: "/images/gallery/customer-solar-02.jpg" },
+            { name: "hybrid-ranchi-5kw.jpg", folder: "projects", size: "290 KB", url: "/images/gallery/customer-solar-03.jpg" },
+            { name: "550w-waaree-bifacial.jpg", folder: "products", size: "180 KB", url: "/images/gallery/customer-solar-04.jpg" },
           ].map((a, i) => (
             <div key={i} className="p-3 bg-white rounded-2xl border border-slate-border shadow-sm space-y-2 group">
               <div className="relative h-28 w-full bg-slate-100 rounded-xl overflow-hidden">

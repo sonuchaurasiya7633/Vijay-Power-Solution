@@ -7,6 +7,7 @@ import PortfolioProject from "@/models/PortfolioProject";
 import InstallationGallery from "@/models/InstallationGallery";
 import DedicatedGalleryView from "@/components/public/DedicatedGalleryView";
 import CtaBanner from "@/components/public/CtaBanner";
+import { getPublicPagesCms } from "@/lib/cms-server";
 
 export const metadata: Metadata = {
   title: "Our Solar Installation Projects | Customer Photo Gallery",
@@ -19,6 +20,8 @@ export const dynamic = "force-dynamic";
 export default async function ProjectsPage() {
   let projects: any[] = [];
   let galleryItems: any[] = [];
+  const cms = await getPublicPagesCms();
+  const h = cms.projectsPage;
 
   try {
     await connectDB();
@@ -41,13 +44,13 @@ export default async function ProjectsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-solar-green/20 border border-solar-green/30 text-solar-yellow text-xs font-bold uppercase tracking-wider">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Authentic Field Documentation</span>
+            <span>{h.badge}</span>
           </div>
           <h1 className="text-3xl sm:text-5xl font-display font-extrabold text-white tracking-tight">
-            Our Solar Installation Projects
+            {h.title}
           </h1>
           <p className="text-sm sm:text-base text-slate-300 max-w-3xl leading-relaxed">
-            Explore real solar installations completed by Vijoy Power Solution for our valued customers. Authentic completed customer handovers and engineered case studies across India.
+            {h.subtitle}
           </p>
         </div>
       </div>

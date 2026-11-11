@@ -57,7 +57,7 @@ export default async function BlogPostPage({
         category: "Government Schemes",
         authorName: "Er. Vijoy Kumar",
         authorRole: "Principal Solar Engineer",
-        coverImage: "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=1200&q=80",
+        coverImage: "/images/gallery/customer-solar-01.jpg",
         publishedAt: new Date(),
         estimatedReadTimeMin: 5,
       };

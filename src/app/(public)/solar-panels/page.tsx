@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import ProductWattageShowcase from "@/components/public/ProductWattageShowcase";
 import CtaBanner from "@/components/public/CtaBanner";
-import { ShieldCheck, Zap, HelpCircle } from "lucide-react";
-import Link from "next/link";
+import connectDB from "@/lib/db/connection";
+import SolarProduct from "@/models/SolarProduct";
+import { getSolarPanelsPageCms } from "@/lib/cms-server";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Solar Panel Catalogue (10W to 730W) | VIJOY POWER SOLUTION",
@@ -10,64 +13,86 @@ export const metadata: Metadata = {
     "Explore our complete range of certified solar panels from 10W up to 730W. Monocrystalline, Mono PERC, Bifacial, N-Type TOPCon, and Heterojunction modules delivered across India.",
 };
 
-export default function SolarPanelsPage() {
+const badgeStyles: Record<string, string> = {
+  navy: "bg-navy-900/10 text-navy-800",
+  green: "bg-solar-green-light text-solar-green",
+  gold: "bg-amber-100 text-amber-800",
+};
+
+export default async function SolarPanelsPage() {
+  const cms = await getSolarPanelsPageCms();
+  let products: any[] = [];
+
+  try {
+    await connectDB();
+    const docs = await SolarProduct.find({ isPublished: true })
+      .sort({ ratedPowerWp: 1 })
+      .lean();
+    products = JSON.parse(JSON.stringify(docs));
+  } catch {
+    products = [];
+  }
+
   return (
     <div className="bg-white">
       {/* Page Header */}
       <div className="bg-navy-900 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-solar-yellow bg-white/10 px-3 py-1 rounded-full">
-            Engineering Catalogue
+          <span className="inline-block text-xs font-bold uppercase tracking-wider text-solar-yellow bg-white/10 px-3 py-1 rounded-full">
+            {cms.heroBadge}
           </span>
           <h1 className="text-3xl sm:text-5xl font-display font-extrabold text-white tracking-tight">
-            Solar Modules from 10W to 730W
+            {cms.heroTitle}
           </h1>
           <p className="text-sm sm:text-base text-slate-300 max-w-3xl leading-relaxed">
-            From compact rural lighting panels (10W–50W) up to utility-grade Heterojunction and N-Type TOPCon bifacial modules (730W). Verified engineering specifications with private quotations.
+            {cms.heroSubtitle}
           </p>
         </div>
       </div>
 
       {/* Catalogue & Wattage Filter Section */}
-      <ProductWattageShowcase />
+      <ProductWattageShowcase
+        initialProducts={products.length > 0 ? products : undefined}
+        cms={cms}
+        showViewAllButton={false}
+      />
 
       {/* Technology Taxonomy Explanations */}
       <section className="py-16 bg-white border-t border-slate-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-          <div className="max-w-2xl">
+          <div className="max-w-2xl space-y-2">
             <span className="text-xs font-bold uppercase tracking-wider text-solar-green">
-              Technology Primer
+              {cms.primerBadge}
             </span>
-            <h2 className="text-2xl sm:text-3xl font-display font-bold text-navy-800 mt-1">
-              Understanding Solar Cell Technologies
+            <h2 className="text-2xl sm:text-3xl font-display font-bold text-navy-800">
+              {cms.primerTitle}
             </h2>
+            {cms.primerSubtitle && (
+              <p className="text-sm text-slate-muted leading-relaxed">
+                {cms.primerSubtitle}
+              </p>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-xs text-slate-muted leading-relaxed">
-            <div className="p-5 rounded-2xl border border-slate-border space-y-2">
-              <h3 className="text-sm font-bold text-navy-800">Mono PERC (Passivated Emitter & Rear Cell)</h3>
-              <p>The contemporary industry benchmark for residential rooftop solar. Features an extra reflective layer on the back of the cell that reflects unabsorbed light back through the silicon, increasing energy yield in hazy weather.</p>
-            </div>
-            <div className="p-5 rounded-2xl border border-slate-border space-y-2">
-              <h3 className="text-sm font-bold text-navy-800">Bifacial Dual-Glass Modules</h3>
-              <p>Produces electricity from both the front and rear sides. Ideal for light concrete terraces, mosaic tiles, or elevated structures where reflected ground light (albedo) can boost generation by an additional 10% to 25%.</p>
-            </div>
-            <div className="p-5 rounded-2xl border border-slate-border space-y-2">
-              <h3 className="text-sm font-bold text-navy-800">N-Type TOPCon Technology</h3>
-              <p>Advanced tunnel oxide passivated contact technology with near-zero Light Induced Degradation (LID) and an ultra-low temperature coefficient (-0.30%/°C), maintaining higher peak wattage in extreme 45°C summer climates.</p>
-            </div>
-            <div className="p-5 rounded-2xl border border-slate-border space-y-2">
-              <h3 className="text-sm font-bold text-navy-800">Heterojunction (HJT) Technology</h3>
-              <p>Combines crystalline silicon with amorphous thin-film silicon layers. Boasts the highest commercial efficiency up to 23.5% and the best thermal stability in the industry, ideal for maximum power generation from limited roof spaces.</p>
-            </div>
-            <div className="p-5 rounded-2xl border border-slate-border space-y-2">
-              <h3 className="text-sm font-bold text-navy-800">Half-Cut Cell Architecture</h3>
-              <p>By cutting standard solar cells in half, electrical current in each cell ribbon is halved, drastically reducing resistive power losses and lowering the operating temperature of the module for extended longevity.</p>
-            </div>
-            <div className="p-5 rounded-2xl border border-slate-border space-y-2">
-              <h3 className="text-sm font-bold text-navy-800">Small-Wattage Modules (10W–100W)</h3>
-              <p>Heavy-duty, compact 12V modules designed for solar streetlights, security cameras, garden illumination, DC poultry lighting, and rural cottage backup battery chargers.</p>
-            </div>
+            {cms.techCards.map((card, idx) => (
+              <div
+                key={idx}
+                className="p-5 rounded-2xl border border-slate-border space-y-2.5 bg-white hover:border-solar-green/40 transition-colors"
+              >
+                {card.badge && (
+                  <span
+                    className={`inline-block text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full ${
+                      badgeStyles[card.badgeColor] || badgeStyles.navy
+                    }`}
+                  >
+                    {card.badge}
+                  </span>
+                )}
+                <h3 className="text-sm font-bold text-navy-800">{card.title}</h3>
+                <p>{card.description}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>

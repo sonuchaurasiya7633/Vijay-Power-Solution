@@ -109,7 +109,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing required fields (name, slug, brand, ratedPowerWp, description)" }, { status: 400 });
     }
 
-    const finalCoverImage = coverImage && coverImage.trim() !== "" ? coverImage : "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=800&q=80";
+    const finalCoverImage = coverImage && coverImage.trim() !== "" ? coverImage : "/images/gallery/customer-solar-01.jpg";
 
     await connectDB();
     const count = await SolarProduct.countDocuments();

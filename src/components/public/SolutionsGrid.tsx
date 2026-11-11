@@ -1,8 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Check } from "lucide-react";
+import connectDB from "@/lib/db/connection";
+import SolarSolution from "@/models/SolarSolution";
+import Setting from "@/models/Setting";
+import { defaultPublicPagesCms, mergeWithDefaults } from "@/lib/cms-defaults";
+import { getLocalSolarGalleryImage, getSafeSolarImage } from "@/lib/image-fallback";
 
-interface SolutionItem {
+export interface SolutionItem {
   slug: string;
   title: string;
   category: string;
@@ -19,7 +24,7 @@ const defaultSolutions: SolutionItem[] = [
     category: "Homes & Villas",
     tagline: "Slash your home electricity bills by 70-90% with clean solar energy.",
     capacity: "1 kW – 10 kW",
-    image: "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=800&q=80",
+    image: getLocalSolarGalleryImage(0),
     benefits: ["PM Surya Ghar subsidy assistance", "Net metering credit on power bills", "Elevated structures available"],
   },
   {
@@ -28,7 +33,7 @@ const defaultSolutions: SolutionItem[] = [
     category: "Schools, Hospitals & Retail",
     tagline: "Reduce peak daytime operating expenditures with accelerated tax depreciation.",
     capacity: "10 kW – 100 kW",
-    image: "https://images.unsplash.com/photo-1548337138-e87d889cc369?w=800&q=80",
+    image: getLocalSolarGalleryImage(1),
     benefits: ["Significant reduction in daytime tariffs", "Fast ROI within 3-4 years", "Remote cloud generation monitoring"],
   },
   {
@@ -37,7 +42,7 @@ const defaultSolutions: SolutionItem[] = [
     category: "Mills, Factories & Storages",
     tagline: "Heavy-duty high-voltage power generation for manufacturing plants and cold storages.",
     capacity: "50 kW – 500+ kW",
-    image: "https://images.unsplash.com/photo-1497440001374-f26997328c1b?w=800&q=80",
+    image: getLocalSolarGalleryImage(2),
     benefits: ["Mitigate costly industrial tariff peaks", "HT synchronization", "Heavy wind-resistant engineering"],
   },
   {
@@ -46,7 +51,7 @@ const defaultSolutions: SolutionItem[] = [
     category: "Utility Grid-Tied",
     tagline: "Export excess solar power back to the grid and receive DISCOM credit adjustments.",
     capacity: "2 kW – 50 kW",
-    image: "https://images.unsplash.com/photo-1508873696983-2df5293cb32f?w=800&q=80",
+    image: getLocalSolarGalleryImage(3),
     benefits: ["Lowest initial cost per kW", "Zero recurring battery expenses", "Full utility net-metering approvals"],
   },
   {
@@ -55,7 +60,7 @@ const defaultSolutions: SolutionItem[] = [
     category: "Uninterrupted Power",
     tagline: "Continuous 24x7 electricity for areas subject to power cuts and load shedding.",
     capacity: "1 kW – 20 kW",
-    image: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800&q=80",
+    image: getLocalSolarGalleryImage(4),
     benefits: ["100% independence from grid blackouts", "Clean & silent alternative to diesel", "Tubular or Lithium storage"],
   },
   {
@@ -64,29 +69,84 @@ const defaultSolutions: SolutionItem[] = [
     category: "Farming & Irrigation",
     tagline: "Reliable daytime irrigation without expensive diesel fuels or erratic grid power.",
     capacity: "3 HP – 10 HP",
-    image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=80",
+    image: getLocalSolarGalleryImage(5),
     benefits: ["Zero ongoing fuel expenditure", "High discharge flow in full sunlight", "Dry run sensor protections"],
   },
 ];
 
-export default function SolutionsGrid() {
+interface SolutionsGridProps {
+  initialSolutions?: SolutionItem[];
+  headerCms?: {
+    badge?: string;
+    title?: string;
+    subtitle?: string;
+  };
+  showHeader?: boolean;
+}
+
+export default async function SolutionsGrid({
+  initialSolutions,
+  headerCms,
+  showHeader = true,
+}: SolutionsGridProps = {}) {
+  let solutions: SolutionItem[] = initialSolutions || [];
+  let sectionHeader = headerCms;
+
+  if (!initialSolutions || !sectionHeader) {
+    try {
+      await connectDB();
+      if (!initialSolutions) {
+        const docs = await SolarSolution.find({ isPublished: true })
+          .sort({ sortOrder: 1, createdAt: 1 })
+          .lean();
+        if (docs && docs.length > 0) {
+          solutions = docs.map((doc: any, idx: number) => ({
+            slug: doc.slug,
+            title: doc.title,
+            category: doc.category || "Solar Architecture",
+            tagline: doc.tagline || doc.description || "",
+            capacity: doc.typicalCapacityRange || "Custom kW",
+            image: getSafeSolarImage(doc.image, idx),
+            benefits: Array.isArray(doc.keyBenefits) && doc.keyBenefits.length > 0
+              ? doc.keyBenefits.slice(0, 3)
+              : ["Custom EPC engineering", "MNRE compliant hardware"],
+          }));
+        }
+      }
+      if (!sectionHeader) {
+        const settingDoc = await Setting.findOne({ key: "public_pages_cms" }).lean() as any;
+        const merged = mergeWithDefaults(defaultPublicPagesCms, settingDoc?.value);
+        sectionHeader = merged.solutionsSection;
+      }
+    } catch {
+      // Fallback safely to defaults if DB temporarily unavailable
+    }
+  }
+
+  const displaySolutions = solutions.length > 0 ? solutions : defaultSolutions;
+  const badge = sectionHeader?.badge || defaultPublicPagesCms.solutionsSection.badge;
+  const title = sectionHeader?.title || defaultPublicPagesCms.solutionsSection.title;
+  const subtitle = sectionHeader?.subtitle || defaultPublicPagesCms.solutionsSection.subtitle;
+
   return (
     <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto space-y-3 mb-14">
-          <span className="text-xs font-bold uppercase tracking-wider text-solar-green bg-solar-green-light px-3 py-1 rounded-full">
-            Engineered For Every Need
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-display font-extrabold text-navy-800 tracking-tight">
-            Tailored Solar Solutions
-          </h2>
-          <p className="text-sm sm:text-base text-slate-muted">
-            From urban rooftops to rural farmhouses and heavy industries, explore our customized clean energy architectures designed specifically for homes, businesses, and enterprises across India.
-          </p>
-        </div>
+        {showHeader && (
+          <div className="text-center max-w-3xl mx-auto space-y-3 mb-14">
+            <span className="text-xs font-bold uppercase tracking-wider text-solar-green bg-solar-green-light px-3 py-1 rounded-full">
+              {badge}
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-display font-extrabold text-navy-800 tracking-tight">
+              {title}
+            </h2>
+            <p className="text-sm sm:text-base text-slate-muted">
+              {subtitle}
+            </p>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {defaultSolutions.map((sol) => (
+          {displaySolutions.map((sol) => (
             <div
               key={sol.slug}
               className="group bg-white rounded-3xl border border-slate-border hover:border-solar-green/40 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden"

@@ -73,6 +73,8 @@ export default function AdminSidebar({
       items: [
         { label: "All Pages", href: "/admin/cms", icon: LayoutGrid, badge: "Hub" },
         { label: "Homepage", href: "/admin/cms/home", icon: Sliders },
+        { label: "Solar Panels CMS", href: "/admin/cms/solar-panels", icon: Package },
+        { label: "Pages Content CMS", href: "/admin/cms/pages-content", icon: FileCode2 },
         { label: "About Us", href: "/admin/cms/about", icon: Building2 },
         { label: "Services", href: "/admin/services", icon: Wrench },
         { label: "Solar Products", href: "/admin/products", icon: Package },

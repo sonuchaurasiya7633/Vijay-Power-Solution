@@ -44,7 +44,7 @@ export default async function AboutPage() {
   const heroImage =
     cmsAbout?.hero?.imageUrl ||
     dynamicPage?.heroImage ||
-    "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=1000&q=85";
+    "/images/gallery/customer-solar-01.jpg";
 
   const storyBadge = cmsAbout?.narrative?.badge || "Engineering Heritage";
   const storyHeadline =

@@ -35,7 +35,7 @@ export default function AdminAboutCmsPage() {
       title: "About VIJOY POWER SOLUTION",
       subtitle:
         "Delivering clean, dependable solar rooftop engineering, ALMM-compliant panel supply, and seamless DISCOM net-metering across India.",
-      imageUrl: "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=1000&q=85",
+      imageUrl: "/images/gallery/customer-solar-01.jpg",
     },
     narrative: {
       badge: "Engineering Heritage",

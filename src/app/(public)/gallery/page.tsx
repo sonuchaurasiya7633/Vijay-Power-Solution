@@ -4,6 +4,7 @@ import InstallationGallery from "@/models/InstallationGallery";
 import DedicatedGalleryView from "@/components/public/DedicatedGalleryView";
 import CtaBanner from "@/components/public/CtaBanner";
 import { Sparkles } from "lucide-react";
+import { getPublicPagesCms } from "@/lib/cms-server";
 
 export const metadata: Metadata = {
   title: "Installation Photo Gallery | Real Customers | VIJOY POWER SOLUTION",
@@ -15,6 +16,9 @@ export const dynamic = "force-dynamic";
 
 export default async function GalleryPage() {
   let galleryItems: any[] = [];
+  const cms = await getPublicPagesCms();
+  const h = cms.galleryPage;
+
   try {
     await connectDB();
     galleryItems = await InstallationGallery.find({ isPublished: true })
@@ -32,13 +36,13 @@ export default async function GalleryPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-solar-green/20 border border-solar-green/30 text-solar-yellow text-xs font-bold uppercase tracking-wider">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Real Site Photography</span>
+            <span>{h.badge}</span>
           </div>
           <h1 className="text-3xl sm:text-5xl font-display font-extrabold text-white tracking-tight">
-            Solar Installation Photo Gallery
+            {h.title}
           </h1>
           <p className="text-sm sm:text-base text-slate-300 max-w-3xl leading-relaxed">
-            Real customer handovers and completed installations captured during plant commissioning, structural mounting, and net metering handover across India.
+            {h.subtitle}
           </p>
         </div>
       </div>

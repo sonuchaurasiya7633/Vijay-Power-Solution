@@ -5,6 +5,7 @@ import { ArrowRight, CheckCircle2, Wrench } from "lucide-react";
 import CtaBanner from "@/components/public/CtaBanner";
 import connectDB from "@/lib/db/connection";
 import SolarService from "@/models/SolarService";
+import { getPublicPagesCms } from "@/lib/cms-server";
 
 export const metadata: Metadata = {
   title: "Solar Installation Services & EPC | VIJOY POWER SOLUTION",
@@ -16,6 +17,9 @@ export const dynamic = "force-dynamic";
 
 export default async function ServicesPage() {
   let services: any[] = [];
+  const cms = await getPublicPagesCms();
+  const h = cms.servicesPage;
+
   try {
     await connectDB();
     services = await SolarService.find({ isAvailable: true }).sort({ sortOrder: 1 }).lean();
@@ -28,14 +32,14 @@ export default async function ServicesPage() {
       {/* Header */}
       <div className="bg-navy-900 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-solar-yellow bg-white/10 px-3 py-1 rounded-full">
-            Turnkey Capabilities
+          <span className="inline-block text-xs font-bold uppercase tracking-wider text-solar-yellow bg-white/10 px-3 py-1 rounded-full">
+            {h.badge}
           </span>
           <h1 className="text-3xl sm:text-5xl font-display font-extrabold text-white tracking-tight">
-            Professional Solar Services
+            {h.title}
           </h1>
           <p className="text-sm sm:text-base text-slate-300 max-w-3xl leading-relaxed">
-            Full-lifecycle solar engineering from initial rooftop shadow simulation and utility approvals to precision physical mounting and long-term maintenance.
+            {h.subtitle}
           </p>
         </div>
       </div>

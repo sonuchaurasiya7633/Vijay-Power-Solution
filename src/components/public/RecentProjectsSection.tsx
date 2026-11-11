@@ -19,7 +19,7 @@ const defaultProjects: ProjectCardData[] = [
     location: "Patna, Bihar",
     capacityKw: 10,
     category: "Residential Rooftop",
-    image: "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=800&q=80",
+    image: "/images/gallery/customer-solar-01.jpg",
     outcome: "Monthly SBPDCL bill reduced by 85%. Usable terrace space preserved via elevated structure.",
   },
   {
@@ -28,7 +28,7 @@ const defaultProjects: ProjectCardData[] = [
     location: "Bodh Gaya, Bihar",
     capacityKw: 25,
     category: "Commercial Enterprise",
-    image: "https://images.unsplash.com/photo-1548337138-e87d889cc369?w=800&q=80",
+    image: "/images/gallery/customer-solar-02.jpg",
     outcome: "Daytime guest house HVAC powered completely by rooftop solar, saving ₹3.2L annually.",
   },
   {
@@ -37,7 +37,7 @@ const defaultProjects: ProjectCardData[] = [
     location: "Morabadi, Ranchi, Jharkhand",
     capacityKw: 5,
     category: "Hybrid Storage",
-    image: "https://images.unsplash.com/photo-1497440001374-f26997328c1b?w=800&q=80",
+    image: "/images/gallery/customer-solar-03.jpg",
     outcome: "Uninterrupted 24/7 power backup during frequent colony load shedding with zero diesel cost.",
   },
 ];

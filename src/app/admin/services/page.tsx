@@ -36,7 +36,7 @@ export default function AdminServicesPage() {
     serviceType: "installation",
     shortDescription: "",
     fullDescription: "",
-    image: "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=800&q=80",
+    image: "/images/gallery/customer-solar-01.jpg",
     isAvailable: true,
     isFeatured: false,
   });
@@ -61,7 +61,7 @@ export default function AdminServicesPage() {
       serviceType: "installation",
       shortDescription: "",
       fullDescription: "",
-      image: "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=800&q=80",
+      image: "/images/gallery/customer-solar-01.jpg",
       isAvailable: true,
       isFeatured: false,
     });
@@ -76,7 +76,7 @@ export default function AdminServicesPage() {
       serviceType: s.serviceType || "installation",
       shortDescription: s.shortDescription || "",
       fullDescription: s.fullDescription || s.shortDescription || "",
-      image: s.image || "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=800&q=80",
+      image: s.image || "/images/gallery/customer-solar-01.jpg",
       isAvailable: s.isAvailable !== undefined ? s.isAvailable : true,
       isFeatured: Boolean(s.isFeatured),
     });

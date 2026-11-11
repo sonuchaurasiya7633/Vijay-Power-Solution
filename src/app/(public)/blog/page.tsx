@@ -6,6 +6,8 @@ import connectDB from "@/lib/db/connection";
 import Blog from "@/models/Blog";
 import { formatDateIST } from "@/lib/utils/formatters";
 import CtaBanner from "@/components/public/CtaBanner";
+import { getPublicPagesCms } from "@/lib/cms-server";
+import { getLocalSolarGalleryImage, getSafeSolarImage } from "@/lib/image-fallback";
 
 export const metadata: Metadata = {
   title: "Solar Knowledge Hub & Blog | VIJOY POWER SOLUTION",
@@ -21,7 +23,7 @@ const defaultArticles = [
     category: "Government Schemes",
     readTime: "5 min read",
     date: "2024-04-10",
-    coverImage: "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=800&q=80",
+    coverImage: getLocalSolarGalleryImage(0),
   },
   {
     slug: "on-grid-vs-hybrid-solar-systems-comparison",
@@ -30,7 +32,7 @@ const defaultArticles = [
     category: "Technical Guide",
     readTime: "6 min read",
     date: "2024-05-18",
-    coverImage: "https://images.unsplash.com/photo-1497440001374-f26997328c1b?w=800&q=80",
+    coverImage: getLocalSolarGalleryImage(1),
   },
   {
     slug: "how-to-calculate-solar-panel-capacity-for-home",
@@ -39,7 +41,7 @@ const defaultArticles = [
     category: "Solar Engineering",
     readTime: "4 min read",
     date: "2024-06-02",
-    coverImage: "https://images.unsplash.com/photo-1548337138-e87d889cc369?w=800&q=80",
+    coverImage: getLocalSolarGalleryImage(2),
   },
 ];
 
@@ -47,6 +49,9 @@ export const dynamic = "force-dynamic";
 
 export default async function BlogIndexPage() {
   let dbBlogs: any[] = [];
+  const cms = await getPublicPagesCms();
+  const h = cms.blogPage;
+
   try {
     await connectDB();
     dbBlogs = await Blog.find({ isPublished: true }).sort({ publishedAt: -1 }).lean();
@@ -59,21 +64,21 @@ export default async function BlogIndexPage() {
     <div className="bg-white">
       <div className="bg-navy-900 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-solar-yellow bg-white/10 px-3 py-1 rounded-full">
-            Knowledge Hub
+          <span className="inline-block text-xs font-bold uppercase tracking-wider text-solar-yellow bg-white/10 px-3 py-1 rounded-full">
+            {h.badge}
           </span>
           <h1 className="text-3xl sm:text-5xl font-display font-extrabold text-white tracking-tight">
-            Solar Educational Articles & Guides
+            {h.title}
           </h1>
           <p className="text-sm sm:text-base text-slate-300 max-w-3xl leading-relaxed">
-            Practical advice written by solar engineers on net metering regulations, module selection, rooftop structural planning, and return on investment.
+            {h.subtitle}
           </p>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {articles.map((a: any) => (
+          {articles.map((a: any, idx: number) => (
             <article
               key={a.slug}
               className="bg-white rounded-3xl border border-slate-border hover:border-solar-green/40 shadow-sm hover:shadow-xl transition-all flex flex-col justify-between overflow-hidden group"
@@ -81,7 +86,7 @@ export default async function BlogIndexPage() {
               <div>
                 <div className="relative h-48 w-full bg-navy-100 overflow-hidden">
                   <Image
-                    src={a.coverImage}
+                    src={getSafeSolarImage(a.coverImage, idx)}
                     alt={a.title}
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-500"

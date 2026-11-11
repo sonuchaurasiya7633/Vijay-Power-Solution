@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
-import { Compass, CheckCircle2, ShieldCheck, MapPin } from "lucide-react";
+import { Compass, CheckCircle2, ShieldCheck } from "lucide-react";
 import LeadCaptureForm from "@/components/forms/LeadCaptureForm";
+import { getPublicPagesCms } from "@/lib/cms-server";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Request Rooftop Solar Site Survey | VIJOY POWER SOLUTION",
@@ -8,19 +11,22 @@ export const metadata: Metadata = {
     "Book an on-site rooftop feasibility inspection by our certified solar technicians across India. Precise shadow analysis and structural evaluation.",
 };
 
-export default function RequestSiteSurveyPage() {
+export default async function RequestSiteSurveyPage() {
+  const cms = await getPublicPagesCms();
+  const h = cms.siteSurveyPage;
+
   return (
     <div className="bg-white">
       <div className="bg-navy-900 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-solar-yellow bg-white/10 px-3 py-1 rounded-full">
-            Engineering Feasibility
+          <span className="inline-block text-xs font-bold uppercase tracking-wider text-solar-yellow bg-white/10 px-3 py-1 rounded-full">
+            {h.badge}
           </span>
           <h1 className="text-3xl sm:text-5xl font-display font-extrabold text-white tracking-tight">
-            Request an On-Site Rooftop Survey
+            {h.title}
           </h1>
           <p className="text-sm sm:text-base text-slate-300 max-w-3xl leading-relaxed">
-            Our certified field technicians inspect your roof orientation, tilt, shadow-casting obstacles, and connection panel distance to ensure an optimal 25-year solar yield.
+            {h.subtitle}
           </p>
         </div>
       </div>
