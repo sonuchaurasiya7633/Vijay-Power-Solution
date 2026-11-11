@@ -197,7 +197,7 @@ export default function LeadDetailPage() {
             href={waLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-green-600 text-white hover:bg-green-700 flex items-center gap-1.5 transition-colors"
+            className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-solar-green text-white hover:bg-solar-green-hover flex items-center gap-1.5 transition-colors"
           >
             <MessageCircle className="w-3.5 h-3.5" />
             <span>Open WhatsApp</span>

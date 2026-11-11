@@ -106,7 +106,7 @@ export default async function ContactPage() {
   return (
     <div className="bg-white">
       {/* Header */}
-      <div className="bg-navy-900 text-white py-16">
+      <div className="bg-navy-800 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
           <span className="text-xs font-bold uppercase tracking-wider text-solar-yellow bg-white/10 px-3 py-1 rounded-full">
             {heroBadge}
@@ -159,14 +159,14 @@ export default async function ContactPage() {
               </div>
 
               <div className="p-4 rounded-2xl border border-slate-border flex items-start gap-3.5 bg-slate-bg/40">
-                <MessageCircle className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
+                <MessageCircle className="w-5 h-5 text-solar-green shrink-0 mt-0.5" />
                 <div>
                   <h4 className="font-bold text-navy-800">WhatsApp Support Desk</h4>
                   <a
                     href={`https://wa.me/${cleanWa}?text=Hello%20VIJOY%20POWER%20SOLUTION,%20I%20would%20like%20to%20enquire%20about%20solar%20installation.`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-green-600 font-bold block mt-1 hover:underline"
+                    className="text-solar-green font-bold block mt-1 hover:underline"
                   >
                     Chat on WhatsApp (+{cleanWa})
                   </a>

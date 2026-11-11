@@ -42,7 +42,7 @@ export default async function CtaBanner() {
   const cleanWa = ctaData.whatsapp ? ctaData.whatsapp.replace(/[^0-9]/g, "") : "919431000000";
 
   return (
-    <section className="bg-gradient-to-r from-navy-900 via-navy-800 to-navy-900 text-white py-16 relative overflow-hidden">
+    <section className="bg-navy-800 text-white py-16 relative overflow-hidden">
       <div className="absolute -right-20 -bottom-20 w-80 h-80 rounded-full bg-solar-green/15 blur-3xl pointer-events-none" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="bg-white/5 border border-white/10 rounded-3xl p-8 sm:p-12 flex flex-col lg:flex-row items-center justify-between gap-8 backdrop-blur-sm">

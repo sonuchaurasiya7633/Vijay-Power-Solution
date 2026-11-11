@@ -88,7 +88,7 @@ export default function FloatingWhatsApp({
           </svg>
         </a>
         {/* Tooltip */}
-        <span className="hidden sm:group-hover:block absolute right-full top-1/2 -translate-y-1/2 mr-3 px-2.5 py-1 text-xs font-semibold text-white bg-navy-900 rounded-lg shadow-md whitespace-nowrap pointer-events-none transition-opacity">
+        <span className="hidden sm:group-hover:block absolute right-full top-1/2 -translate-y-1/2 mr-3 px-2.5 py-1 text-xs font-semibold text-white bg-navy-800 rounded-lg shadow-md whitespace-nowrap pointer-events-none transition-opacity">
           WhatsApp Us
         </span>
       </div>
@@ -98,13 +98,13 @@ export default function FloatingWhatsApp({
         <a
           href={`tel:${cleanPhone}`}
           onClick={handleCallClick}
-          className="flex items-center justify-center w-12 h-12 sm:w-13 sm:h-13 rounded-full bg-white text-navy-800 border-2 border-slate-200/90 shadow-xl hover:border-solar-green hover:shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-emerald-100"
+          className="flex items-center justify-center w-12 h-12 sm:w-13 sm:h-13 rounded-full bg-white text-navy-800 border-2 border-slate-border shadow-xl hover:border-solar-green hover:shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-solar-green-light"
           aria-label="Call solar hotline directly"
         >
-          <Phone className="w-5 h-5 sm:w-6 sm:h-6 text-[#128C7E] group-hover:rotate-12 transition-transform" />
+          <Phone className="w-5 h-5 sm:w-6 sm:h-6 text-solar-green group-hover:rotate-12 transition-transform" />
         </a>
         {/* Tooltip */}
-        <span className="hidden sm:group-hover:block absolute right-full top-1/2 -translate-y-1/2 mr-3 px-2.5 py-1 text-xs font-semibold text-white bg-navy-900 rounded-lg shadow-md whitespace-nowrap pointer-events-none transition-opacity">
+        <span className="hidden sm:group-hover:block absolute right-full top-1/2 -translate-y-1/2 mr-3 px-2.5 py-1 text-xs font-semibold text-white bg-navy-800 rounded-lg shadow-md whitespace-nowrap pointer-events-none transition-opacity">
           Call: {contactData.phone}
         </span>
       </div>

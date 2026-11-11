@@ -107,10 +107,10 @@ export default function QuotationsPage() {
                       <span
                         className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${
                           q.status === "approved" || q.status === "accepted"
-                            ? "bg-green-100 text-green-700"
+                            ? "bg-solar-green-light text-solar-green"
                             : q.status === "sent"
-                            ? "bg-blue-100 text-blue-700"
-                            : "bg-slate-100 text-slate-700"
+                            ? "bg-navy-50 text-navy-800"
+                            : "bg-slate-bg text-slate-main"
                         }`}
                       >
                         {q.status}
@@ -129,7 +129,7 @@ export default function QuotationsPage() {
                       {q.status === "approved" && (
                         <button
                           onClick={() => updateStatus(q._id, "sent")}
-                          className="px-2 py-1 rounded bg-blue-600 text-white font-bold text-[10px] hover:bg-blue-700"
+                          className="px-2 py-1 rounded bg-navy-800 text-white font-bold text-[10px] hover:bg-navy-900"
                         >
                           Mark Sent
                         </button>

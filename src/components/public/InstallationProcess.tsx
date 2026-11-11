@@ -72,7 +72,7 @@ export default async function InstallationProcess() {
   }
 
   return (
-    <section className="py-20 bg-navy-900 text-white relative overflow-hidden">
+    <section className="py-20 bg-navy-800 text-white relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto space-y-3 mb-16">
           <span className="text-xs font-bold uppercase tracking-wider text-solar-yellow bg-white/10 px-3 py-1 rounded-full">

@@ -40,7 +40,7 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-navy-900 via-navy-800 to-navy-900 p-4">
+    <div className="min-h-screen w-full flex items-center justify-center bg-navy-800 p-4">
       <div className="w-full max-w-md bg-white rounded-3xl p-8 sm:p-10 shadow-2xl border border-slate-border space-y-6">
         {/* Logo & Heading */}
         <div className="text-center space-y-3">

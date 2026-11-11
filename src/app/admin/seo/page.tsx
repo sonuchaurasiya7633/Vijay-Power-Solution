@@ -119,8 +119,8 @@ export default function AdminSeoPage() {
           </button>
 
           {saved && (
-            <div className="p-2.5 rounded-xl bg-green-50 border border-green-200 text-green-800 text-xs flex items-center gap-1.5 animate-in fade-in">
-              <CheckCircle2 className="w-4 h-4 text-green-600" />
+            <div className="p-2.5 rounded-xl bg-solar-green-light border border-solar-green/30 text-solar-green text-xs flex items-center gap-1.5 animate-in fade-in">
+              <CheckCircle2 className="w-4 h-4 text-solar-green" />
               <span>Saved to database!</span>
             </div>
           )}

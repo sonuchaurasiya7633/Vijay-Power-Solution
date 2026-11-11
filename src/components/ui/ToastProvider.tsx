@@ -13,31 +13,31 @@ export default function ToastProvider() {
       gap={8}
       visibleToasts={5}
       icons={{
-        success: <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />,
+        success: <CheckCircle2 className="w-5 h-5 text-solar-green shrink-0" />,
         error: <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" />,
-        warning: <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0" />,
-        info: <Info className="w-5 h-5 text-sky-600 shrink-0" />,
-        loading: <Loader2 className="w-5 h-5 text-emerald-600 animate-spin shrink-0" />,
+        warning: <AlertTriangle className="w-5 h-5 text-solar-yellow-hover shrink-0" />,
+        info: <Info className="w-5 h-5 text-navy-800 shrink-0" />,
+        loading: <Loader2 className="w-5 h-5 text-solar-green animate-spin shrink-0" />,
       }}
       toastOptions={{
         unstyled: false,
         className:
-          "!bg-white !text-navy-900 !border !border-slate-200 !shadow-xl !shadow-navy-950/10 !rounded-2xl !p-4 !font-sans !text-sm",
+          "!bg-white !text-slate-main !border !border-slate-border !shadow-xl !shadow-navy-900/10 !rounded-2xl !p-4 !font-sans !text-sm",
         classNames: {
           toast:
-            "group flex items-center gap-3 p-4 rounded-2xl border bg-white text-navy-900 shadow-xl transition-all duration-200 ease-out",
-          title: "text-sm font-bold text-navy-900 tracking-tight",
-          description: "text-xs font-medium text-slate-500 mt-0.5",
+            "group flex items-center gap-3 p-4 rounded-2xl border bg-white text-slate-main shadow-xl transition-all duration-200 ease-out",
+          title: "text-sm font-bold text-navy-800 tracking-tight",
+          description: "text-xs font-medium text-slate-muted mt-0.5",
           actionButton:
-            "!bg-navy-900 !text-white !text-xs !font-semibold !px-3 !py-1.5 !rounded-lg !hover:bg-navy-800 transition-colors",
+            "!bg-navy-800 !text-white !text-xs !font-semibold !px-3 !py-1.5 !rounded-lg !hover:bg-navy-900 transition-colors",
           cancelButton:
-            "!bg-slate-100 !text-slate-700 !text-xs !font-semibold !px-3 !py-1.5 !rounded-lg !hover:bg-slate-200 transition-colors",
+            "!bg-slate-bg !text-slate-main !text-xs !font-semibold !px-3 !py-1.5 !rounded-lg !hover:bg-slate-border transition-colors",
           closeButton:
-            "!bg-white !text-slate-400 !border-slate-200 !hover:text-navy-900 !hover:bg-slate-100 !transition-all !rounded-full !w-5 !h-5",
-          success: "!border-emerald-200 !bg-emerald-50/40",
+            "!bg-white !text-slate-muted !border-slate-border !hover:text-navy-800 !hover:bg-slate-bg !transition-all !rounded-full !w-5 !h-5",
+          success: "!border-solar-green/30 !bg-solar-green-light/60",
           error: "!border-rose-200 !bg-rose-50/40",
-          warning: "!border-amber-200 !bg-amber-50/40",
-          info: "!border-sky-200 !bg-sky-50/40",
+          warning: "!border-solar-yellow/40 !bg-solar-yellow-light/70",
+          info: "!border-slate-border !bg-slate-bg",
         },
       }}
     />

@@ -223,8 +223,8 @@ export default function LeadsCRMPage() {
                           l.priority === "urgent"
                             ? "bg-red-100 text-red-700"
                             : l.priority === "high"
-                            ? "bg-amber-100 text-amber-700"
-                            : "bg-slate-100 text-slate-700"
+                            ? "bg-solar-yellow-light text-solar-yellow-hover"
+                            : "bg-slate-bg text-slate-main"
                         }`}
                       >
                         {l.priority}

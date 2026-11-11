@@ -139,7 +139,7 @@ export default function InstallationsPage() {
                     </td>
                     <td className="p-4">
                       {j.convertedToPublicProject ? (
-                        <span className="text-green-700 font-bold flex items-center gap-1 text-[11px]">
+                        <span className="text-solar-green font-bold flex items-center gap-1 text-[11px]">
                           <CheckCircle2 className="w-3.5 h-3.5" />
                           <span>Linked to Portfolio</span>
                         </span>

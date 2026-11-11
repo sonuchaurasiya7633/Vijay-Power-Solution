@@ -116,8 +116,8 @@ export default function SurveysPage() {
                       <span
                         className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${
                           s.status === "completed"
-                            ? "bg-green-100 text-green-700"
-                            : "bg-purple-100 text-purple-700"
+                            ? "bg-solar-green-light text-solar-green"
+                            : "bg-solar-yellow-light text-solar-yellow-hover"
                         }`}
                       >
                         {s.status}
@@ -132,7 +132,7 @@ export default function SurveysPage() {
                           Record Outcome
                         </button>
                       ) : (
-                        <span className="text-green-700 font-bold flex items-center gap-1">
+                        <span className="text-solar-green font-bold flex items-center gap-1">
                           <CheckCircle2 className="w-3.5 h-3.5" />
                           <span>Completed</span>
                         </span>

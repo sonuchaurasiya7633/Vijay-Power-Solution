@@ -205,7 +205,7 @@ export default function AdminSubsidyCmsPage() {
           </Link>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-solar-green bg-solar-green-light px-2 py-0.5 rounded-full">
                 Page CMS
               </span>
               <span className="text-[10px] font-semibold text-slate-400">/subsidy-information</span>
@@ -380,7 +380,7 @@ export default function AdminSubsidyCmsPage() {
                         type="text"
                         value={slab.subsidyAmount}
                         onChange={(e) => updateSlab(idx, "subsidyAmount", e.target.value)}
-                        className="w-full text-xs font-bold text-emerald-700 px-2.5 py-2 rounded-lg border border-slate-border bg-white"
+                        className="w-full text-xs font-bold text-solar-green px-2.5 py-2 rounded-lg border border-slate-border bg-white"
                       />
                     </div>
                   </div>

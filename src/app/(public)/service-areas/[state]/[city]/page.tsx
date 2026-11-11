@@ -43,7 +43,7 @@ export default async function CityServiceAreaPage({
   return (
     <div className="bg-white">
       {/* Header */}
-      <div className="bg-navy-900 text-white py-16">
+      <div className="bg-navy-800 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
           <div className="flex items-center gap-2 text-xs text-solar-yellow">
             <Link href="/service-areas" className="hover:underline">Service Areas</Link>

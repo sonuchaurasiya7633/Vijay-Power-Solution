@@ -215,7 +215,7 @@ export default function AdminTeamPage() {
                     <td className="p-4">
                       <span
                         className={`text-[10px] font-bold px-2 py-0.5 rounded ${
-                          m.isActive ? "text-green-700 bg-green-50" : "text-slate-500 bg-slate-100"
+                          m.isActive ? "text-solar-green bg-solar-green-light" : "text-slate-muted bg-slate-bg"
                         }`}
                       >
                         {m.isActive ? "Active" : "Disabled"}

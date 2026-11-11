@@ -12,7 +12,7 @@ export default function SolarCardPlaceholder({
   compact = false,
 }: SolarCardPlaceholderProps) {
   return (
-    <div className="relative w-full h-full bg-gradient-to-br from-navy-900 via-navy-800 to-navy-950 flex items-center justify-center p-5 overflow-hidden select-none">
+    <div className="relative w-full h-full bg-navy-800 flex items-center justify-center p-5 overflow-hidden select-none">
       {/* Subtle architectural grid lines */}
       <div
         className="absolute inset-0 opacity-15"

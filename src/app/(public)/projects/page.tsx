@@ -42,7 +42,7 @@ export default async function ProjectsPage() {
   return (
     <div className="bg-white">
       {/* Header */}
-      <div className="bg-navy-900 text-white py-16">
+      <div className="bg-navy-800 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-solar-green/20 border border-solar-green/30 text-solar-yellow text-xs font-bold uppercase tracking-wider">
             <Sparkles className="w-3.5 h-3.5" />

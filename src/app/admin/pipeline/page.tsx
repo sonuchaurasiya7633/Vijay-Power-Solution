@@ -27,11 +27,11 @@ export default function PipelinePage() {
   }, []);
 
   const stages = [
-    { key: "new_lead", label: "New Lead", color: "border-blue-400" },
-    { key: "contacted", label: "Contacted", color: "border-amber-400" },
-    { key: "qualified", label: "Qualified", color: "border-purple-400" },
-    { key: "site_survey_scheduled", label: "Survey Scheduled", color: "border-indigo-400" },
-    { key: "quotation_sent", label: "Quotation Sent", color: "border-teal-400" },
+    { key: "new_lead", label: "New Lead", color: "border-navy-600" },
+    { key: "contacted", label: "Contacted", color: "border-solar-yellow" },
+    { key: "qualified", label: "Qualified", color: "border-navy-700" },
+    { key: "site_survey_scheduled", label: "Survey Scheduled", color: "border-navy-800" },
+    { key: "quotation_sent", label: "Quotation Sent", color: "border-solar-yellow-hover" },
     { key: "won", label: "Won Customer", color: "border-solar-green" },
   ];
 
@@ -100,8 +100,8 @@ export default function PipelinePage() {
                               lead.priority === "urgent"
                                 ? "bg-red-100 text-red-700"
                                 : lead.priority === "high"
-                                ? "bg-amber-100 text-amber-700"
-                                : "bg-slate-100 text-slate-700"
+                                ? "bg-solar-yellow-light text-solar-yellow-hover"
+                                : "bg-slate-bg text-slate-main"
                             }`}
                           >
                             {lead.priority}

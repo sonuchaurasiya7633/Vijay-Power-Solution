@@ -242,14 +242,14 @@ export default function AdminServicesPage() {
                     <span
                       className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase shadow-sm ${
                         s.isAvailable
-                          ? "bg-green-500 text-white"
-                          : "bg-slate-700 text-slate-200"
+                          ? "bg-solar-green text-white"
+                          : "bg-navy-800 text-slate-200"
                       }`}
                     >
                       {s.isAvailable ? "Active" : "Hidden"}
                     </span>
                     {s.isFeatured && (
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase bg-amber-500 text-white shadow-sm flex items-center gap-1">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase bg-solar-yellow text-navy-800 shadow-sm flex items-center gap-1">
                         <Sparkles className="w-2.5 h-2.5" />
                         Featured
                       </span>

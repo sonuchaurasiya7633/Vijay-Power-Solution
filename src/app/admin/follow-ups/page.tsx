@@ -135,10 +135,10 @@ export default function FollowUpsPage() {
                       <span
                         className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${
                           fu.status === "completed"
-                            ? "bg-green-100 text-green-700"
+                            ? "bg-solar-green-light text-solar-green"
                             : fu.status === "overdue"
                             ? "bg-red-100 text-red-700"
-                            : "bg-amber-100 text-amber-700"
+                            : "bg-solar-yellow-light text-solar-yellow-hover"
                         }`}
                       >
                         {fu.status}

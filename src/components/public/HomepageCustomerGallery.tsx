@@ -125,7 +125,7 @@ export default function HomepageCustomerGallery({
         </div>
 
         {/* Section 9: Trust and Conversion Design CTA */}
-        <div className="mt-14 bg-gradient-to-r from-navy-900 via-navy-950 to-navy-900 text-white rounded-3xl p-6 sm:p-10 border border-navy-700 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="mt-14 bg-navy-800 text-white rounded-3xl p-6 sm:p-10 border border-navy-700 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="space-y-2 text-center md:text-left">
             <div className="inline-flex items-center gap-1.5 text-solar-yellow text-xs font-bold uppercase tracking-wider">
               <ShieldCheck className="w-4 h-4" />

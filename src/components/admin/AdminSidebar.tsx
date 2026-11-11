@@ -135,7 +135,7 @@ export default function AdminSidebar({
 
   return (
     <aside
-      className={`fixed lg:static top-0 bottom-0 left-0 z-50 bg-navy-900 text-slate-300 flex flex-col shrink-0 border-r border-navy-800 transition-all duration-300 ease-in-out select-none shadow-xl lg:shadow-none ${
+      className={`fixed lg:static top-0 bottom-0 left-0 z-50 bg-navy-800 text-slate-200 flex flex-col shrink-0 border-r border-navy-700 transition-all duration-300 ease-in-out select-none shadow-xl lg:shadow-none ${
         /* Mobile drawer classes */
         mobileOpen ? "translate-x-0 w-72" : "-translate-x-full lg:translate-x-0"
       } ${
@@ -144,7 +144,7 @@ export default function AdminSidebar({
       }`}
     >
       {/* Brand Header */}
-      <div className="h-16 px-4 border-b border-navy-800 flex items-center justify-between shrink-0">
+      <div className="h-16 px-4 border-b border-navy-700 flex items-center justify-between shrink-0">
         <Link
           href="/admin/dashboard"
           className="flex items-center gap-2.5 overflow-hidden group"
@@ -169,7 +169,7 @@ export default function AdminSidebar({
           <button
             type="button"
             onClick={() => setCollapsed(!collapsed)}
-            className="hidden lg:flex w-8 h-8 rounded-lg text-slate-400 hover:text-white hover:bg-navy-800 items-center justify-center transition-colors"
+            className="hidden lg:flex w-8 h-8 rounded-lg text-slate-300 hover:text-white hover:bg-navy-700 items-center justify-center transition-colors"
             title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
             {collapsed ? (
@@ -185,7 +185,7 @@ export default function AdminSidebar({
           <button
             type="button"
             onClick={() => setMobileOpen(false)}
-            className="lg:hidden w-8 h-8 rounded-lg text-slate-400 hover:text-white hover:bg-navy-800 flex items-center justify-center"
+            className="lg:hidden w-8 h-8 rounded-lg text-slate-300 hover:text-white hover:bg-navy-700 flex items-center justify-center"
             aria-label="Close sidebar"
           >
             <X className="w-5 h-5" />
@@ -202,7 +202,7 @@ export default function AdminSidebar({
                 {g.group}
               </span>
             ) : (
-              <div className="h-px bg-navy-800 mx-2 my-2" />
+              <div className="h-px bg-navy-700 mx-2 my-2" />
             )}
 
             <div className="space-y-0.5 mt-1">
@@ -220,11 +220,11 @@ export default function AdminSidebar({
                       } py-2 rounded-xl text-xs font-semibold transition-all ${
                         active
                           ? "bg-solar-green text-white shadow-sm font-bold"
-                          : "text-slate-300 hover:bg-navy-800 hover:text-white"
+                          : "text-slate-200 hover:bg-navy-700 hover:text-white"
                       }`}
                     >
                       <div className="flex items-center gap-2.5 min-w-0">
-                        <Icon className={`w-4 h-4 shrink-0 ${active ? "text-white" : "text-slate-400 group-hover:text-white"}`} />
+                        <Icon className={`w-4 h-4 shrink-0 ${active ? "text-white" : "text-slate-300 group-hover:text-white"}`} />
                         {!collapsed && (
                           <span className="truncate">{item.label}</span>
                         )}
@@ -243,7 +243,7 @@ export default function AdminSidebar({
 
                     {/* Floating Tooltip in Collapsed Mode */}
                     {collapsed && (
-                      <div className="hidden lg:group-hover:block absolute left-full top-1/2 -translate-y-1/2 ml-3 px-3 py-1.5 bg-navy-950 text-white text-xs font-semibold rounded-lg shadow-xl border border-navy-700 whitespace-nowrap z-50 pointer-events-none animate-in fade-in zoom-in-95 duration-150">
+                      <div className="hidden lg:group-hover:block absolute left-full top-1/2 -translate-y-1/2 ml-3 px-3 py-1.5 bg-navy-900 text-white text-xs font-semibold rounded-lg shadow-xl border border-navy-700 whitespace-nowrap z-50 pointer-events-none animate-in fade-in zoom-in-95 duration-150">
                         {item.label}
                       </div>
                     )}
@@ -256,7 +256,7 @@ export default function AdminSidebar({
       </div>
 
       {/* User Footer & Logout */}
-      <div className="p-3 border-t border-navy-800 bg-navy-900/90 shrink-0">
+      <div className="p-3 border-t border-navy-700 bg-navy-900 shrink-0">
         <div className={`flex items-center ${collapsed ? "justify-center" : "justify-between"}`}>
           {!collapsed && (
             <div className="overflow-hidden pr-2">

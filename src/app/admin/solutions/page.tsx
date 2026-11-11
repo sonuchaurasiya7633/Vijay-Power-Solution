@@ -241,8 +241,8 @@ export default function AdminSolutionsPage() {
                     <span
                       className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase shadow-sm ${
                         s.isPublished
-                          ? "bg-green-500 text-white"
-                          : "bg-slate-700 text-slate-200"
+                          ? "bg-solar-green text-white"
+                          : "bg-navy-800 text-slate-200"
                       }`}
                     >
                       {s.isPublished ? "Published" : "Draft"}

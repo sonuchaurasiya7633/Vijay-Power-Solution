@@ -177,7 +177,7 @@ export default function AdminSolarPanelsCmsPage() {
       </div>
 
       {/* Product Catalog Shortcut Notice */}
-      <div className="bg-navy-900 text-white rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-navy-800 text-white rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-start gap-3">
           <Package className="w-5 h-5 text-solar-gold shrink-0 mt-0.5" />
           <div>
@@ -191,7 +191,7 @@ export default function AdminSolarPanelsCmsPage() {
         </div>
         <Link
           href="/admin/products"
-          className="px-4 py-2 rounded-xl bg-solar-gold text-navy-900 text-xs font-extrabold whitespace-nowrap hover:bg-amber-400 transition-colors"
+          className="px-4 py-2 rounded-xl bg-solar-gold text-navy-800 text-xs font-extrabold whitespace-nowrap hover:bg-solar-yellow-hover transition-colors"
         >
           Open Product Catalogue →
         </Link>

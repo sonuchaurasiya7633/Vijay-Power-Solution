@@ -85,7 +85,7 @@ export default function AdminCmsAllPages() {
       status: "Published",
       lastUpdated: "Recently",
       badge: "Brand Identity",
-      badgeColor: "bg-blue-100 text-blue-800 border-blue-200",
+      badgeColor: "bg-navy-50 text-navy-800 border-slate-border",
     },
     {
       id: "pages-content",
@@ -100,7 +100,7 @@ export default function AdminCmsAllPages() {
       status: "Active",
       lastUpdated: "Unified Editor",
       badge: "Global Pages CMS",
-      badgeColor: "bg-emerald-100 text-emerald-800 border-emerald-200",
+      badgeColor: "bg-solar-green-light text-solar-green border-solar-green/30",
     },
     {
       id: "products",
@@ -115,7 +115,7 @@ export default function AdminCmsAllPages() {
       status: "Published",
       lastUpdated: "Live Sync",
       badge: "Solar Panels CMS",
-      badgeColor: "bg-emerald-100 text-emerald-800 border-emerald-200",
+      badgeColor: "bg-solar-green-light text-solar-green border-solar-green/30",
     },
     {
       id: "solutions",
@@ -130,7 +130,7 @@ export default function AdminCmsAllPages() {
       status: "Published",
       lastUpdated: "Live Sync",
       badge: "Solutions",
-      badgeColor: "bg-purple-100 text-purple-800 border-purple-200",
+      badgeColor: "bg-navy-50 text-navy-800 border-slate-border",
     },
     {
       id: "services",
@@ -145,7 +145,7 @@ export default function AdminCmsAllPages() {
       status: "Published",
       lastUpdated: "Live Sync",
       badge: "Services",
-      badgeColor: "bg-teal-100 text-teal-800 border-teal-200",
+      badgeColor: "bg-solar-green-light text-solar-green border-solar-green/30",
     },
     {
       id: "projects",
@@ -160,7 +160,7 @@ export default function AdminCmsAllPages() {
       status: "Published",
       lastUpdated: "Live Sync",
       badge: "Portfolio",
-      badgeColor: "bg-indigo-100 text-indigo-800 border-indigo-200",
+      badgeColor: "bg-navy-50 text-navy-800 border-slate-border",
     },
     {
       id: "gallery",
@@ -175,7 +175,7 @@ export default function AdminCmsAllPages() {
       status: "Published",
       lastUpdated: "Live Sync",
       badge: "Authentic Photos",
-      badgeColor: "bg-amber-100 text-amber-800 border-amber-200",
+      badgeColor: "bg-solar-yellow-light text-solar-yellow-hover border-solar-yellow/40",
     },
     {
       id: "videos",
@@ -190,7 +190,7 @@ export default function AdminCmsAllPages() {
       status: "Published",
       lastUpdated: "Recently",
       badge: "Media",
-      badgeColor: "bg-rose-100 text-rose-800 border-rose-200",
+      badgeColor: "bg-navy-50 text-navy-800 border-slate-border",
     },
     {
       id: "faqs",
@@ -205,7 +205,7 @@ export default function AdminCmsAllPages() {
       status: "Published",
       lastUpdated: "Live Sync",
       badge: "Support",
-      badgeColor: "bg-sky-100 text-sky-800 border-sky-200",
+      badgeColor: "bg-navy-50 text-navy-800 border-slate-border",
     },
     {
       id: "testimonials",
@@ -220,7 +220,7 @@ export default function AdminCmsAllPages() {
       status: "Published",
       lastUpdated: "Live Sync",
       badge: "Client Proof",
-      badgeColor: "bg-green-100 text-green-800 border-green-200",
+      badgeColor: "bg-solar-green-light text-solar-green border-solar-green/30",
     },
     {
       id: "blog",
@@ -235,7 +235,7 @@ export default function AdminCmsAllPages() {
       status: "Published",
       lastUpdated: "Live Sync",
       badge: "Knowledge Hub",
-      badgeColor: "bg-amber-100 text-amber-800 border-amber-200",
+      badgeColor: "bg-solar-yellow-light text-solar-yellow-hover border-solar-yellow/40",
     },
     {
       id: "subsidy",
@@ -250,7 +250,7 @@ export default function AdminCmsAllPages() {
       status: "Published",
       lastUpdated: "Recently",
       badge: "Govt Schemes",
-      badgeColor: "bg-emerald-100 text-emerald-800 border-emerald-200",
+      badgeColor: "bg-solar-green-light text-solar-green border-solar-green/30",
     },
     {
       id: "calculator",
@@ -265,7 +265,7 @@ export default function AdminCmsAllPages() {
       status: "Active",
       lastUpdated: "System Tool",
       badge: "Calculator",
-      badgeColor: "bg-blue-100 text-blue-800 border-blue-200",
+      badgeColor: "bg-navy-50 text-navy-800 border-slate-border",
     },
     {
       id: "get-quote",
@@ -310,7 +310,7 @@ export default function AdminCmsAllPages() {
       status: "Published",
       lastUpdated: "Live Sync",
       badge: "Pan India",
-      badgeColor: "bg-green-100 text-green-800 border-green-200",
+      badgeColor: "bg-solar-green-light text-solar-green border-solar-green/30",
     },
     {
       id: "contact",
@@ -325,7 +325,7 @@ export default function AdminCmsAllPages() {
       status: "Published",
       lastUpdated: "Recently",
       badge: "Lead Routing",
-      badgeColor: "bg-purple-100 text-purple-800 border-purple-200",
+      badgeColor: "bg-navy-50 text-navy-800 border-slate-border",
     },
     {
       id: "header-footer",
@@ -416,7 +416,7 @@ export default function AdminCmsAllPages() {
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div className="bg-gradient-to-r from-navy-900 via-navy-800 to-navy-950 p-6 sm:p-8 rounded-3xl text-white shadow-xl border border-navy-700 relative overflow-hidden">
+      <div className="bg-navy-800 p-6 sm:p-8 rounded-3xl text-white shadow-xl border border-navy-700 relative overflow-hidden">
         <div className="relative z-10 space-y-3">
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-[11px] font-extrabold uppercase tracking-widest text-solar-yellow bg-white/10 px-3 py-1 rounded-full border border-solar-yellow/30">

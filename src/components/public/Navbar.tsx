@@ -121,10 +121,10 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-border shadow-sm">
+      <header className="sticky top-0 z-40 bg-white border-b border-slate-border shadow-sm">
       {/* Top Notice Marquee Bar (if enabled) */}
       {headerCms.noticeBar.enabled && (
-        <div className="bg-navy-900 text-white text-[11px] py-1.5 px-4 text-center border-b border-navy-700">
+        <div className="bg-navy-800 text-white text-[11px] py-1.5 px-4 text-center border-b border-navy-700">
           <div className="max-w-7xl mx-auto flex items-center justify-center gap-2 flex-wrap">
             <span className="font-bold text-solar-yellow bg-white/10 px-2 py-0.5 rounded text-[10px] uppercase">
               {headerCms.noticeBar.badge}
@@ -257,7 +257,7 @@ export default function Navbar() {
           <div className="flex items-center gap-2 lg:hidden">
             <a
               href={`tel:${cleanPhone}`}
-              className="w-10 h-10 rounded-xl bg-slate-50 text-navy-800 border border-slate-border flex items-center justify-center hover:bg-slate-100 transition-colors"
+              className="w-10 h-10 rounded-xl bg-slate-bg text-navy-800 border border-slate-border flex items-center justify-center hover:bg-navy-50 transition-colors"
               aria-label="Call VPS Solar Helpline"
             >
               <Phone className="w-4 h-4 text-solar-green" />
@@ -265,7 +265,7 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => setMobileMenuOpen(true)}
-              className="w-11 h-11 rounded-xl text-navy-800 hover:bg-slate-100 flex items-center justify-center transition-colors"
+              className="w-11 h-11 rounded-xl text-navy-800 hover:bg-slate-bg flex items-center justify-center transition-colors"
               aria-label="Open navigation menu"
               aria-expanded={mobileMenuOpen}
             >
@@ -514,7 +514,7 @@ export default function Navbar() {
 
         {/* Drawer Fixed Footer & Primary Action */}
         <div
-          className="shrink-0 p-4 border-t border-slate-100 bg-white/95 space-y-2.5"
+          className="shrink-0 p-4 border-t border-slate-border bg-white space-y-2.5"
           style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }}
         >
           {/* Primary CTA */}
@@ -531,7 +531,7 @@ export default function Navbar() {
           <div className="grid grid-cols-2 gap-2 text-xs font-semibold">
             <a
               href={`tel:${cleanPhone}`}
-              className="h-10 flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 text-navy-800 hover:bg-slate-100 transition-colors"
+              className="h-10 flex items-center justify-center gap-1.5 rounded-lg border border-slate-border bg-slate-bg text-navy-800 hover:bg-navy-50 transition-colors"
             >
               <Phone className="w-3.5 h-3.5 text-solar-green" />
               <span>Call Helpline</span>
@@ -540,9 +540,9 @@ export default function Navbar() {
               href={`https://wa.me/${cleanWa}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="h-10 flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 text-navy-800 hover:bg-slate-100 transition-colors"
+              className="h-10 flex items-center justify-center gap-1.5 rounded-lg border border-slate-border bg-slate-bg text-navy-800 hover:bg-navy-50 transition-colors"
             >
-              <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
+              <MessageCircle className="w-3.5 h-3.5 text-solar-green" />
               <span>WhatsApp Desk</span>
             </a>
           </div>

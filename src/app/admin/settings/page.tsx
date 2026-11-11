@@ -160,8 +160,8 @@ export default function AdminSettingsPage() {
         </button>
 
         {saved && (
-          <div className="p-3.5 rounded-xl bg-green-50 border border-green-200 text-green-800 text-xs flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-green-600" />
+          <div className="p-3.5 rounded-xl bg-solar-green-light border border-solar-green/30 text-solar-green text-xs flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-solar-green" />
             <span>Platform settings updated successfully!</span>
           </div>
         )}

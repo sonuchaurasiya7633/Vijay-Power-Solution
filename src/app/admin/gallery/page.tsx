@@ -619,8 +619,8 @@ export default function AdminInstallationGalleryPage() {
                           title={item.isPublished ? "Published (click to hide)" : "Hidden (click to publish)"}
                           className={`p-1.5 rounded-lg border transition-colors ${
                             item.isPublished
-                              ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                              : "bg-slate-100 text-slate-500 border-slate-200"
+                              ? "bg-solar-green-light text-solar-green border-solar-green/30"
+                              : "bg-slate-bg text-slate-muted border-slate-border"
                           }`}
                         >
                           {item.isPublished ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
@@ -629,7 +629,7 @@ export default function AdminInstallationGalleryPage() {
                         <button
                           onClick={() => openEditModal(item)}
                           title="Edit details"
-                          className="p-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition-colors"
+                          className="p-1.5 rounded-lg bg-navy-50 text-navy-800 hover:bg-navy-100 border border-slate-border transition-colors"
                         >
                           <Edit3 className="w-3.5 h-3.5" />
                         </button>

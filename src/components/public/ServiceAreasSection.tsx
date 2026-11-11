@@ -76,7 +76,7 @@ export default function ServiceAreasSection() {
             return (
               <div
                 key={i}
-                className="bg-navy-900 text-white rounded-2xl p-5 border border-navy-800 flex items-start gap-3.5 shadow-md"
+                className="bg-navy-800 text-white rounded-2xl p-5 border border-navy-700 flex items-start gap-3.5 shadow-md"
               >
                 <div className="w-10 h-10 rounded-xl bg-solar-green/20 border border-solar-green/30 flex items-center justify-center text-solar-yellow shrink-0">
                   <Icon className="w-5 h-5" />
@@ -203,12 +203,12 @@ export default function ServiceAreasSection() {
         </div>
 
         {/* Pan India Callout Banner */}
-        <div className="mt-12 bg-gradient-to-r from-solar-green-light via-emerald-50 to-solar-green-light/60 border border-solar-green/30 rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="mt-12 bg-solar-green-light border border-solar-green/30 rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="space-y-1 text-center md:text-left">
             <h4 className="text-lg font-bold text-navy-800">
               Pan-India Solar Supply &amp; Turnkey EPC Across All 28 States &amp; 8 UTs
             </h4>
-            <p className="text-xs text-slate-600 max-w-2xl">
+            <p className="text-xs text-slate-muted max-w-2xl">
               From Delhi NCR, Mumbai, Ahmedabad, Jaipur, Bengaluru, Hyderabad, and Chennai to Patna, Ranchi, Lucknow, and Kolkata — we deliver Vikram Solar, Adani Solar, Waaree, and Loom Solar modules (10W to 730W) with complete installation teams nationwide.
             </p>
           </div>

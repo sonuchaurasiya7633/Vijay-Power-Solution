@@ -278,7 +278,7 @@ export default function AdminProjectsPage() {
                       </span>
                     </td>
                     <td className="p-4">
-                      <span className="text-[10px] font-bold text-green-700 bg-green-50 px-2 py-0.5 rounded flex items-center gap-1 w-fit">
+                      <span className="text-[10px] font-bold text-solar-green bg-solar-green-light px-2 py-0.5 rounded flex items-center gap-1 w-fit">
                         <CheckCircle2 className="w-3 h-3" />
                         <span>Verified</span>
                       </span>
@@ -286,7 +286,7 @@ export default function AdminProjectsPage() {
                     <td className="p-4">
                       <span
                         className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${
-                          p.isPublished ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-600"
+                          p.isPublished ? "bg-solar-green-light text-solar-green" : "bg-slate-bg text-slate-muted"
                         }`}
                       >
                         {p.isPublished ? "Published" : "Draft"}

@@ -121,7 +121,7 @@ export default async function SubsidyInformationPage() {
   return (
     <div className="bg-white">
       {/* Header */}
-      <div className="bg-navy-900 text-white py-16">
+      <div className="bg-navy-800 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
           <span className="text-xs font-bold uppercase tracking-wider text-solar-yellow bg-white/10 px-3 py-1 rounded-full">
             {heroBadge}
@@ -184,7 +184,7 @@ export default async function SubsidyInformationPage() {
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {states.map((st: any, idx: number) => (
-                    <div key={idx} className="p-4 rounded-2xl border border-slate-border bg-slate-50 space-y-2">
+                    <div key={idx} className="p-4 rounded-2xl border border-slate-border bg-slate-bg space-y-2">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-solar-green bg-solar-green-light px-2 py-0.5 rounded-full">
                         {st.state}
                       </span>
@@ -237,7 +237,7 @@ export default async function SubsidyInformationPage() {
             </div>
 
             {/* Official Portal Link */}
-            <div className="p-6 rounded-2xl bg-navy-900 text-white flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="p-6 rounded-2xl bg-navy-800 text-white flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="space-y-1">
                 <span className="text-xs text-solar-yellow font-bold uppercase tracking-wider">Official Government Portal</span>
                 <h4 className="text-base font-bold">National Rooftop Solar Portal</h4>
@@ -255,9 +255,9 @@ export default async function SubsidyInformationPage() {
             </div>
 
             {/* Mandatory Regulatory Disclaimer */}
-            <div className="p-5 rounded-2xl bg-yellow-50 border border-yellow-200 text-yellow-900 space-y-2 text-xs leading-relaxed">
-              <div className="flex items-center gap-2 font-bold text-yellow-950">
-                <ShieldAlert className="w-4 h-4 text-yellow-700 shrink-0" />
+            <div className="p-5 rounded-2xl bg-solar-yellow-light border border-solar-yellow/40 text-navy-800 space-y-2 text-xs leading-relaxed">
+              <div className="flex items-center gap-2 font-bold text-navy-800">
+                <ShieldAlert className="w-4 h-4 text-solar-yellow-hover shrink-0" />
                 <span>Regulatory Notice & Vendor Disclaimer:</span>
               </div>
               <p>{disclaimer}</p>

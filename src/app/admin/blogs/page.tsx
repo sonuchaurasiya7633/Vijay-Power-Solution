@@ -235,7 +235,7 @@ export default function AdminBlogsPage() {
                     <td className="p-4">
                       <span
                         className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${
-                          b.isPublished ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-600"
+                          b.isPublished ? "bg-solar-green-light text-solar-green" : "bg-slate-bg text-slate-muted"
                         }`}
                       >
                         {b.isPublished ? "Published" : "Draft"}

@@ -132,13 +132,13 @@ export default async function AdminDashboardPage() {
 
   const cards = [
     { label: "Total Public Pages", value: pagesCount, icon: FileCode2, color: "text-navy-800", bg: "bg-navy-50", link: "/admin/cms" },
-    { label: "Total Leads", value: totalLeads, icon: Users, color: "text-blue-600", bg: "bg-blue-50", link: "/admin/leads" },
+    { label: "Total Leads", value: totalLeads, icon: Users, color: "text-navy-700", bg: "bg-navy-50", link: "/admin/leads" },
     { label: "New Leads (Uncontacted)", value: newLeads, icon: Zap, color: "text-solar-green", bg: "bg-solar-green-light", link: "/admin/leads?stage=new_lead" },
-    { label: "Today's Enquiries", value: todayLeads, icon: Calendar, color: "text-amber-600", bg: "bg-amber-50", link: "/admin/leads" },
-    { label: "Gallery Installations", value: galleryCount, icon: Camera, color: "text-purple-600", bg: "bg-purple-50", link: "/admin/gallery" },
-    { label: "Active Installations", value: activeInstallations, icon: HardHat, color: "text-indigo-600", bg: "bg-indigo-50", link: "/admin/installations" },
-    { label: "Won Customers", value: wonLeads, icon: CheckCircle2, color: "text-emerald-600", bg: "bg-emerald-50", link: "/admin/leads?stage=won" },
-    { label: "Catalogue Products", value: publishedProducts, icon: Package, color: "text-teal-600", bg: "bg-teal-50", link: "/admin/products" },
+    { label: "Today's Enquiries", value: todayLeads, icon: Calendar, color: "text-solar-yellow-hover", bg: "bg-solar-yellow-light", link: "/admin/leads" },
+    { label: "Gallery Installations", value: galleryCount, icon: Camera, color: "text-navy-800", bg: "bg-navy-50", link: "/admin/gallery" },
+    { label: "Active Installations", value: activeInstallations, icon: HardHat, color: "text-solar-green", bg: "bg-solar-green-light", link: "/admin/installations" },
+    { label: "Won Customers", value: wonLeads, icon: CheckCircle2, color: "text-solar-green", bg: "bg-solar-green-light", link: "/admin/leads?stage=won" },
+    { label: "Catalogue Products", value: publishedProducts, icon: Package, color: "text-navy-700", bg: "bg-navy-50", link: "/admin/products" },
   ];
 
   return (
@@ -187,7 +187,7 @@ export default async function AdminDashboardPage() {
 
           <Link
             href="/admin/cms"
-            className="p-3 rounded-xl bg-slate-50 hover:bg-solar-green-light hover:text-solar-green border border-slate-border/80 flex items-center gap-2.5 text-xs font-bold text-navy-800 transition-all group"
+            className="p-3 rounded-xl bg-slate-bg hover:bg-solar-green-light hover:text-solar-green border border-slate-border flex items-center gap-2.5 text-xs font-bold text-navy-800 transition-all group"
           >
             <LayoutGrid className="w-4 h-4 text-navy-800 group-hover:text-solar-green group-hover:scale-110 transition-transform" />
             <span className="truncate">Website All Pages</span>
@@ -195,25 +195,25 @@ export default async function AdminDashboardPage() {
 
           <Link
             href="/admin/media"
-            className="p-3 rounded-xl bg-slate-50 hover:bg-solar-green-light hover:text-solar-green border border-slate-border/80 flex items-center gap-2.5 text-xs font-bold text-navy-800 transition-all group"
+            className="p-3 rounded-xl bg-slate-bg hover:bg-solar-green-light hover:text-solar-green border border-slate-border flex items-center gap-2.5 text-xs font-bold text-navy-800 transition-all group"
           >
-            <UploadCloud className="w-4 h-4 text-blue-600 group-hover:scale-110 transition-transform" />
+            <UploadCloud className="w-4 h-4 text-navy-700 group-hover:scale-110 transition-transform" />
             <span className="truncate">Upload Images</span>
           </Link>
 
           <Link
             href="/admin/gallery"
-            className="p-3 rounded-xl bg-slate-50 hover:bg-solar-green-light hover:text-solar-green border border-slate-border/80 flex items-center gap-2.5 text-xs font-bold text-navy-800 transition-all group"
+            className="p-3 rounded-xl bg-slate-bg hover:bg-solar-green-light hover:text-solar-green border border-slate-border flex items-center gap-2.5 text-xs font-bold text-navy-800 transition-all group"
           >
-            <Camera className="w-4 h-4 text-purple-600 group-hover:scale-110 transition-transform" />
+            <Camera className="w-4 h-4 text-solar-yellow-hover group-hover:scale-110 transition-transform" />
             <span className="truncate">Customer Gallery</span>
           </Link>
 
           <Link
             href="/admin/leads"
-            className="p-3 rounded-xl bg-slate-50 hover:bg-solar-green-light hover:text-solar-green border border-slate-border/80 flex items-center gap-2.5 text-xs font-bold text-navy-800 transition-all group"
+            className="p-3 rounded-xl bg-slate-bg hover:bg-solar-green-light hover:text-solar-green border border-slate-border flex items-center gap-2.5 text-xs font-bold text-navy-800 transition-all group"
           >
-            <Users className="w-4 h-4 text-emerald-600 group-hover:scale-110 transition-transform" />
+            <Users className="w-4 h-4 text-solar-green group-hover:scale-110 transition-transform" />
             <span className="truncate">View Leads ({totalLeads})</span>
           </Link>
         </div>
@@ -281,7 +281,7 @@ export default async function AdminDashboardPage() {
         </div>
 
         {/* Quick Operations Guide */}
-        <div className="lg:col-span-7 bg-navy-900 text-white p-6 rounded-2xl border border-navy-700 shadow-sm flex flex-col justify-between space-y-4">
+        <div className="lg:col-span-7 bg-navy-800 text-white p-6 rounded-2xl border border-navy-700 shadow-sm flex flex-col justify-between space-y-4">
           <div className="space-y-2">
             <span className="text-[10px] font-bold uppercase tracking-wider text-solar-yellow bg-white/10 px-2.5 py-0.5 rounded-full">
               Standard Operating Sequence

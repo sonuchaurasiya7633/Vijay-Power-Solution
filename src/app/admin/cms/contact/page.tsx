@@ -193,7 +193,7 @@ export default function AdminContactCmsPage() {
           </Link>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-purple-700 bg-purple-100 px-2 py-0.5 rounded-full">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-navy-800 bg-navy-50 px-2 py-0.5 rounded-full">
                 Page CMS
               </span>
               <span className="text-[10px] font-semibold text-slate-400">/contact</span>

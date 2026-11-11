@@ -49,18 +49,18 @@ export default function AdminAnalyticsPage() {
         </div>
         <div className="p-5 bg-white rounded-2xl border border-slate-border shadow-sm space-y-2">
           <span className="text-xs font-bold text-slate-muted">Scheduled Surveys</span>
-          <h3 className="text-2xl font-extrabold font-display text-purple-700">{metrics.scheduledSurveys || 0}</h3>
+          <h3 className="text-2xl font-extrabold font-display text-solar-yellow-hover">{metrics.scheduledSurveys || 0}</h3>
           <span className="text-[10px] text-slate-muted font-bold">Physical Roof Feasibility</span>
         </div>
         <div className="p-5 bg-white rounded-2xl border border-slate-border shadow-sm space-y-2">
           <span className="text-xs font-bold text-slate-muted">Active Installations</span>
-          <h3 className="text-2xl font-extrabold font-display text-indigo-700">{metrics.activeInstallations || 0}</h3>
+          <h3 className="text-2xl font-extrabold font-display text-navy-800">{metrics.activeInstallations || 0}</h3>
           <span className="text-[10px] text-slate-muted font-bold">EPC Construction</span>
         </div>
         <div className="p-5 bg-white rounded-2xl border border-slate-border shadow-sm space-y-2">
           <span className="text-xs font-bold text-slate-muted">Won Installations</span>
-          <h3 className="text-2xl font-extrabold font-display text-emerald-700">{metrics.wonLeads || 0}</h3>
-          <span className="text-[10px] text-emerald-700 font-bold">Converted Customers</span>
+          <h3 className="text-2xl font-extrabold font-display text-solar-green">{metrics.wonLeads || 0}</h3>
+          <span className="text-[10px] text-solar-green font-bold">Converted Customers</span>
         </div>
       </div>
 

@@ -265,7 +265,7 @@ export default function AdminTestimonialsPage() {
                   <button
                     onClick={() => toggleApproval(t._id, t.isApproved)}
                     className={`text-[10px] font-bold px-2 py-0.5 rounded cursor-pointer ${
-                      t.isApproved ? "text-green-700 bg-green-50" : "text-amber-700 bg-amber-50"
+                      t.isApproved ? "text-solar-green bg-solar-green-light" : "text-solar-yellow-hover bg-solar-yellow-light"
                     }`}
                   >
                     {t.isApproved ? "Approved" : "Pending"}

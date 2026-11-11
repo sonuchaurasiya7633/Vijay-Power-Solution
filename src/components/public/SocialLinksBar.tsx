@@ -44,22 +44,22 @@ export default function SocialLinksBar({
       name: "YouTube",
       href: resolved.youtube,
       Icon: YouTubeIcon,
-      darkHover: "hover:bg-red-600 hover:border-red-500 hover:text-white",
-      lightStyle: "text-red-600 bg-red-50 border-red-200 hover:bg-red-600 hover:text-white",
+      darkHover: "hover:bg-solar-green hover:border-solar-green hover:text-white",
+      lightStyle: "text-navy-800 bg-slate-bg border-slate-border hover:bg-navy-800 hover:border-navy-800 hover:text-white",
     },
     {
       name: "Instagram",
       href: resolved.instagram,
       Icon: InstagramIcon,
-      darkHover: "hover:bg-pink-600 hover:border-pink-500 hover:text-white",
-      lightStyle: "text-pink-600 bg-pink-50 border-pink-200 hover:bg-pink-600 hover:text-white",
+      darkHover: "hover:bg-solar-green hover:border-solar-green hover:text-white",
+      lightStyle: "text-navy-800 bg-slate-bg border-slate-border hover:bg-navy-800 hover:border-navy-800 hover:text-white",
     },
     {
       name: "Facebook",
       href: resolved.facebook,
       Icon: FacebookIcon,
-      darkHover: "hover:bg-blue-600 hover:border-blue-500 hover:text-white",
-      lightStyle: "text-blue-600 bg-blue-50 border-blue-200 hover:bg-blue-600 hover:text-white",
+      darkHover: "hover:bg-solar-green hover:border-solar-green hover:text-white",
+      lightStyle: "text-navy-800 bg-slate-bg border-slate-border hover:bg-navy-800 hover:border-navy-800 hover:text-white",
     },
   ].filter((item) => Boolean(item.href));
 

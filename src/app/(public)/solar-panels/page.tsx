@@ -14,9 +14,9 @@ export const metadata: Metadata = {
 };
 
 const badgeStyles: Record<string, string> = {
-  navy: "bg-navy-900/10 text-navy-800",
+  navy: "bg-navy-800/10 text-navy-800",
   green: "bg-solar-green-light text-solar-green",
-  gold: "bg-amber-100 text-amber-800",
+  gold: "bg-solar-yellow-light text-solar-yellow-hover",
 };
 
 export default async function SolarPanelsPage() {
@@ -36,7 +36,7 @@ export default async function SolarPanelsPage() {
   return (
     <div className="bg-white">
       {/* Page Header */}
-      <div className="bg-navy-900 text-white py-16">
+      <div className="bg-navy-800 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
           <span className="inline-block text-xs font-bold uppercase tracking-wider text-solar-yellow bg-white/10 px-3 py-1 rounded-full">
             {cms.heroBadge}
