@@ -66,7 +66,7 @@ export default function FloatingWhatsApp({
   return (
     <aside
       aria-label="Quick Contact"
-      className="fixed bottom-6 right-5 sm:right-6 z-40 flex flex-col items-center gap-3 select-none"
+      className="fixed bottom-6 right-5 sm:right-6 z-30 flex flex-col items-center gap-3 select-none"
     >
       {/* 1. WhatsApp Button (Circular Green Button) */}
       <div className="relative group">

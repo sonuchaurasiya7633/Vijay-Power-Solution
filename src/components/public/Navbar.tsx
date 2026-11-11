@@ -120,7 +120,8 @@ export default function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-border shadow-sm">
+    <>
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-border shadow-sm">
       {/* Top Notice Marquee Bar (if enabled) */}
       {headerCms.noticeBar.enabled && (
         <div className="bg-navy-900 text-white text-[11px] py-1.5 px-4 text-center border-b border-navy-700">
@@ -273,16 +274,18 @@ export default function Navbar() {
           </div>
         </div>
       </div>
+      </header>
 
       {/* =========================================================================
           PREMIUM MOBILE NAVIGATION DRAWER & OVERLAY
-          Mounted only when open so it never leaks outside viewport on mobile zoom
+          Rendered outside <header> stacking context so it cleanly layers above
+          all page content & floating call/WhatsApp buttons on mobile.
           ========================================================================= */}
       {mobileMenuOpen && (
         <>
           {/* Backdrop Overlay */}
           <div
-            className="fixed inset-0 bg-navy-950/60 backdrop-blur-sm z-50 lg:hidden"
+            className="fixed inset-0 bg-navy-950/60 backdrop-blur-sm z-[70] lg:hidden"
             onClick={() => setMobileMenuOpen(false)}
             aria-hidden="true"
           />
@@ -292,7 +295,7 @@ export default function Navbar() {
             role="dialog"
             aria-modal="true"
             aria-label="Mobile Navigation Menu"
-            className="fixed top-0 right-0 bottom-0 z-50 w-[min(85vw,360px)] h-[100dvh] max-h-[100dvh] bg-white shadow-2xl flex flex-col lg:hidden border-l border-slate-200/80 animate-drawer-slide-in"
+            className="fixed top-0 right-0 bottom-0 z-[70] w-[min(85vw,360px)] h-[100dvh] max-h-[100dvh] bg-white shadow-2xl flex flex-col lg:hidden border-l border-slate-200/80 animate-drawer-slide-in"
           >
         {/* Drawer Header */}
         <div className="shrink-0 h-20 px-5 border-b border-slate-100 flex items-center justify-between bg-white">
@@ -549,6 +552,6 @@ export default function Navbar() {
           </aside>
         </>
       )}
-    </header>
+    </>
   );
 }
