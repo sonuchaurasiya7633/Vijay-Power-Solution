@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Play, X } from "lucide-react";
 import { getCleanPublicImage } from "@/lib/image-fallback";
 import SolarCardPlaceholder from "@/components/public/SolarCardPlaceholder";
+import { getYouTubeEmbedUrl, getYouTubeThumbnailUrl } from "@/lib/utils/youtube";
 
 interface VideoStory {
   title: string;
@@ -20,19 +21,19 @@ const defaultVideos: VideoStory[] = [
     location: "New Delhi, India",
     duration: "1:05",
     thumbnail: "",
-    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    videoUrl: "https://www.youtube.com/watch?v=IQS7WYUY2oE",
   },
   {
     title: "25 kW Commercial Solar Plant Commissioning & DISCOM Inspection",
     location: "Jaipur, Rajasthan",
     duration: "1:42",
     thumbnail: "",
-    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+    videoUrl: "",
   },
 ];
 
 export default function VideoSection() {
-  const [activeVideo, setActiveVideo] = useState<string | null>(null);
+  const [activeVideo, setActiveVideo] = useState<{ url: string; title: string } | null>(null);
   const [videoList, setVideoList] = useState<VideoStory[]>(defaultVideos);
   const [badge, setBadge] = useState("Video Stories & Walkthroughs");
   const [title, setTitle] = useState("See Our Installations in Action");
@@ -73,66 +74,106 @@ export default function VideoSection() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          {videoList.map((v, idx) => (
-            <div
-              key={idx}
-              className="group bg-white rounded-3xl overflow-hidden border border-slate-border shadow-sm hover:shadow-xl transition-all cursor-pointer"
-              onClick={() => setActiveVideo(v.videoUrl)}
-            >
-              <div className="relative h-60 w-full overflow-hidden bg-navy-900">
-                {getCleanPublicImage(v.thumbnail) ? (
-                  <Image
-                    src={getCleanPublicImage(v.thumbnail)}
-                    alt={v.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                ) : (
-                  <SolarCardPlaceholder title={v.title} subtitle={v.location} />
-                )}
-                <div className="absolute inset-0 bg-navy-950/35 group-hover:bg-navy-950/20 transition-colors" />
+          {videoList.map((v, idx) => {
+            const customThumb = getCleanPublicImage(v.thumbnail);
+            const ytThumb = !customThumb ? getYouTubeThumbnailUrl(v.videoUrl) : null;
+            const displayThumb = customThumb || ytThumb || "";
+            const hasPlayableUrl = Boolean(v.videoUrl && v.videoUrl.trim());
 
-                {/* Play Button Overlay */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-14 h-14 rounded-full bg-white/90 text-solar-green flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:bg-solar-green group-hover:text-white transition-all">
-                    <Play className="w-6 h-6 ml-1 fill-current" />
+            return (
+              <div
+                key={idx}
+                className={`group bg-white rounded-3xl overflow-hidden border border-slate-border shadow-sm transition-all ${
+                  hasPlayableUrl ? "hover:shadow-xl cursor-pointer" : "opacity-95"
+                }`}
+                onClick={() => {
+                  if (hasPlayableUrl) {
+                    setActiveVideo({ url: v.videoUrl.trim(), title: v.title });
+                  }
+                }}
+              >
+                <div className="relative h-60 w-full overflow-hidden bg-navy-900">
+                  {displayThumb ? (
+                    <Image
+                      src={displayThumb}
+                      alt={v.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  ) : (
+                    <SolarCardPlaceholder title={v.title} subtitle={v.location} />
+                  )}
+                  <div className="absolute inset-0 bg-navy-950/35 group-hover:bg-navy-950/20 transition-colors" />
+
+                  {/* Play Button Overlay or Coming Soon badge */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    {hasPlayableUrl ? (
+                      <div className="w-14 h-14 rounded-full bg-white/90 text-solar-green flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:bg-solar-green group-hover:text-white transition-all">
+                        <Play className="w-6 h-6 ml-1 fill-current" />
+                      </div>
+                    ) : (
+                      <span className="px-3.5 py-1.5 rounded-full bg-navy-900/85 border border-white/20 text-white text-xs font-bold tracking-wide">
+                        Video Coming Soon
+                      </span>
+                    )}
                   </div>
+
+                  <span className="absolute bottom-3 right-3 bg-navy-950/80 backdrop-blur-sm text-white text-[11px] font-mono px-2 py-0.5 rounded-md">
+                    {v.duration || "1:00"}
+                  </span>
                 </div>
 
-                <span className="absolute bottom-3 right-3 bg-navy-950/80 backdrop-blur-sm text-white text-[11px] font-mono px-2 py-0.5 rounded-md">
-                  {v.duration || "1:00"}
-                </span>
+                <div className="p-5 space-y-1">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-solar-green">
+                    {v.location}
+                  </span>
+                  <h3 className="font-bold text-navy-800 text-sm group-hover:text-solar-green transition-colors">
+                    {v.title}
+                  </h3>
+                </div>
               </div>
-
-              <div className="p-5 space-y-1">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-solar-green">
-                  {v.location}
-                </span>
-                <h3 className="font-bold text-navy-800 text-sm group-hover:text-solar-green transition-colors">
-                  {v.title}
-                </h3>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
-      {/* Video Modal Player */}
-      {activeVideo && (
-        <div className="fixed inset-0 z-50 bg-navy-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-black rounded-3xl overflow-hidden max-w-3xl w-full border border-white/10 relative shadow-2xl">
-            <button
-              onClick={() => setActiveVideo(null)}
-              className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/20 text-white hover:bg-white/40 transition-colors"
+      {/* Video Modal Player (Supports YouTube & Direct MP4) */}
+      {activeVideo && (() => {
+        const ytEmbedUrl = getYouTubeEmbedUrl(activeVideo.url);
+        return (
+          <div
+            className="fixed inset-0 z-50 bg-navy-950/85 backdrop-blur-sm flex items-center justify-center p-4"
+            onClick={() => setActiveVideo(null)}
+          >
+            <div
+              className="bg-black rounded-3xl overflow-hidden max-w-3xl w-full border border-white/15 relative shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
             >
-              <X className="w-5 h-5" />
-            </button>
-            <div className="aspect-video w-full">
-              <video src={activeVideo} controls autoPlay className="w-full h-full object-contain" />
+              <button
+                type="button"
+                onClick={() => setActiveVideo(null)}
+                aria-label="Close video player"
+                className="absolute top-3 right-3 z-10 p-2 rounded-full bg-black/60 text-white hover:bg-black/85 border border-white/20 transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              <div className="aspect-video w-full bg-black">
+                {ytEmbedUrl ? (
+                  <iframe
+                    src={ytEmbedUrl}
+                    title={activeVideo.title}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                    className="w-full h-full border-0"
+                  />
+                ) : (
+                  <video src={activeVideo.url} controls autoPlay className="w-full h-full object-contain" />
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
     </section>
   );
 }

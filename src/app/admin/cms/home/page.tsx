@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import CmsImageUploader from "@/components/admin/CmsImageUploader";
 import CmsLivePreviewModal from "@/components/admin/CmsLivePreviewModal";
+import { extractYouTubeId } from "@/lib/utils/youtube";
 
 export default function AdminHomeCmsPage() {
   const [activeTab, setActiveTab] = useState<
@@ -116,18 +117,18 @@ export default function AdminHomeCmsPage() {
       "Watch real site surveys, rooftop mounting structure erections, inverter synchronization, and client reviews.",
     items: [
       {
-        title: "10 kW Elevated Rooftop Solar Walkthrough in Patna",
-        location: "Kankarbagh, Patna",
+        title: "10 kW Elevated Rooftop Solar Walkthrough — Delhi NCR",
+        location: "New Delhi, India",
         duration: "1:05",
         thumbnail: "",
-        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+        videoUrl: "https://www.youtube.com/watch?v=IQS7WYUY2oE",
       },
       {
-        title: "25 kW Bodh Gaya Hotel Solar Commissioning & SBPDCL Inspection",
-        location: "Bodh Gaya, Bihar",
+        title: "25 kW Commercial Solar Plant Commissioning & DISCOM Inspection",
+        location: "Jaipur, Rajasthan",
         duration: "1:42",
         thumbnail: "",
-        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+        videoUrl: "",
       },
     ],
   });
@@ -209,7 +210,7 @@ export default function AdminHomeCmsPage() {
           location: "Pan India Site",
           duration: "1:30",
           thumbnail: "",
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+          videoUrl: "",
         },
       ],
     }));
@@ -971,17 +972,29 @@ export default function AdminHomeCmsPage() {
                       />
 
                       <div>
-                        <label className="text-slate-muted block mb-1 text-[11px] font-bold">Video Stream / MP4 URL</label>
+                        <label className="text-slate-muted block mb-1 text-[11px] font-bold">
+                          YouTube Video URL (or Direct MP4 URL)
+                        </label>
                         <input
                           type="text"
+                          placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/..."
                           value={v.videoUrl}
                           onChange={(e) => {
                             const updated = [...videos.items];
                             updated[idx] = { ...updated[idx], videoUrl: e.target.value };
                             setVideos({ ...videos, items: updated });
                           }}
-                          className="w-full p-2 rounded-xl border border-slate-border font-mono text-xs outline-none focus:border-solar-green"
+                          className="w-full p-2.5 rounded-xl border border-slate-border font-mono text-xs outline-none focus:border-solar-green"
                         />
+                        {extractYouTubeId(v.videoUrl) ? (
+                          <p className="mt-1 text-[11px] font-semibold text-solar-green">
+                            ✓ Valid YouTube Video Detected (ID: {extractYouTubeId(v.videoUrl)}) — Plays inside embedded YouTube player; auto-thumbnail active if no custom thumbnail is uploaded.
+                          </p>
+                        ) : (
+                          <p className="mt-1 text-[11px] text-slate-muted">
+                            Supports any YouTube Watch, Shorts, Share (`youtu.be`), Live, or Embed link, as well as direct `.mp4` video URLs.
+                          </p>
+                        )}
                       </div>
                     </div>
                   ))}

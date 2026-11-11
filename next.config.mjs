@@ -15,6 +15,14 @@ const nextConfig = {
         protocol: "https",
         hostname: "commondatastorage.googleapis.com",
       },
+      {
+        protocol: "https",
+        hostname: "i.ytimg.com",
+      },
+      {
+        protocol: "https",
+        hostname: "img.youtube.com",
+      },
     ],
   },
   eslint: {
