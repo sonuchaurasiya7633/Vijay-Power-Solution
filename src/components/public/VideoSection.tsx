@@ -16,15 +16,15 @@ interface VideoStory {
 
 const defaultVideos: VideoStory[] = [
   {
-    title: "10 kW Elevated Rooftop Solar Walkthrough in Patna",
-    location: "Kankarbagh, Patna",
+    title: "10 kW Elevated Rooftop Solar Walkthrough — Delhi NCR",
+    location: "New Delhi, India",
     duration: "1:05",
     thumbnail: "",
     videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
   },
   {
-    title: "25 kW Bodh Gaya Hotel Solar Commissioning & SBPDCL Inspection",
-    location: "Bodh Gaya, Bihar",
+    title: "25 kW Commercial Solar Plant Commissioning & DISCOM Inspection",
+    location: "Jaipur, Rajasthan",
     duration: "1:42",
     thumbnail: "",
     videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",

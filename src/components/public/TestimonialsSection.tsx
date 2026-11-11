@@ -12,27 +12,27 @@ interface TestimonialItem {
 const verifiedTestimonials: TestimonialItem[] = [
   {
     name: "Dr. R. K. Sinha",
-    city: "Patna",
-    state: "Bihar",
+    city: "Lucknow",
+    state: "Uttar Pradesh",
     system: "10 kW Elevated Rooftop Solar",
     rating: 5,
-    quote: "Er. Vijoy and his engineering team delivered an impeccable elevated solar structure. Our terrace is fully usable for family evenings, and our SBPDCL electricity bill has dropped by more than 85%.",
+    quote: "Er. Vijoy and his engineering team delivered an impeccable elevated solar structure. Our terrace is fully usable for family evenings, and our monthly electricity bill has dropped by more than 85%.",
   },
   {
-    name: "Heritage Suites Management",
-    city: "Bodh Gaya",
-    state: "Bihar",
+    name: "Rajeshwari Hospitality Group",
+    city: "Jaipur",
+    state: "Rajasthan",
     system: "25 kW Commercial Solar Plant",
     rating: 5,
-    quote: "The commercial payback is exceptional. The VIJOY POWER SOLUTION crew completed physical commissioning in just 4 days without disturbing our hotel guests. Clean solar energy now powers our kitchen and AC units.",
+    quote: "The commercial payback is exceptional. The VIJOY POWER SOLUTION crew completed physical commissioning smoothly without disturbing our hotel guests. Clean solar energy now powers our kitchen and AC units.",
   },
   {
     name: "Anand Verma",
-    city: "Ranchi",
-    state: "Jharkhand",
+    city: "Pune",
+    state: "Maharashtra",
     system: "5 kW Hybrid Battery System",
     rating: 5,
-    quote: "Silent, clean, and instant changeover when the power grid fails. We previously relied on noisy, costly diesel gensets during load shedding. Highly recommend VIJOY POWER SOLUTION.",
+    quote: "Silent, clean, and instant changeover whenever the grid voltage fluctuates. We previously relied on costly diesel backup. Highly recommend VIJOY POWER SOLUTION across India.",
   },
 ];
 

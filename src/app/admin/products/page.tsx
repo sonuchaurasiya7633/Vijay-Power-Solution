@@ -21,6 +21,7 @@ import {
 import CmsImageUploader from "@/components/admin/CmsImageUploader";
 import CmsLivePreviewModal from "@/components/admin/CmsLivePreviewModal";
 import CmsTableImageCell from "@/components/admin/CmsTableImageCell";
+import { OFFICIAL_PANEL_BRANDS, normalizeOfficialPanelBrand } from "@/lib/constants/brands";
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<any[]>([]);
@@ -34,7 +35,7 @@ export default function AdminProductsPage() {
   const [form, setForm] = useState({
     name: "",
     slug: "",
-    brand: "VPS Solar",
+    brand: "Vikram Solar",
     ratedPowerWp: 550,
     cellTechnology: "Mono PERC",
     wattageGroup: "351W - 550W",
@@ -67,7 +68,7 @@ export default function AdminProductsPage() {
     setForm({
       name: "",
       slug: "",
-      brand: "VPS Solar",
+      brand: "Vikram Solar",
       ratedPowerWp: 550,
       cellTechnology: "Mono PERC",
       wattageGroup: "351W - 550W",
@@ -84,7 +85,7 @@ export default function AdminProductsPage() {
     setForm({
       name: p.name || "",
       slug: p.slug || "",
-      brand: p.brand || "VPS Solar",
+      brand: normalizeOfficialPanelBrand(p.brand),
       ratedPowerWp: p.ratedPowerWp || 550,
       cellTechnology: p.cellTechnology || "Mono PERC",
       wattageGroup: p.wattageGroup || "351W - 550W",
@@ -398,15 +399,19 @@ export default function AdminProductsPage() {
                   />
                 </div>
                 <div>
-                  <label className="font-bold text-navy-800 block mb-1">Brand *</label>
-                  <input
-                    type="text"
+                  <label className="font-bold text-navy-800 block mb-1">Brand * (4 Authorized Partners)</label>
+                  <select
                     required
-                    placeholder="e.g. Waaree / Tata Power / VPS"
                     value={form.brand}
                     onChange={(e) => setForm({ ...form, brand: e.target.value })}
-                    className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green"
-                  />
+                    className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green bg-white"
+                  >
+                    {OFFICIAL_PANEL_BRANDS.map((brandOption) => (
+                      <option key={brandOption} value={brandOption}>
+                        {brandOption}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
 

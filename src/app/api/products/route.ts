@@ -3,6 +3,7 @@ import connectDB from "@/lib/db/connection";
 import SolarProduct from "@/models/SolarProduct";
 import { getSession } from "@/lib/auth/session";
 import { hasPermission } from "@/lib/auth/permissions";
+import { normalizeOfficialPanelBrand } from "@/lib/constants/brands";
 
 export async function GET(req: NextRequest) {
   try {
@@ -134,7 +135,7 @@ export async function POST(req: NextRequest) {
       productId,
       name,
       slug: slug.toLowerCase().trim(),
-      brand,
+      brand: normalizeOfficialPanelBrand(brand),
       modelNumber,
       ratedPowerWp: Number(ratedPowerWp),
       technologyCategories,

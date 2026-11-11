@@ -8,6 +8,7 @@ import connectDB from "@/lib/db/connection";
 import SolarProduct from "@/models/SolarProduct";
 import { getCleanPublicImage } from "@/lib/image-fallback";
 import SolarCardPlaceholder from "@/components/public/SolarCardPlaceholder";
+import { normalizeOfficialPanelBrand } from "@/lib/constants/brands";
 
 export async function generateMetadata({
   params,
@@ -68,7 +69,7 @@ export default async function ProductDetailPage({
               ) : (
                 <SolarCardPlaceholder
                   title={product.name}
-                  subtitle={`${product.brand} • ${product.ratedPowerWp} Wp`}
+                  subtitle={`${normalizeOfficialPanelBrand(product.brand)} • ${product.ratedPowerWp} Wp`}
                 />
               )}
               <div className="absolute top-4 left-4 bg-solar-green text-white font-extrabold text-sm px-3.5 py-1.5 rounded-xl shadow flex items-center gap-1.5">
@@ -76,7 +77,7 @@ export default async function ProductDetailPage({
                 <span>{product.ratedPowerWp} Wp Rated Power</span>
               </div>
               <div className="absolute top-4 right-4 bg-white/95 text-navy-800 text-xs font-bold px-3 py-1 rounded-lg border border-slate-200">
-                {product.brand}
+                {normalizeOfficialPanelBrand(product.brand)}
               </div>
             </div>
 

@@ -35,7 +35,10 @@ export default async function BlogPostPage({
 
   let article: any = blog;
   if (!article) {
-    if (params.slug === "pm-surya-ghar-subsidy-guide-bihar-jharkhand-up") {
+    if (
+      params.slug === "pm-surya-ghar-subsidy-guide-pan-india" ||
+      params.slug === "pm-surya-ghar-subsidy-guide-bihar-jharkhand-up"
+    ) {
       article = {
         title: "Complete PM Surya Ghar Subsidy Guide — Pan India Coverage",
         excerpt: "Everything residential consumers need to know about the ₹78,000 central rooftop subsidy, DISCOM portal registration, and net meter commissioning across India.",
@@ -46,10 +49,10 @@ export default async function BlogPostPage({
 2. **2 kW Solar System:** ₹60,000 central assistance.
 3. **3 kW and Above:** ₹78,000 maximum financial cap.
 
-### Eligible Power Boards
-- **Bihar:** South Bihar Power Distribution Company Ltd (SBPDCL) & North Bihar Power Distribution Company Ltd (NBPDCL).
-- **Jharkhand:** Jharkhand Bijli Vitran Nigam Limited (JBVNL).
-- **Uttar Pradesh:** Uttar Pradesh Power Corporation Limited (UPPCL) with regional discoms (DVVNL, MVVNL, PVVNL, PuVVNL).
+### Eligible Power Boards (Pan-India Coverage)
+- **North & Central India:** UPPCL (UP), BSES/TPDDL (Delhi), JVVNL/AVVNL/JdVVNL (Rajasthan), UHBVN/DHBVN (Haryana), MPMKVVCL (MP).
+- **West & South India:** MSEDCL (Maharashtra), UGVCL/MGVCL/PGVCL/DGVCL (Gujarat), BESCOM/MESCOM (Karnataka), TSSPDCL (Telangana), TANGEDCO (Tamil Nadu).
+- **East & North-East India:** SBPDCL & NBPDCL (Bihar), JBVNL (Jharkhand), WBSEDCL (West Bengal), TPCODL (Odisha), APDCL (Assam).
 
 ### How to Apply Successfully
 1. Ensure your electricity connection bill name matches your Aadhaar and bank account passbook.

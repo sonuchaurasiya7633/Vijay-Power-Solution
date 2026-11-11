@@ -14,14 +14,10 @@ export async function generateMetadata({
 }: {
   params: { state: string };
 }): Promise<Metadata> {
-  const stateName =
-    params.state === "bihar"
-      ? "Bihar"
-      : params.state === "jharkhand"
-      ? "Jharkhand"
-      : params.state === "uttar-pradesh"
-      ? "Uttar Pradesh"
-      : params.state;
+  const stateName = params.state
+    .split("-")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
 
   return {
     title: `Solar Panel Installation in ${stateName} | Subsidy & Net Metering`,

@@ -4,7 +4,7 @@ export interface ISolarProduct extends Document {
   productId: string; // VPS-PRD-XXXX
   name: string;
   slug: string;
-  brand: string; // e.g. Loom, Tata Power Solar, Vikram, Waaree, Adani, Goldi, etc.
+  brand: string; // Strictly one of: Vikram Solar, Adani Solar, Waaree, Loom Solar
   modelNumber?: string;
   ratedPowerWp: number; // 10 to 730
   technologyCategories: string[]; // e.g. ["Mono PERC", "Bifacial", "N-Type TOPCon"]

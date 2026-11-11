@@ -41,7 +41,7 @@ export default async function RequestSiteSurveyPage() {
               Schedule Your Site Visit
             </h2>
             <p className="text-xs text-slate-muted">
-              Available across Patna, Gaya, Muzaffarpur, Ranchi, Jamshedpur, Lucknow, Varanasi, and neighboring districts.
+              Pan-India engineering dispatch available across Delhi NCR, Mumbai, Ahmedabad, Jaipur, Bengaluru, Hyderabad, Pune, Kolkata, Lucknow, Patna, Ranchi, and all 28 States &amp; 8 UTs.
             </p>
           </div>
 

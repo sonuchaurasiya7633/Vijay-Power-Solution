@@ -29,7 +29,7 @@ export default function LeadCaptureForm({
   const [formData, setFormData] = useState({
     fullName: "",
     phone: "",
-    state: "Bihar",
+    state: "Delhi (NCT)",
     city: "",
     customerType: "residential",
     solarSolutionType: defaultSolution,
@@ -128,7 +128,7 @@ export default function LeadCaptureForm({
             setFormData({
               fullName: "",
               phone: "",
-              state: "Bihar",
+              state: "Delhi (NCT)",
               city: "",
               customerType: "residential",
               solarSolutionType: defaultSolution,
@@ -227,7 +227,7 @@ export default function LeadCaptureForm({
           <input
             type="text"
             required
-            placeholder="e.g. Gaya, Patna, Ranchi"
+            placeholder="e.g. Delhi, Mumbai, Bengaluru, Patna"
             value={formData.city}
             onChange={(e) => setFormData({ ...formData, city: e.target.value })}
             className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-border focus:border-solar-green focus:ring-2 focus:ring-solar-green/20 outline-none transition-all"

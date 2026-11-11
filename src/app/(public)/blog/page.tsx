@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 
 const defaultArticles = [
   {
-    slug: "pm-surya-ghar-subsidy-guide-bihar-jharkhand-up",
+    slug: "pm-surya-ghar-subsidy-guide-pan-india",
     title: "Complete PM Surya Ghar Subsidy Guide — Pan India Coverage",
     excerpt: "Everything residential consumers need to know about the ₹78,000 central rooftop subsidy, DISCOM portal registration, and net meter commissioning.",
     category: "Government Schemes",

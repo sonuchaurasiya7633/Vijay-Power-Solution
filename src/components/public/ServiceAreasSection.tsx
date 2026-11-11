@@ -166,14 +166,50 @@ export default function ServiceAreasSection() {
           ))}
         </div>
 
+        {/* Pan-India State Network Links */}
+        <div className="mt-8 bg-slate-bg border border-slate-border rounded-2xl p-5 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+            <h4 className="text-sm font-bold text-navy-800 uppercase tracking-wider">
+              Active Pan-India EPC &amp; Dispatch Network
+            </h4>
+            <span className="text-[11px] font-semibold text-solar-green">
+              All 28 States &amp; 8 Union Territories Supported
+            </span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {[
+              { name: "Delhi NCR", slug: "delhi" },
+              { name: "Maharashtra", slug: "maharashtra" },
+              { name: "Gujarat", slug: "gujarat" },
+              { name: "Rajasthan", slug: "rajasthan" },
+              { name: "Karnataka", slug: "karnataka" },
+              { name: "Telangana", slug: "telangana" },
+              { name: "Tamil Nadu", slug: "tamil-nadu" },
+              { name: "Uttar Pradesh", slug: "uttar-pradesh" },
+              { name: "Madhya Pradesh", slug: "madhya-pradesh" },
+              { name: "West Bengal", slug: "west-bengal" },
+              { name: "Bihar", slug: "bihar" },
+              { name: "Jharkhand", slug: "jharkhand" },
+            ].map((st) => (
+              <Link
+                key={st.slug}
+                href={`/service-areas/${st.slug}`}
+                className="px-3 py-1.5 rounded-xl bg-white border border-slate-border text-xs font-semibold text-navy-800 hover:border-solar-green hover:text-solar-green transition-colors"
+              >
+                {st.name}
+              </Link>
+            ))}
+          </div>
+        </div>
+
         {/* Pan India Callout Banner */}
         <div className="mt-12 bg-gradient-to-r from-solar-green-light via-emerald-50 to-solar-green-light/60 border border-solar-green/30 rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="space-y-1 text-center md:text-left">
             <h4 className="text-lg font-bold text-navy-800">
-              Located Outside Eastern or Northern Hubs?
+              Pan-India Solar Supply &amp; Turnkey EPC Across All 28 States &amp; 8 UTs
             </h4>
             <p className="text-xs text-slate-600 max-w-2xl">
-              We deliver Tier-1 solar panels (10W to 730W), balance of system (BOS), and turnkey installation teams across any city, district, or industrial zone in India.
+              From Delhi NCR, Mumbai, Ahmedabad, Jaipur, Bengaluru, Hyderabad, and Chennai to Patna, Ranchi, Lucknow, and Kolkata — we deliver Vikram Solar, Adani Solar, Waaree, and Loom Solar modules (10W to 730W) with complete installation teams nationwide.
             </p>
           </div>
           <Link

@@ -6,7 +6,7 @@ import LeadCaptureForm from "@/components/forms/LeadCaptureForm";
 import { INDIAN_STATES_AND_UTS } from "@/lib/constants/states";
 
 export default function CalculatorWidget() {
-  const [state, setState] = useState("Bihar");
+  const [state, setState] = useState("Delhi (NCT)");
   const [monthlyUnits, setMonthlyUnits] = useState(400);
   const [monthlyBill, setMonthlyBill] = useState(3000);
   const [roofType, setRoofType] = useState("Flat RCC Concrete");
@@ -14,7 +14,7 @@ export default function CalculatorWidget() {
   const [showLeadModal, setShowLeadModal] = useState(false);
 
   // Solar calculations
-  // Average daily generation per kW in Bihar/JH/UP is approx 4.2 to 4.5 kWh/day -> ~125-130 units/month per kW
+  // Average daily generation per kW across India is approx 4.2 to 4.5 kWh/day -> ~125-130 units/month per kW
   const unitsPerKwMonth = 125;
   const suggestedKw = Math.max(1, Math.round((monthlyUnits / unitsPerKwMonth) * 10) / 10);
   const requiredRoofSqFt = Math.round(suggestedKw * 75); // approx 75 sq ft per kW with high-efficiency 550W modules

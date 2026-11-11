@@ -7,7 +7,7 @@ import { Globe, CheckCircle2, Save, Loader2 } from "lucide-react";
 export default function AdminSeoPage() {
   const [defaultTitle, setDefaultTitle] = useState("VIJOY POWER SOLUTION | Premier Solar Panel Installation & EPC Across India");
   const [defaultDesc, setDefaultDesc] = useState("Turnkey solar power solutions, high-efficiency solar panels (10W-730W), PM Surya Ghar subsidy assistance, and DISCOM net-metering across India.");
-  const [keywords, setKeywords] = useState("solar panels india, solar installation nationwide, solar epc bihar, solar jharkhand, solar uttar pradesh, 550w solar module");
+  const [keywords, setKeywords] = useState("solar panels india, pan india solar installation, vikram solar, adani solar, waaree solar, loom solar, 10w to 730w solar module");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);

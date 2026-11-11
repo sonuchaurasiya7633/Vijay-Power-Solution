@@ -62,7 +62,7 @@ export const defaultSolarPanelsPageCms: SolarPanelsPageCms = {
       badgeColor: "gold",
       title: "Heterojunction (HJT)",
       description:
-        "Ultra-high-efficiency modules reaching up to 730W. Features exceptional temperature coefficients, meaning minimal power drop during extreme 45°C+ Bihar, Jharkhand, and UP summer heatwaves.",
+        "Ultra-high-efficiency modules reaching up to 730W. Features exceptional temperature coefficients, meaning minimal power drop during extreme 45°C+ Indian summer heatwaves across all regions.",
     },
   ],
 };
@@ -137,7 +137,7 @@ export const defaultPublicPagesCms: PublicPagesCms = {
     badge: "Executed EPC Track Record",
     title: "Our Completed Solar Projects",
     subtitle:
-      "Explore completed residential rooftop, commercial institutional, industrial captive, and agricultural solar installations engineered across Bihar, Jharkhand, and Uttar Pradesh.",
+      "Explore completed residential rooftop, commercial institutional, industrial captive, and agricultural solar installations engineered across India.",
   },
   galleryPage: {
     badge: "Verified Field Installations",
@@ -158,16 +158,16 @@ export const defaultPublicPagesCms: PublicPagesCms = {
       "Everything you need to know about solar panel sizing, government subsidies under PM Surya Ghar, DISCOM net metering, warranties, and maintenance.",
   },
   serviceAreasPage: {
-    badge: "Regional Presence & Engineering Dispatch",
-    title: "Our Solar Service Footprint",
+    badge: "Pan-India Presence & Engineering Dispatch",
+    title: "Our Solar Service Footprint Across India",
     subtitle:
-      "Vijay Power Solution provides comprehensive turnkey rooftop solar EPC, DISCOM liaison, and field warranty maintenance across Bihar, Jharkhand, and Uttar Pradesh.",
+      "Vijay Power Solution provides comprehensive turnkey rooftop solar EPC, state DISCOM liaison, and field warranty maintenance across all 28 States & 8 Union Territories in India.",
   },
   blogPage: {
     badge: "Solar Engineering & Policy Insights",
     title: "Solar Guides, Subsidies & Maintenance Blog",
     subtitle:
-      "Practical articles written by solar field engineers covering PM Surya Ghar Muft Bijli Yojana updates, net-metering rules, and panel maintenance in North India.",
+      "Practical articles written by solar field engineers covering PM Surya Ghar Muft Bijli Yojana updates, net-metering rules, and panel maintenance across India.",
   },
   testimonialsPage: {
     badge: "Real Stories, Verified Performance",
@@ -186,9 +186,9 @@ export const defaultPublicPagesCms: PublicPagesCms = {
     subtitle:
       "Estimate the right rooftop solar system capacity, installation area, monthly electricity bill savings, and CO₂ emission offsets customized for your monthly billing cycle.",
     methodologyTitle: "Calculation Methodology & Engineering Assumptions",
-    card1Title: "1. Regional Irradiance Yield",
+    card1Title: "1. Pan-India Irradiance Yield",
     card1Text:
-      "Simulations use average daily solar insolation parameters for eastern & northern India, assuming an average annual yield of ~4.0 kWh per kW per day after typical thermal and wiring derating.",
+      "Simulations use average daily solar insolation parameters across India, assuming an average annual yield of ~4.0 to 4.5 kWh per kW per day after typical thermal and wiring derating.",
     card2Title: "2. Roof Area Allocation",
     card2Text:
       "Standard sizing accounts for 80 to 100 sq. ft. per kW using high-efficiency 550W+ Mono PERC / TOPCon modules, including inter-row shadow spacing and walkway maintenance tolerances.",
@@ -211,10 +211,10 @@ export const defaultPublicPagesCms: PublicPagesCms = {
     guarantee3Subtitle: "25-year linear performance documentation.",
   },
   siteSurveyPage: {
-    badge: "On-Site Roof Inspection",
+    badge: "Pan-India On-Site Roof Inspection",
     title: "Schedule a Free Engineering Site Survey",
     subtitle:
-      "Book a visit by our field technical team across Bihar, Jharkhand, or Uttar Pradesh for laser roof measurements, shading analysis, and load feasibility assessment.",
+      "Book a visit by our field technical team anywhere across India for laser roof measurements, shading analysis, and load feasibility assessment.",
   },
 };
 

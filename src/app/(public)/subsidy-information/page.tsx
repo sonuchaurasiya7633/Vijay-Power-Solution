@@ -72,7 +72,7 @@ export default async function SubsidyInformationPage() {
     {
       step: "02",
       title: "DISCOM Technical Feasibility Approval",
-      desc: "Submit the rooftop application. Your regional utility (SBPDCL/NBPDCL in Bihar, JBVNL in Jharkhand, UPPCL in UP) reviews local distribution transformer capacity and issues technical clearance.",
+      desc: "Submit the rooftop application. Your state electricity utility (DISCOM) across India reviews local distribution transformer capacity and issues technical clearance online.",
     },
     {
       step: "03",
@@ -88,22 +88,22 @@ export default async function SubsidyInformationPage() {
 
   const states = cmsSubsidy?.states || [
     {
-      state: "Bihar",
-      discoms: "SBPDCL & NBPDCL",
+      state: "North & Central India",
+      discoms: "UPPCL, BSES / TPDDL (Delhi), JVVNL / AVVNL (Rajasthan), MPMKVVCL",
       perks:
-        "Online Suvidha Portal integration for seamless Net-Metering application. Bi-directional meter installation fee adjusted in upcoming electricity bills.",
+        "Seamless integration with the PM Surya Ghar national portal across Delhi NCR, UP, Rajasthan, Haryana, and Madhya Pradesh, plus applicable state net-metering incentives.",
     },
     {
-      state: "Jharkhand",
-      discoms: "JBVNL",
+      state: "West & South India",
+      discoms: "MSEDCL (Maharashtra), UGVCL/MGVCL (Gujarat), BESCOM (Karnataka), TANGEDCO",
       perks:
-        "Single-window rooftop portal with expedited feeder feasibility checks. Zero meter security deposit for domestic consumers under 5 kW.",
+        "Fast-track online bi-directional net-metering and DBT processing across industrial, commercial, and residential rooftops in Maharashtra, Gujarat, Karnataka, Telangana, and Tamil Nadu.",
     },
     {
-      state: "Uttar Pradesh",
-      discoms: "UPPCL (MVVNL, PVVNL, DVVNL, PuVVNL)",
+      state: "East & North-East India",
+      discoms: "SBPDCL & NBPDCL (Bihar), JBVNL (Jharkhand), WBSEDCL (WB), TPCODL (Odisha)",
       perks:
-        "Direct DISCOM portal sync with central PM Surya Ghar national portal. State additional incentive of up to ₹30,000 credited under the UP Solar Energy Policy 2022.",
+        "Single-window rooftop DISCOM coordination, Suvidha/JBVNL feeder checks, and turnkey net-metering commissioning for homes and enterprises across Eastern India.",
     },
   ];
 

@@ -181,22 +181,22 @@ export default async function Footer() {
             <ul className="space-y-2 text-sm">
               <li>
                 <Link href="/service-areas" className="text-solar-yellow hover:text-white font-bold transition-colors">
-                  Serving Customers Across India →
+                  Pan-India Solar EPC (All 28 States &amp; 8 UTs) →
                 </Link>
               </li>
               <li>
-                <Link href="/service-areas/bihar" className="hover:text-solar-green transition-colors">
-                  Solar Hub: Bihar (Patna, Gaya, Muzaffarpur)
+                <Link href="/service-areas/delhi" className="hover:text-solar-green transition-colors">
+                  North India (Delhi NCR, UP, Rajasthan, Punjab)
                 </Link>
               </li>
               <li>
-                <Link href="/service-areas/jharkhand" className="hover:text-solar-green transition-colors">
-                  Solar Hub: Jharkhand (Ranchi, Jamshedpur)
+                <Link href="/service-areas/maharashtra" className="hover:text-solar-green transition-colors">
+                  West &amp; South (Maharashtra, Gujarat, Karnataka, TN)
                 </Link>
               </li>
               <li>
-                <Link href="/service-areas/uttar-pradesh" className="hover:text-solar-green transition-colors">
-                  Solar Hub: UP (Lucknow, Varanasi, Prayagraj)
+                <Link href="/service-areas/west-bengal" className="hover:text-solar-green transition-colors">
+                  East &amp; Central (WB, Bihar, Jharkhand, MP, Odisha)
                 </Link>
               </li>
               <li className="pt-2">

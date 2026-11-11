@@ -6,6 +6,7 @@ import Image from "next/image";
 import { ArrowRight, BatteryCharging, Check, Cpu, ShieldCheck, Zap } from "lucide-react";
 import { getCleanPublicImage } from "@/lib/image-fallback";
 import { defaultSolarPanelsPageCms, type SolarPanelsPageCms } from "@/lib/cms-defaults";
+import { OFFICIAL_PANEL_BRANDS, normalizeOfficialPanelBrand } from "@/lib/constants/brands";
 import SolarCardPlaceholder from "@/components/public/SolarCardPlaceholder";
 
 export interface ShowcaseProductItem {
@@ -76,7 +77,7 @@ const fallbackCatalog: ShowcaseProductItem[] = [
   {
     slug: "225w-monocrystalline-panel",
     name: "225W Monocrystalline Panel",
-    brand: "Luminous",
+    brand: "Loom Solar",
     ratedPowerWp: 225,
     technology: "Mono PERC",
     efficiency: "20.2%",
@@ -87,7 +88,7 @@ const fallbackCatalog: ShowcaseProductItem[] = [
   {
     slug: "450w-mono-perc-half-cut",
     name: "450W Mono PERC Half-Cut Module",
-    brand: "Tata Power Solar",
+    brand: "Adani Solar",
     ratedPowerWp: 450,
     technology: "Mono PERC Half-Cut",
     efficiency: "21.0%",
@@ -98,7 +99,7 @@ const fallbackCatalog: ShowcaseProductItem[] = [
   {
     slug: "550w-topcon-bifacial-module",
     name: "550W N-Type TOPCon Bifacial Module",
-    brand: "Waaree / Adani",
+    brand: "Waaree",
     ratedPowerWp: 550,
     technology: "N-Type TOPCon Bifacial",
     efficiency: "22.3%",
@@ -120,7 +121,7 @@ const fallbackCatalog: ShowcaseProductItem[] = [
   {
     slug: "730w-hjt-utility-module",
     name: "730W Heterojunction (HJT) Flagship",
-    brand: "Tier-1 Utility Grade",
+    brand: "Vikram Solar",
     ratedPowerWp: 730,
     technology: "Heterojunction (HJT)",
     efficiency: "23.4%",
@@ -158,7 +159,7 @@ function normalizeProduct(raw: any, index: number): ShowcaseProductItem {
     _id: raw._id ? String(raw._id) : undefined,
     slug: raw.slug || `solar-module-${raw.ratedPowerWp || index}`,
     name: raw.name || `${raw.ratedPowerWp || 550}W Solar Module`,
-    brand: raw.brand || "Tier-1 Manufacturer",
+    brand: normalizeOfficialPanelBrand(raw.brand),
     ratedPowerWp: Number(raw.ratedPowerWp) || 550,
     wattageGroup: raw.wattageGroup,
     technology: tech,
@@ -181,6 +182,7 @@ export default function ProductWattageShowcase({
   showViewAllButton = true,
 }: ProductWattageShowcaseProps) {
   const [activeTab, setActiveTab] = useState("all");
+  const [activeBrand, setActiveBrand] = useState<string>("all");
   const [products, setProducts] = useState<ShowcaseProductItem[]>(() => {
     if (Array.isArray(initialProducts) && initialProducts.length > 0) {
       return initialProducts.map((p, idx) => normalizeProduct(p, idx));
@@ -223,11 +225,14 @@ export default function ProductWattageShowcase({
 
   const filteredProducts = useMemo(() => {
     const selectedTab = wattageTabs.find((t) => t.value === activeTab) || wattageTabs[0];
-    if (selectedTab.value === "all") return effectiveProducts;
-    return effectiveProducts.filter(
-      (item) => item.ratedPowerWp >= selectedTab.minWp && item.ratedPowerWp <= selectedTab.maxWp
-    );
-  }, [activeTab, effectiveProducts]);
+    return effectiveProducts.filter((item) => {
+      const matchesWattage =
+        selectedTab.value === "all" ||
+        (item.ratedPowerWp >= selectedTab.minWp && item.ratedPowerWp <= selectedTab.maxWp);
+      const matchesBrand = activeBrand === "all" || item.brand === activeBrand;
+      return matchesWattage && matchesBrand;
+    });
+  }, [activeTab, activeBrand, effectiveProducts]);
 
   const showcaseBadge = cms?.showcaseBadge || defaultSolarPanelsPageCms.showcaseBadge;
   const showcaseTitle = cms?.showcaseTitle || defaultSolarPanelsPageCms.showcaseTitle;
@@ -266,7 +271,7 @@ export default function ProductWattageShowcase({
         </div>
 
         {/* Wattage Tabs */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-8">
+        <div className="flex items-center gap-2 overflow-x-auto pb-3">
           {wattageTabs.map((tab) => {
             const active = activeTab === tab.value;
             return (
@@ -281,6 +286,41 @@ export default function ProductWattageShowcase({
                 }`}
               >
                 {tab.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Strict 4 Official Brand Partner Filters */}
+        <div className="flex flex-wrap items-center gap-2 mb-8">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-muted mr-1">
+            Authorized Brands:
+          </span>
+          <button
+            type="button"
+            onClick={() => setActiveBrand("all")}
+            className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+              activeBrand === "all"
+                ? "bg-solar-green text-white shadow-sm"
+                : "bg-white text-navy-800 border border-slate-border hover:border-solar-green"
+            }`}
+          >
+            All 4 Brands
+          </button>
+          {OFFICIAL_PANEL_BRANDS.map((brandName) => {
+            const active = activeBrand === brandName;
+            return (
+              <button
+                key={brandName}
+                type="button"
+                onClick={() => setActiveBrand(brandName)}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+                  active
+                    ? "bg-solar-green text-white shadow-sm"
+                    : "bg-white text-navy-800 border border-slate-border hover:border-solar-green"
+                }`}
+              >
+                {brandName}
               </button>
             );
           })}

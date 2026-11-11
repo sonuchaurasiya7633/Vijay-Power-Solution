@@ -42,11 +42,15 @@ export const INDIAN_STATES_AND_UTS = [
 ] as const;
 
 export const POPULAR_OPERATIONAL_HUBS = [
+  "Delhi (NCT)",
+  "Maharashtra",
+  "Gujarat",
+  "Uttar Pradesh",
+  "Rajasthan",
+  "Karnataka",
   "Bihar",
   "Jharkhand",
-  "Uttar Pradesh",
   "West Bengal",
-  "Delhi (NCT)",
-  "Odisha",
-  "Madhya Pradesh"
+  "Madhya Pradesh",
+  "Tamil Nadu",
 ];

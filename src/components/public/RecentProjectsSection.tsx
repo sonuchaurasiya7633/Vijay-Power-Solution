@@ -16,31 +16,31 @@ interface ProjectCardData {
 
 const defaultProjects: ProjectCardData[] = [
   {
-    slug: "10kw-on-grid-rooftop-solar-patna",
-    title: "10 kW On-Grid Rooftop Solar in Kankarbagh",
-    location: "Patna, Bihar",
+    slug: "10kw-on-grid-rooftop-solar-delhi-ncr",
+    title: "10 kW On-Grid Elevated Rooftop Solar",
+    location: "New Delhi (Delhi NCR)",
     capacityKw: 10,
     category: "Residential Rooftop",
     image: "",
-    outcome: "Monthly SBPDCL bill reduced by 85%. Usable terrace space preserved via elevated structure.",
+    outcome: "Monthly electricity bill reduced by 85%. Usable terrace space preserved via elevated galvanized structure.",
   },
   {
-    slug: "25kw-commercial-solar-bodh-gaya",
+    slug: "25kw-commercial-solar-jaipur",
     title: "25 kW Commercial Solar Power Plant",
-    location: "Bodh Gaya, Bihar",
+    location: "Jaipur, Rajasthan",
     capacityKw: 25,
     category: "Commercial Enterprise",
     image: "",
-    outcome: "Daytime guest house HVAC powered completely by rooftop solar, saving ₹3.2L annually.",
+    outcome: "Daytime commercial HVAC powered completely by Vikram/Adani modules, saving ₹3.2L annually.",
   },
   {
     slug: "5kw-hybrid-solar-system-ranchi",
     title: "5 kW Hybrid Solar with Lithium Storage",
-    location: "Morabadi, Ranchi, Jharkhand",
+    location: "Pune, Maharashtra",
     capacityKw: 5,
     category: "Hybrid Storage",
     image: "",
-    outcome: "Uninterrupted 24/7 power backup during frequent colony load shedding with zero diesel cost.",
+    outcome: "Uninterrupted 24/7 clean backup power during peak outages with zero diesel generator expense.",
   },
 ];
 

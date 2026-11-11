@@ -300,7 +300,7 @@ export default function AdminBlogsPage() {
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Complete Guide to PM Surya Ghar Scheme in Bihar"
+                  placeholder="e.g. Complete Guide to PM Surya Ghar Scheme Across India"
                   value={form.title}
                   onChange={(e) => handleTitleChange(e.target.value)}
                   className="w-full p-2.5 rounded-xl border border-slate-border outline-none focus:border-solar-green"

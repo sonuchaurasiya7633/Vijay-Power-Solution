@@ -3,6 +3,7 @@ import connectDB from "@/lib/db/connection";
 import SolarProduct from "@/models/SolarProduct";
 import { getSession } from "@/lib/auth/session";
 import { hasPermission } from "@/lib/auth/permissions";
+import { normalizeOfficialPanelBrand } from "@/lib/constants/brands";
 
 export async function GET(
   req: NextRequest,
@@ -36,6 +37,9 @@ export async function PATCH(
     }
 
     const body = await req.json();
+    if (body && typeof body.brand === "string") {
+      body.brand = normalizeOfficialPanelBrand(body.brand);
+    }
     await connectDB();
 
     const product = await SolarProduct.findByIdAndUpdate(params.id, body, { new: true });
