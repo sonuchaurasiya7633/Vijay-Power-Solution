@@ -5,8 +5,12 @@ import LeadActivity from "@/models/LeadActivity";
 import FollowUp from "@/models/FollowUp";
 import SiteSurvey from "@/models/SiteSurvey";
 import Quotation from "@/models/Quotation";
+import "@/models/User";
+import "@/models/SolarProduct";
 import { getSession } from "@/lib/auth/session";
 import { hasPermission } from "@/lib/auth/permissions";
+
+export const dynamic = "force-dynamic";
 
 export async function GET(
   req: NextRequest,

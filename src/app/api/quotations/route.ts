@@ -3,8 +3,11 @@ import connectDB from "@/lib/db/connection";
 import Quotation from "@/models/Quotation";
 import Lead from "@/models/Lead";
 import LeadActivity from "@/models/LeadActivity";
+import "@/models/User";
 import { getSession } from "@/lib/auth/session";
 import { hasPermission } from "@/lib/auth/permissions";
+
+export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   try {

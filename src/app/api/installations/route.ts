@@ -4,8 +4,11 @@ import InstallationJob from "@/models/InstallationJob";
 import Lead from "@/models/Lead";
 import LeadActivity from "@/models/LeadActivity";
 import PortfolioProject from "@/models/PortfolioProject";
+import "@/models/User";
 import { getSession } from "@/lib/auth/session";
 import { hasPermission } from "@/lib/auth/permissions";
+
+export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {

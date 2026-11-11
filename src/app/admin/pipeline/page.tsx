@@ -62,7 +62,12 @@ export default function PipelinePage() {
       ) : (
         <div className="flex gap-4 overflow-x-auto pb-6 scrollbar-thin">
           {stages.map((st) => {
-            const stageLeads = leads.filter((l) => l.stage === st.key);
+            const aliases: Record<string, string[]> = {
+              new_lead: ["new_lead", "new"],
+              site_survey_scheduled: ["site_survey_scheduled", "survey_scheduled"],
+            };
+            const accepted = aliases[st.key] || [st.key];
+            const stageLeads = leads.filter((l) => accepted.includes(l.stage));
             return (
               <div
                 key={st.key}

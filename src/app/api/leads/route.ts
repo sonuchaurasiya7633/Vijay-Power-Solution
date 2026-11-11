@@ -2,10 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db/connection";
 import Lead from "@/models/Lead";
 import LeadActivity from "@/models/LeadActivity";
+import "@/models/User";
+import "@/models/SolarProduct";
 import { LeadCaptureSchema } from "@/lib/validation/lead";
 import { getSession } from "@/lib/auth/session";
 import { hasPermission } from "@/lib/auth/permissions";
 import { sendEmail } from "@/lib/email/mailer";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   try {
@@ -152,28 +156,39 @@ export async function GET(req: NextRequest) {
     const priority = searchParams.get("priority");
     const state = searchParams.get("state");
     const customerType = searchParams.get("customerType");
-    const search = searchParams.get("search");
+    const search = searchParams.get("search")?.trim();
     const page = Math.max(1, Number(searchParams.get("page") || 1));
     const limit = Math.min(100, Math.max(1, Number(searchParams.get("limit") || 25)));
 
-        const query: Record<string, any> = { isArchived: false };
+    const query: Record<string, any> = { isArchived: { $ne: true } };
 
     // Scoped visibility: sales_executive only views leads assigned to them unless viewer/manager/admin
     if (session.role === "sales_executive") {
       query.assignedTo = session.userId;
     }
 
-    if (stage && stage !== "all") query.stage = stage;
+    if (stage && stage !== "all") {
+      const stageAliases: Record<string, string[]> = {
+        new_lead: ["new_lead", "new"],
+        site_survey_scheduled: ["site_survey_scheduled", "survey_scheduled"],
+        site_survey_completed: ["site_survey_completed", "survey_completed"],
+        installation_completed: ["installation_completed", "completed"],
+      };
+      const matchedStages = stageAliases[stage];
+      query.stage = matchedStages ? { $in: matchedStages } : stage;
+    }
     if (priority && priority !== "all") query.priority = priority;
     if (state && state !== "all") query.state = state;
     if (customerType && customerType !== "all") query.customerType = customerType;
 
     if (search) {
+      const escaped = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       query.$or = [
-        { leadId: { $regex: search, $options: "i" } },
-        { fullName: { $regex: search, $options: "i" } },
-        { phone: { $regex: search, $options: "i" } },
-        { city: { $regex: search, $options: "i" } },
+        { leadId: { $regex: escaped, $options: "i" } },
+        { fullName: { $regex: escaped, $options: "i" } },
+        { phone: { $regex: escaped, $options: "i" } },
+        { city: { $regex: escaped, $options: "i" } },
+        { state: { $regex: escaped, $options: "i" } },
       ];
     }
 
@@ -190,15 +205,18 @@ export async function GET(req: NextRequest) {
       Lead.countDocuments(query),
     ]);
 
-    return NextResponse.json({
-      leads,
-      pagination: {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
+    return NextResponse.json(
+      {
+        leads,
+        pagination: {
+          total,
+          page,
+          limit,
+          totalPages: Math.max(1, Math.ceil(total / limit)),
+        },
       },
-    });
+      { headers: { "Cache-Control": "no-store" } }
+    );
   } catch (error) {
     console.error("[Get Leads Error]", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

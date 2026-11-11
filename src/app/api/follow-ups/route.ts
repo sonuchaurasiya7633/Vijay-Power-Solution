@@ -3,7 +3,10 @@ import connectDB from "@/lib/db/connection";
 import FollowUp from "@/models/FollowUp";
 import Lead from "@/models/Lead";
 import LeadActivity from "@/models/LeadActivity";
+import "@/models/User";
 import { getSession } from "@/lib/auth/session";
+
+export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   try {
