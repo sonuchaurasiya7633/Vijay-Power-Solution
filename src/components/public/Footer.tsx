@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Phone, Mail, MapPin, MessageCircle, ShieldCheck, Sun } from "lucide-react";
+import { Phone, Mail, MapPin, ShieldCheck, Sun, ArrowRight } from "lucide-react";
 import SocialLinksBar from "@/components/public/SocialLinksBar";
 
 import { getPublicShellSettings, type PublicShellSettings } from "@/lib/cms-server";
@@ -49,11 +49,11 @@ export default async function Footer({
     `© ${currentYear} VIJOY POWER SOLUTION. All rights reserved.`;
 
   return (
-    <footer className="bg-navy-900 text-slate-300 pt-16 pb-10 border-t border-navy-700">
+    <footer className="bg-navy-900 text-slate-300 pt-14 pb-10 border-t border-navy-700">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-navy-700/60">
-          {/* Col 1: About & Logo */}
-          <div className="lg:col-span-2 space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-10 border-b border-navy-700/60">
+          {/* Col 1: About & Contact */}
+          <div className="lg:col-span-5 space-y-4">
             <Link href="/" className="flex items-center gap-3">
               <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-white/10 p-0.5 border border-white/20">
                 <Image
@@ -72,10 +72,10 @@ export default async function Footer({
                 </span>
               </div>
             </Link>
-            <p className="text-sm text-slate-300 leading-relaxed pr-6">
+            <p className="text-sm text-slate-300 leading-relaxed pr-4">
               {tagline}
             </p>
-            <div className="pt-2 flex flex-col gap-2.5 text-xs text-slate-300">
+            <div className="pt-1 flex flex-col gap-2.5 text-xs text-slate-300">
               <div className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-solar-yellow shrink-0 mt-0.5" />
                 <span>{contact.address}</span>
@@ -83,7 +83,7 @@ export default async function Footer({
               <div className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-solar-green shrink-0" />
                 <a href={`tel:${cleanPhone}`} className="hover:text-white transition-colors">
-                  {contact.phone} ({contact.workingHours})
+                  {contact.phone} • <span className="text-slate-400">{contact.workingHours}</span>
                 </a>
               </div>
               <div className="flex items-center gap-2.5">
@@ -93,7 +93,7 @@ export default async function Footer({
                 </a>
               </div>
             </div>
-            <div className="pt-3 space-y-2">
+            <div className="pt-2 space-y-2">
               <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
                 Follow Us
               </p>
@@ -101,49 +101,44 @@ export default async function Footer({
             </div>
           </div>
 
-          {/* Col 2: Solutions */}
-          <div className="space-y-3">
-            <h4 className="text-sm font-bold uppercase tracking-wider text-white">Solar Solutions</h4>
-            <ul className="space-y-2 text-sm">
+          {/* Col 2: Quick Links */}
+          <div className="lg:col-span-3 space-y-3">
+            <h4 className="text-sm font-bold uppercase tracking-wider text-white">Explore</h4>
+            <ul className="space-y-2.5 text-sm">
               <li>
-                <Link href="/solar-solutions" className="hover:text-solar-green transition-colors">
-                  Residential Rooftop Solar
+                <Link href="/about" className="hover:text-solar-green transition-colors">
+                  About Us
                 </Link>
               </li>
               <li>
                 <Link href="/solar-solutions" className="hover:text-solar-green transition-colors">
-                  Commercial Rooftop Solar
+                  Solar Solutions
                 </Link>
               </li>
               <li>
-                <Link href="/solar-solutions" className="hover:text-solar-green transition-colors">
-                  Industrial Solar Plants
+                <Link href="/solar-panels" className="hover:text-solar-green transition-colors">
+                  Panel Catalogue (10W – 730W)
                 </Link>
               </li>
               <li>
-                <Link href="/solar-solutions" className="hover:text-solar-green transition-colors">
-                  On-Grid Net Metering
+                <Link href="/services" className="hover:text-solar-green transition-colors">
+                  Installation Services
                 </Link>
               </li>
               <li>
-                <Link href="/solar-solutions" className="hover:text-solar-green transition-colors">
-                  Hybrid &amp; Battery Systems
-                </Link>
-              </li>
-              <li>
-                <Link href="/solar-solutions" className="hover:text-solar-green transition-colors">
-                  Solar Agricultural Pumps
+                <Link href="/projects" className="hover:text-solar-green transition-colors">
+                  Real Installations
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Col 3: Services & Tools */}
-          <div className="space-y-3">
-            <h4 className="text-sm font-bold uppercase tracking-wider text-white">Services & Tools</h4>
-            <ul className="space-y-2 text-sm">
+          {/* Col 3: Tools & Support */}
+          <div className="lg:col-span-4 space-y-3">
+            <h4 className="text-sm font-bold uppercase tracking-wider text-white">Tools &amp; Coverage</h4>
+            <ul className="space-y-2.5 text-sm">
               <li>
-                <Link href="/solar-calculator" className="text-solar-yellow hover:text-white flex items-center gap-1 font-medium">
+                <Link href="/solar-calculator" className="text-solar-yellow hover:text-white inline-flex items-center gap-1.5 font-medium transition-colors">
                   <Sun className="w-3.5 h-3.5" />
                   <span>Solar Savings Calculator</span>
                 </Link>
@@ -154,63 +149,22 @@ export default async function Footer({
                 </Link>
               </li>
               <li>
-                <Link href="/services/solar-consultation-site-survey" className="hover:text-solar-green transition-colors">
-                  Rooftop Site Survey
+                <Link href="/service-areas" className="hover:text-solar-green transition-colors">
+                  Pan-India Service Coverage
                 </Link>
               </li>
               <li>
-                <Link href="/services/solar-panel-installation" className="hover:text-solar-green transition-colors">
-                  Turnkey Installation
-                </Link>
-              </li>
-              <li>
-                <Link href="/services/net-metering-guidance" className="hover:text-solar-green transition-colors">
-                  DISCOM Net Metering Liaison
-                </Link>
-              </li>
-              <li>
-                <Link href="/solar-panels" className="hover:text-solar-green transition-colors">
-                  Panel Catalogue (10W - 730W)
-                </Link>
-              </li>
-              <li>
-                <Link href="/projects" className="hover:text-solar-green transition-colors">
-                  Recent Installations
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Col 4: Primary Coverage */}
-          <div className="space-y-3">
-            <h4 className="text-sm font-bold uppercase tracking-wider text-white">Service Coverage</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="/service-areas" className="text-solar-yellow hover:text-white font-bold transition-colors">
-                  Pan-India Solar EPC (All 28 States &amp; 8 UTs) →
-                </Link>
-              </li>
-              <li>
-                <Link href="/service-areas/delhi" className="hover:text-solar-green transition-colors">
-                  North India (Delhi NCR, UP, Rajasthan, Punjab)
-                </Link>
-              </li>
-              <li>
-                <Link href="/service-areas/maharashtra" className="hover:text-solar-green transition-colors">
-                  West &amp; South (Maharashtra, Gujarat, Karnataka, TN)
-                </Link>
-              </li>
-              <li>
-                <Link href="/service-areas/west-bengal" className="hover:text-solar-green transition-colors">
-                  East &amp; Central (WB, Bihar, Jharkhand, MP, Odisha)
+                <Link href="/contact" className="hover:text-solar-green transition-colors">
+                  Contact Us
                 </Link>
               </li>
               <li className="pt-2">
                 <Link
                   href="/request-site-survey"
-                  className="inline-block py-2 px-3 text-xs font-semibold rounded-lg bg-navy-800 text-solar-yellow border border-navy-600 hover:bg-navy-700 transition-colors"
+                  className="inline-flex items-center gap-2 py-2.5 px-4 text-xs font-bold rounded-xl bg-navy-800 text-solar-yellow border border-navy-600 hover:bg-navy-700 hover:border-solar-yellow/50 transition-all"
                 >
-                  Book Pan India Feasibility Visit
+                  <span>Request Site Survey</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </li>
             </ul>
@@ -218,7 +172,7 @@ export default async function Footer({
         </div>
 
         {/* Disclaimer & Transparency Note */}
-        <div className="py-6 border-b border-navy-700/60 text-xs text-slate-400 space-y-2">
+        <div className="py-5 border-b border-navy-700/60 text-xs text-slate-400 space-y-1.5">
           <p className="flex items-center gap-1.5 text-slate-300 font-semibold">
             <ShieldCheck className="w-4 h-4 text-solar-green" />
             <span>Strict Commercial Transparency Notice:</span>
@@ -237,15 +191,11 @@ export default async function Footer({
             </Link>
             <span>•</span>
             <Link href="/terms-and-conditions" className="hover:text-white transition-colors">
-              Terms & Conditions
+              Terms &amp; Conditions
             </Link>
             <span>•</span>
             <Link href="/disclaimer" className="hover:text-white transition-colors">
-              Regulatory Disclaimer
-            </Link>
-            <span>•</span>
-            <Link href="/faqs" className="hover:text-white transition-colors">
-              FAQs
+              Disclaimer
             </Link>
             <span>•</span>
             <Link href="/admin/login" className="text-slate-400 hover:text-slate-200 transition-colors">
