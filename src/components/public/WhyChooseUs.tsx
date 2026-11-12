@@ -1,6 +1,7 @@
 import { Compass, ShieldCheck, Wrench, FileText, Headphones, CheckCircle2 } from "lucide-react";
 import connectDB from "@/lib/db/connection";
 import Setting from "@/models/Setting";
+import { Reveal, StaggerGrid, StaggerItem } from "@/components/ui/MotionPrimitives";
 
 export default async function WhyChooseUs() {
   const defaultData = {
@@ -61,7 +62,7 @@ export default async function WhyChooseUs() {
   return (
     <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-2xl mx-auto space-y-3 mb-14">
+        <Reveal className="text-center max-w-2xl mx-auto space-y-3 mb-14">
           <span className="text-xs font-bold uppercase tracking-wider text-solar-green bg-solar-green-light px-3 py-1 rounded-full">
             {data.badge}
           </span>
@@ -71,25 +72,26 @@ export default async function WhyChooseUs() {
           <p className="text-sm text-slate-muted">
             {data.subtitle}
           </p>
-        </div>
+        </Reveal>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <StaggerGrid className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {data.pillars.map((p, idx) => {
             const Icon = icons[idx % icons.length];
             return (
-              <div
+              <StaggerItem
                 key={idx}
-                className="p-6 rounded-2xl border border-slate-border bg-slate-bg/50 hover:bg-white hover:border-solar-green/40 hover:shadow-lg transition-all space-y-3"
+                hoverLift
+                className="p-6 rounded-2xl border border-slate-border bg-slate-bg/50 hover:bg-white hover:border-solar-green/40 hover:shadow-lg transition-all duration-300 space-y-3"
               >
                 <div className="w-12 h-12 rounded-xl bg-solar-green-light text-solar-green flex items-center justify-center">
                   <Icon className="w-6 h-6" />
                 </div>
                 <h3 className="text-lg font-bold text-navy-800">{p.title}</h3>
                 <p className="text-xs text-slate-muted leading-relaxed">{p.desc}</p>
-              </div>
+              </StaggerItem>
             );
           })}
-        </div>
+        </StaggerGrid>
       </div>
     </section>
   );

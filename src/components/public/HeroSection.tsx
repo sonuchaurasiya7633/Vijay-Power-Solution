@@ -5,6 +5,7 @@ import connectDB from "@/lib/db/connection";
 import Page from "@/models/Page";
 import { getHomepageSetting } from "@/lib/cms-server";
 import { optimizeCloudinaryUrl } from "@/lib/image-optimize";
+import { HeroSlideUp, HeroAmbientZoom } from "@/components/ui/MotionPrimitives";
 
 export default async function HeroSection() {
   let heroData = {

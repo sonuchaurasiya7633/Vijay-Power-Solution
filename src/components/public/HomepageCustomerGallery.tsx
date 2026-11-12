@@ -7,6 +7,7 @@ import Link from "next/link";
 import { ArrowRight, MapPin, Zap, Maximize2, ShieldCheck, Sparkles } from "lucide-react";
 import type { GalleryItem } from "@/components/public/GalleryLightbox";
 import { optimizeCloudinaryUrl } from "@/lib/image-optimize";
+import { Reveal, StaggerGrid, StaggerItem } from "@/components/ui/MotionPrimitives";
 
 const GalleryLightbox = dynamic(() => import("@/components/public/GalleryLightbox"), {
   ssr: false,
@@ -39,7 +40,7 @@ export default function HomepageCustomerGallery({
     <section className="py-20 bg-slate-bg border-t border-slate-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-3 mb-14">
+        <Reveal className="text-center max-w-3xl mx-auto space-y-3 mb-14">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-solar-green-light border border-solar-green/20 text-solar-green text-xs font-extrabold uppercase tracking-wider">
             <Sparkles className="w-3.5 h-3.5" />
             <span>Verified Customer Installations</span>
@@ -50,18 +51,22 @@ export default function HomepageCustomerGallery({
           <p className="text-sm sm:text-base text-slate-muted leading-relaxed">
             Real Installations. Real Customers. Trusted Solar Solutions Across India.
           </p>
-        </div>
+        </Reveal>
 
         {/* Gallery Grid: Desktop 3 cols, Tablet 2 cols, Mobile 2 cols */}
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+        <StaggerGrid className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
           {displayItems.map((item, idx) => {
             const locationText = [item.city, item.state].filter(Boolean).join(", ");
             return (
-              <div
+              <StaggerItem
                 key={item._id || idx}
-                onClick={() => openLightbox(idx)}
-                className="group relative bg-white rounded-2xl sm:rounded-3xl border border-slate-border overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between"
+                hoverLift
+                className="group relative bg-white rounded-2xl sm:rounded-3xl border border-slate-border overflow-hidden shadow-sm hover:shadow-xl hover:border-solar-green/40 transition-all duration-300 cursor-pointer flex flex-col justify-between"
               >
+                <div
+                  onClick={() => openLightbox(idx)}
+                  className="flex flex-col justify-between h-full"
+                >
                 {/* Image Container with neutral frame to protect portrait/poster aspect ratios */}
                 <div className="relative aspect-[4/5] sm:aspect-[4/3] w-full bg-navy-950/90 overflow-hidden flex items-center justify-center">
                   <Image
@@ -114,10 +119,11 @@ export default function HomepageCustomerGallery({
                     )}
                   </div>
                 </div>
-              </div>
+                </div>
+              </StaggerItem>
             );
           })}
-        </div>
+        </StaggerGrid>
 
         {/* View All Button */}
         <div className="text-center mt-10">

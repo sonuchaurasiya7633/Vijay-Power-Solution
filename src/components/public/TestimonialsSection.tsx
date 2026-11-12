@@ -1,4 +1,5 @@
 import { Star, Quote, CheckCircle2 } from "lucide-react";
+import { Reveal, StaggerGrid, StaggerItem } from "@/components/ui/MotionPrimitives";
 
 interface TestimonialItem {
   name: string;
@@ -40,7 +41,7 @@ export default function TestimonialsSection() {
   return (
     <section className="py-20 bg-slate-bg border-t border-slate-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-2xl mx-auto space-y-3 mb-14">
+        <Reveal className="text-center max-w-2xl mx-auto space-y-3 mb-14">
           <span className="text-xs font-bold uppercase tracking-wider text-solar-green bg-solar-green-light px-3 py-1 rounded-full">
             Real Customer Feedback
           </span>
@@ -50,13 +51,14 @@ export default function TestimonialsSection() {
           <p className="text-sm text-slate-muted">
             Genuine customer-confirmed reviews from our completed installations across India.
           </p>
-        </div>
+        </Reveal>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <StaggerGrid className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {verifiedTestimonials.map((t, idx) => (
-            <div
+            <StaggerItem
               key={idx}
-              className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-border shadow-sm flex flex-col justify-between space-y-6 hover:shadow-md transition-shadow relative"
+              hoverLift
+              className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-border shadow-sm flex flex-col justify-between space-y-6 hover:shadow-lg hover:border-solar-green/30 transition-all duration-300 relative"
             >
               <div className="space-y-4">
                 <Quote className="w-8 h-8 text-solar-green/20" />
@@ -80,9 +82,9 @@ export default function TestimonialsSection() {
                   <span>Verified</span>
                 </div>
               </div>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerGrid>
       </div>
     </section>
   );

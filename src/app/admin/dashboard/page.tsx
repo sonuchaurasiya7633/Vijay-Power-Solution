@@ -31,6 +31,12 @@ import {
   UploadCloud,
   FileCode2,
 } from "lucide-react";
+import {
+  StaggerGrid,
+  StaggerItem,
+  AnimatedCounter,
+  AnimatedProgressBar,
+} from "@/components/ui/MotionPrimitives";
 
 export const dynamic = "force-dynamic";
 
@@ -220,33 +226,34 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* Metric Cards Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <StaggerGrid className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {cards.map((c, idx) => {
           const Icon = c.icon;
           return (
-            <Link
-              key={idx}
-              href={c.link}
-              className="bg-white p-5 rounded-2xl border border-slate-border hover:border-solar-green/40 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group"
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-muted">{c.label}</span>
-                <div className={`w-8 h-8 rounded-xl ${c.bg} ${c.color} flex items-center justify-center`}>
-                  <Icon className="w-4 h-4" />
+            <StaggerItem key={idx} hoverLift>
+              <Link
+                href={c.link}
+                className="h-full bg-white p-5 rounded-2xl border border-slate-border hover:border-solar-green/40 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-muted">{c.label}</span>
+                  <div className={`w-8 h-8 rounded-xl ${c.bg} ${c.color} flex items-center justify-center`}>
+                    <Icon className="w-4 h-4" />
+                  </div>
                 </div>
-              </div>
-              <div className="mt-4 flex items-baseline justify-between">
-                <span className="text-2xl sm:text-3xl font-extrabold font-display text-navy-800">
-                  {c.value}
-                </span>
-                <span className="text-[11px] font-bold text-slate-400 group-hover:text-solar-green transition-colors flex items-center gap-0.5">
-                  View <ArrowRight className="w-3 h-3" />
-                </span>
-              </div>
-            </Link>
+                <div className="mt-4 flex items-baseline justify-between">
+                  <span className="text-2xl sm:text-3xl font-extrabold font-display text-navy-800">
+                    <AnimatedCounter value={c.value} />
+                  </span>
+                  <span className="text-[11px] font-bold text-slate-400 group-hover:text-solar-green transition-colors flex items-center gap-0.5">
+                    View <ArrowRight className="w-3 h-3 transition-transform duration-200 group-hover:translate-x-0.5" />
+                  </span>
+                </div>
+              </Link>
+            </StaggerItem>
           );
         })}
-      </div>
+      </StaggerGrid>
 
       {/* State breakdown & Pipeline overview */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -269,9 +276,9 @@ export default async function AdminDashboardPage() {
                     <span className="text-slate-muted font-mono">{item.count} leads ({pct}%)</span>
                   </div>
                   <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-solar-green rounded-full transition-all duration-500"
-                      style={{ width: `${pct}%` }}
+                    <AnimatedProgressBar
+                      percent={pct}
+                      className="h-full bg-solar-green rounded-full"
                     />
                   </div>
                 </div>

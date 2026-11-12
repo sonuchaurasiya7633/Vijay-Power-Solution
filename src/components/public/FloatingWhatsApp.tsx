@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { Phone } from "lucide-react";
+import { motion } from "framer-motion";
+import { VPS_EASE } from "@/components/ui/MotionPrimitives";
 
 export default function FloatingWhatsApp({
   phone = "+91 94310 00000",
@@ -67,7 +69,10 @@ export default function FloatingWhatsApp({
   const waUrl = `https://wa.me/${cleanWa}?text=${encodeURIComponent(message)}`;
 
   return (
-    <aside
+    <motion.aside
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.32, delay: 0.25, ease: VPS_EASE }}
       aria-label="Quick Contact"
       className="fixed bottom-6 right-5 sm:right-6 z-30 flex flex-col items-center gap-3 select-none"
     >
@@ -111,6 +116,6 @@ export default function FloatingWhatsApp({
           Call: {contactData.phone}
         </span>
       </div>
-    </aside>
+    </motion.aside>
   );
 }

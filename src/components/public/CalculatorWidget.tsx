@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Sun, Zap, TrendingUp, Leaf, ShieldAlert, ArrowRight } from "lucide-react";
 import LeadCaptureForm from "@/components/forms/LeadCaptureForm";
 import { INDIAN_STATES_AND_UTS } from "@/lib/constants/states";
+import { AnimatePresence, motion } from "framer-motion";
+import { VPS_EASE } from "@/components/ui/MotionPrimitives";
 
 export default function CalculatorWidget() {
   const [state, setState] = useState("Delhi (NCT)");
@@ -232,38 +234,54 @@ export default function CalculatorWidget() {
       </div>
 
       {/* Modal to submit calculated lead */}
-      {showLeadModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-900/70 backdrop-blur-sm animate-fadeIn">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-border relative max-h-[90vh] overflow-y-auto">
-            <button
-              onClick={() => setShowLeadModal(false)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-navy-800 font-bold text-lg w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center"
-              aria-label="Close modal"
+      <AnimatePresence>
+        {showLeadModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-900/70 backdrop-blur-sm"
+            onClick={() => setShowLeadModal(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: 6 }}
+              transition={{ duration: 0.24, ease: VPS_EASE }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-border relative max-h-[90vh] overflow-y-auto"
             >
-              ✕
-            </button>
-            <div className="mb-4">
-              <span className="text-xs font-bold text-solar-green uppercase tracking-wider">
-                Step 2: Reserve Consultation
-              </span>
-              <h4 className="text-xl font-display font-extrabold text-navy-800">
-                Claim Your Customized Solar Report
-              </h4>
-              <p className="text-xs text-slate-muted mt-1">
-                We will prepare a customized technical proposal for <strong>{suggestedKw} kW</strong> in <strong>{state}</strong>.
-              </p>
-            </div>
-            <LeadCaptureForm
-              defaultEnquiryType="calculator"
-              defaultSolution={`${systemType} (${suggestedKw} kW)`}
-              buttonText="Confirm & Receive Detailed Proposal"
-              onSuccess={() => {
-                setTimeout(() => setShowLeadModal(false), 4000);
-              }}
-            />
-          </div>
-        </div>
-      )}
+              <button
+                onClick={() => setShowLeadModal(false)}
+                className="absolute top-4 right-4 text-slate-400 hover:text-navy-800 font-bold text-lg w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center transition-colors"
+                aria-label="Close modal"
+              >
+                ✕
+              </button>
+              <div className="mb-4">
+                <span className="text-xs font-bold text-solar-green uppercase tracking-wider">
+                  Step 2: Reserve Consultation
+                </span>
+                <h4 className="text-xl font-display font-extrabold text-navy-800">
+                  Claim Your Customized Solar Report
+                </h4>
+                <p className="text-xs text-slate-muted mt-1">
+                  We will prepare a customized technical proposal for <strong>{suggestedKw} kW</strong> in <strong>{state}</strong>.
+                </p>
+              </div>
+              <LeadCaptureForm
+                defaultEnquiryType="calculator"
+                defaultSolution={`${systemType} (${suggestedKw} kW)`}
+                buttonText="Confirm & Receive Detailed Proposal"
+                onSuccess={() => {
+                  setTimeout(() => setShowLeadModal(false), 4000);
+                }}
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

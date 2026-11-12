@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import AdminSidebar from "./AdminSidebar";
 import AdminHeader from "./AdminHeader";
+import { PageTransition } from "@/components/ui/MotionPrimitives";
 
 interface AdminShellProps {
   children: React.ReactNode;
@@ -81,9 +82,9 @@ export default function AdminShell({
           setMobileOpen={setMobileOpen}
         />
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
-          <div className="max-w-7xl mx-auto space-y-6">
+          <PageTransition className="max-w-7xl mx-auto space-y-6">
             {children}
-          </div>
+          </PageTransition>
         </main>
       </div>
     </div>

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { MotionProvider } from "@/components/ui/MotionPrimitives";
 import { Suspense } from "react";
 import { Inter, Manrope } from "next/font/google";
 import "./globals.css";
@@ -136,15 +137,17 @@ export default async function RootLayout({
         <JsonLd data={websiteSchema} />
       </head>
       <body className="antialiased min-h-screen flex flex-col font-sans">
-        <Suspense fallback={null}>
-          <NavigationProgress />
-          <GoogleAnalyticsConsent
-            ga4MeasurementId={seoConfig.ga4MeasurementId}
-            enableConsentBanner={seoConfig.enableConsentBanner}
-          />
-        </Suspense>
-        <ToastProvider />
-        {children}
+        <MotionProvider>
+          <Suspense fallback={null}>
+            <NavigationProgress />
+            <GoogleAnalyticsConsent
+              ga4MeasurementId={seoConfig.ga4MeasurementId}
+              enableConsentBanner={seoConfig.enableConsentBanner}
+            />
+          </Suspense>
+          <ToastProvider />
+          {children}
+        </MotionProvider>
       </body>
     </html>
   );

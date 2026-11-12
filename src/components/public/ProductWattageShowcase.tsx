@@ -8,6 +8,8 @@ import { getCleanPublicImage } from "@/lib/image-fallback";
 import { defaultSolarPanelsPageCms, type SolarPanelsPageCms } from "@/lib/cms-defaults";
 import { OFFICIAL_PANEL_BRANDS, normalizeOfficialPanelBrand } from "@/lib/constants/brands";
 import SolarCardPlaceholder from "@/components/public/SolarCardPlaceholder";
+import { motion } from "framer-motion";
+import { VPS_EASE } from "@/components/ui/MotionPrimitives";
 import { ProductGridSkeleton } from "@/components/ui/SkeletonLoaders";
 
 export interface ShowcaseProductItem {
@@ -340,10 +342,20 @@ export default function ProductWattageShowcase({
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {filteredProducts.map((p) => (
-              <div
+          <motion.div
+            key={`${activeTab}-${activeBrand}`}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25, ease: VPS_EASE }}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+          >
+            {filteredProducts.map((p, idx) => (
+              <motion.div
                 key={p._id || p.slug}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.28, delay: Math.min(idx * 0.03, 0.21), ease: VPS_EASE }}
+                whileHover={{ y: -4 }}
                 className="group bg-white rounded-2xl border border-slate-border hover:border-solar-green/50 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col overflow-hidden"
               >
                 <div className="relative h-48 w-full bg-navy-800 overflow-hidden">
@@ -417,9 +429,9 @@ export default function ProductWattageShowcase({
                     </Link>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         )}
 
         {/* Policy Note */}

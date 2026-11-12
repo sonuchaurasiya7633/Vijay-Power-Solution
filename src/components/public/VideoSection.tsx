@@ -10,6 +10,8 @@ import {
   isYouTubeUrl,
 } from "@/lib/utils/youtube";
 import SolarCardPlaceholder from "@/components/public/SolarCardPlaceholder";
+import { AnimatePresence, motion } from "framer-motion";
+import { Reveal, StaggerGrid, StaggerItem, VPS_EASE } from "@/components/ui/MotionPrimitives";
 
 interface VideoStory {
   title: string;
@@ -105,7 +107,7 @@ export default function VideoSection({
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <StaggerGrid className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {videoList.map((v, idx) => {
             const customThumb = getCleanPublicImage(v.thumbnail);
             const autoYtThumb = getYouTubeThumbnailUrl(v.videoUrl) || "";
@@ -113,15 +115,18 @@ export default function VideoSection({
             const hasPlayableVideo = Boolean(getYouTubeEmbedUrl(v.videoUrl, false));
 
             return (
-              <div
+              <StaggerItem
                 key={idx}
-                className={`group bg-white rounded-3xl overflow-hidden border border-slate-border shadow-sm transition-all ${
-                  hasPlayableVideo ? "hover:shadow-xl cursor-pointer" : "opacity-95"
+                hoverLift={hasPlayableVideo}
+                className={`group bg-white rounded-3xl overflow-hidden border border-slate-border shadow-sm transition-all duration-300 ${
+                  hasPlayableVideo ? "hover:shadow-xl cursor-pointer hover:border-solar-green/40" : "opacity-95"
                 }`}
-                onClick={() => {
-                  if (hasPlayableVideo) setActiveVideo(v);
-                }}
               >
+                <div
+                  onClick={() => {
+                    if (hasPlayableVideo) setActiveVideo(v);
+                  }}
+                >
                 <div className="relative h-60 w-full overflow-hidden bg-navy-900">
                   {resolvedThumb ? (
                     <Image
@@ -167,66 +172,77 @@ export default function VideoSection({
                     {v.title}
                   </h3>
                 </div>
-              </div>
+                </div>
+              </StaggerItem>
             );
           })}
-        </div>
+        </StaggerGrid>
       </div>
 
       {/* Video Modal Player (YouTube iframe embed + direct fallback) */}
-      {activeVideo && (
-        <div
-          className="fixed inset-0 z-50 bg-navy-950/80 backdrop-blur-sm flex items-center justify-center p-4"
-          onClick={() => setActiveVideo(null)}
-        >
-          <div
-            className="bg-black rounded-3xl overflow-hidden max-w-3xl w-full border border-white/10 relative shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
+      <AnimatePresence>
+        {activeVideo && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 bg-navy-950/80 backdrop-blur-sm flex items-center justify-center p-4"
+            onClick={() => setActiveVideo(null)}
           >
-            <div className="flex items-center justify-between px-4 py-3 bg-navy-900/95 border-b border-white/10">
-              <div className="min-w-0 pr-3">
-                <p className="text-xs font-bold text-white truncate">{activeVideo.title}</p>
-                <p className="text-[11px] text-slate-300 truncate">{activeVideo.location}</p>
-              </div>
-              <div className="flex items-center gap-2 shrink-0">
-                <a
-                  href={activeVideo.videoUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold transition-colors"
-                >
-                  <span>Open YouTube</span>
-                  <ExternalLink className="w-3 h-3" />
-                </a>
-                <button
-                  type="button"
-                  onClick={() => setActiveVideo(null)}
-                  aria-label="Close video modal"
-                  className="p-1.5 rounded-full bg-white/15 text-white hover:bg-white/30 transition-colors"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-
-            <div className="aspect-video w-full bg-black">
-              {activeEmbedUrl ? (
-                <iframe
-                  src={activeEmbedUrl}
-                  title={activeVideo.title}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                  className="w-full h-full border-0"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-xs text-slate-300 p-6 text-center">
-                  Invalid or unsupported YouTube video link.
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 8 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: 6 }}
+              transition={{ duration: 0.24, ease: VPS_EASE }}
+              className="bg-black rounded-3xl overflow-hidden max-w-3xl w-full border border-white/10 relative shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between px-4 py-3 bg-navy-900/95 border-b border-white/10">
+                <div className="min-w-0 pr-3">
+                  <p className="text-xs font-bold text-white truncate">{activeVideo.title}</p>
+                  <p className="text-[11px] text-slate-300 truncate">{activeVideo.location}</p>
                 </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+                <div className="flex items-center gap-2 shrink-0">
+                  <a
+                    href={activeVideo.videoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold transition-colors"
+                  >
+                    <span>Open YouTube</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => setActiveVideo(null)}
+                    aria-label="Close video modal"
+                    className="p-1.5 rounded-full bg-white/15 text-white hover:bg-white/30 transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="aspect-video w-full bg-black">
+                {activeEmbedUrl ? (
+                  <iframe
+                    src={activeEmbedUrl}
+                    title={activeVideo.title}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                    className="w-full h-full border-0"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-xs text-slate-300 p-6 text-center">
+                    Invalid or unsupported YouTube video link.
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

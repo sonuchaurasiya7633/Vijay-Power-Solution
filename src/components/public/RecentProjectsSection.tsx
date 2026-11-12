@@ -4,6 +4,7 @@ import { MapPin, Zap, ArrowRight, CheckCircle2 } from "lucide-react";
 import { getCleanPublicImage } from "@/lib/image-fallback";
 import { optimizeCloudinaryUrl } from "@/lib/image-optimize";
 import SolarCardPlaceholder from "@/components/public/SolarCardPlaceholder";
+import { Reveal, StaggerGrid, StaggerItem } from "@/components/ui/MotionPrimitives";
 
 interface ProjectCardData {
   slug: string;
@@ -49,7 +50,7 @@ export default function RecentProjectsSection() {
   return (
     <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+        <Reveal className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
           <div className="space-y-2 max-w-2xl">
             <span className="text-xs font-bold uppercase tracking-wider text-solar-green bg-solar-green-light px-3 py-1 rounded-full">
               Real Installations
@@ -69,14 +70,15 @@ export default function RecentProjectsSection() {
             <span>View All Installations</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
-        </div>
+        </Reveal>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <StaggerGrid className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {defaultProjects.map((p) => {
             const imgUrl = getCleanPublicImage(p.image);
             return (
-              <div
+              <StaggerItem
                 key={p.slug}
+                hoverLift
                 className="group bg-white rounded-3xl border border-slate-border hover:border-solar-green/40 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden"
               >
                 <div className="relative h-56 w-full bg-navy-900 overflow-hidden">
@@ -129,10 +131,10 @@ export default function RecentProjectsSection() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </StaggerItem>
             );
           })}
-        </div>
+        </StaggerGrid>
       </div>
     </section>
   );

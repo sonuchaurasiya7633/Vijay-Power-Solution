@@ -24,6 +24,8 @@ import {
 } from "lucide-react";
 import SocialLinksBar from "@/components/public/SocialLinksBar";
 import { DEFAULT_SOCIAL_LINKS } from "@/lib/constants/social";
+import { AnimatePresence, motion } from "framer-motion";
+import { VPS_EASE } from "@/components/ui/MotionPrimitives";
 
 export default function Navbar({
   initialCms,
@@ -292,22 +294,33 @@ export default function Navbar({
           Rendered outside <header> stacking context so it cleanly layers above
           all page content & floating call/WhatsApp buttons on mobile.
           ========================================================================= */}
-      {mobileMenuOpen && (
-        <>
-          {/* Backdrop Overlay */}
-          <div
-            className="fixed inset-0 bg-navy-950/60 backdrop-blur-sm z-[70] lg:hidden"
-            onClick={() => setMobileMenuOpen(false)}
-            aria-hidden="true"
-          />
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <>
+            {/* Backdrop Overlay */}
+            <motion.div
+              key="mobile-nav-backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 bg-navy-950/60 backdrop-blur-sm z-[70] lg:hidden"
+              onClick={() => setMobileMenuOpen(false)}
+              aria-hidden="true"
+            />
 
-          {/* Right-Side Drawer Container */}
-          <aside
-            role="dialog"
-            aria-modal="true"
-            aria-label="Mobile Navigation Menu"
-            className="fixed top-0 right-0 bottom-0 z-[70] w-[min(85vw,360px)] h-[100dvh] max-h-[100dvh] bg-white shadow-2xl flex flex-col lg:hidden border-l border-slate-200/80 animate-drawer-slide-in"
-          >
+            {/* Right-Side Drawer Container */}
+            <motion.aside
+              key="mobile-nav-drawer"
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ duration: 0.26, ease: VPS_EASE }}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Mobile Navigation Menu"
+              className="fixed top-0 right-0 bottom-0 z-[70] w-[min(85vw,360px)] h-[100dvh] max-h-[100dvh] bg-white shadow-2xl flex flex-col lg:hidden border-l border-slate-200/80"
+            >
         {/* Drawer Header */}
         <div className="shrink-0 h-20 px-5 border-b border-slate-100 flex items-center justify-between bg-white">
           <Link
@@ -440,8 +453,15 @@ export default function Navbar({
             </div>
 
             {/* Projects Submenu */}
-            {mobileProjectsOpen && (
-              <div className="pl-4 pr-1 py-1 space-y-1 border-l-2 border-slate-100 ml-4 animate-in fade-in duration-200">
+            <AnimatePresence initial={false}>
+              {mobileProjectsOpen && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.22, ease: VPS_EASE }}
+                  className="overflow-hidden pl-4 pr-1 py-1 space-y-1 border-l-2 border-slate-100 ml-4"
+                >
                 <Link
                   href="/projects"
                   onClick={() => setMobileMenuOpen(false)}
@@ -463,8 +483,9 @@ export default function Navbar({
                 >
                   Video Walkthroughs & Stories
                 </Link>
-              </div>
-            )}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           {/* 7. Solar Savings Calculator */}
@@ -560,9 +581,10 @@ export default function Navbar({
 
           <SocialLinksBar links={headerCms.socialLinks} variant="compact" />
         </div>
-          </aside>
-        </>
-      )}
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
     </>
   );
 }

@@ -6,6 +6,8 @@ import toast from "@/lib/toast";
 import { SolarEmblemSpinner } from "@/components/ui/SolarLoader";
 import { INDIAN_STATES_AND_UTS } from "@/lib/constants/states";
 import { trackConversionEvent } from "@/lib/analytics-client";
+import { AnimatePresence, motion } from "framer-motion";
+import { VPS_EASE } from "@/components/ui/MotionPrimitives";
 
 interface LeadCaptureFormProps {
   defaultEnquiryType?: string;
@@ -117,10 +119,20 @@ export default function LeadCaptureForm({
 
   if (submittedLeadId) {
     return (
-      <div className="bg-solar-green-light/80 border border-solar-green/30 rounded-2xl p-6 text-center space-y-4">
-        <div className="w-12 h-12 bg-solar-green text-white rounded-full flex items-center justify-center mx-auto shadow-md">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96, y: 10 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.3, ease: VPS_EASE }}
+        className="bg-solar-green-light/80 border border-solar-green/30 rounded-2xl p-6 text-center space-y-4"
+      >
+        <motion.div
+          initial={{ scale: 0.6, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.32, delay: 0.06, ease: VPS_EASE }}
+          className="w-12 h-12 bg-solar-green text-white rounded-full flex items-center justify-center mx-auto shadow-md"
+        >
           <CheckCircle2 className="w-6 h-6" />
-        </div>
+        </motion.div>
         <div className="space-y-1">
           <h3 className="text-lg font-bold text-navy-800">Enquiry Received Successfully!</h3>
           <p className="text-xs text-slate-muted">
@@ -149,7 +161,7 @@ export default function LeadCaptureForm({
         >
           Submit another requirement
         </button>
-      </div>
+      </motion.div>
     );
   }
 
@@ -167,12 +179,20 @@ export default function LeadCaptureForm({
         aria-hidden="true"
       />
 
-      {errorMsg && (
-        <div className="bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl p-3 flex items-start gap-2">
-          <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-          <span>{errorMsg}</span>
-        </div>
-      )}
+      <AnimatePresence>
+        {errorMsg && (
+          <motion.div
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.2, ease: VPS_EASE }}
+            className="bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl p-3 flex items-start gap-2"
+          >
+            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+            <span>{errorMsg}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Name and Phone */}
       <div className={compact ? "space-y-3" : "grid grid-cols-1 sm:grid-cols-2 gap-3"}>

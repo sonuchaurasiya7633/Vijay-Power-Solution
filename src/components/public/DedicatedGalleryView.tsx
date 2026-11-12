@@ -6,6 +6,8 @@ import Image from "next/image";
 import { Maximize2, MapPin, Zap, User, Sparkles } from "lucide-react";
 import type { GalleryItem } from "@/components/public/GalleryLightbox";
 import { optimizeCloudinaryUrl } from "@/lib/image-optimize";
+import { motion } from "framer-motion";
+import { VPS_EASE } from "@/components/ui/MotionPrimitives";
 
 const GalleryLightbox = dynamic(() => import("@/components/public/GalleryLightbox"), {
   ssr: false,
@@ -67,14 +69,24 @@ export default function DedicatedGalleryView({ items = [] }: DedicatedGalleryVie
       )}
 
       {/* Gallery Grid: Desktop 4 cols, Tablet 3 cols, Mobile 2 cols */}
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
+      <motion.div
+        key={selectedCategory}
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.28, ease: VPS_EASE }}
+        className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6"
+      >
         {filteredItems.map((item, idx) => {
           const locationText = [item.city, item.state].filter(Boolean).join(", ");
           return (
-            <div
+            <motion.div
               key={item._id || idx}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: Math.min(idx * 0.03, 0.24), ease: VPS_EASE }}
+              whileHover={{ y: -4 }}
               onClick={() => openLightbox(idx)}
-              className="group relative bg-white rounded-2xl sm:rounded-3xl border border-slate-border overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between"
+              className="group relative bg-white rounded-2xl sm:rounded-3xl border border-slate-border overflow-hidden shadow-sm hover:shadow-xl hover:border-solar-green/40 transition-all duration-300 cursor-pointer flex flex-col justify-between"
             >
               {/* Image Frame with neutral background & object-contain to preserve poster/portrait aspect ratios */}
               <div className="relative aspect-[3/4] sm:aspect-[4/5] w-full bg-navy-950/95 overflow-hidden flex items-center justify-center">
@@ -129,10 +141,10 @@ export default function DedicatedGalleryView({ items = [] }: DedicatedGalleryVie
                   )}
                 </div>
               </div>
-            </div>
+            </motion.div>
           );
         })}
-      </div>
+      </motion.div>
 
       {/* Lightbox Modal - Lazy loaded only on demand */}
       {lightboxOpen && (

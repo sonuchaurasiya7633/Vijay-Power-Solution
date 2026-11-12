@@ -4,6 +4,8 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import Image from "next/image";
 import { X, ChevronLeft, ChevronRight, MapPin, Zap, User, Tag } from "lucide-react";
 import { optimizeCloudinaryUrl } from "@/lib/image-optimize";
+import { AnimatePresence, motion } from "framer-motion";
+import { VPS_EASE } from "@/components/ui/MotionPrimitives";
 
 export interface GalleryItem {
   _id?: string;
@@ -139,16 +141,25 @@ export default function GalleryLightbox({
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
       >
-        <div className="relative w-full h-full flex items-center justify-center">
-          <Image
-            src={optimizeCloudinaryUrl(currentItem.imageUrl, 1600)}
-            alt={currentItem.title || "Solar Installation"}
-            fill
-            priority
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
-            className="object-contain"
-          />
-        </div>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentItem.imageUrl + currentIndex}
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            transition={{ duration: 0.22, ease: VPS_EASE }}
+            className="relative w-full h-full flex items-center justify-center"
+          >
+            <Image
+              src={optimizeCloudinaryUrl(currentItem.imageUrl, 1600)}
+              alt={currentItem.title || "Solar Installation"}
+              fill
+              priority
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
+              className="object-contain"
+            />
+          </motion.div>
+        </AnimatePresence>
       </div>
 
       {/* Navigation Buttons (Desktop & Tablet) */}

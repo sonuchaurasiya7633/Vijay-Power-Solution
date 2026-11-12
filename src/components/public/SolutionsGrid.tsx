@@ -8,6 +8,7 @@ import { defaultPublicPagesCms, mergeWithDefaults } from "@/lib/cms-defaults";
 import { getCleanPublicImage } from "@/lib/image-fallback";
 import { optimizeCloudinaryUrl } from "@/lib/image-optimize";
 import SolarCardPlaceholder from "@/components/public/SolarCardPlaceholder";
+import { Reveal, StaggerGrid, StaggerItem } from "@/components/ui/MotionPrimitives";
 
 export interface SolutionItem {
   slug: string;
@@ -134,7 +135,7 @@ export default async function SolutionsGrid({
     <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {showHeader && (
-          <div className="text-center max-w-3xl mx-auto space-y-3 mb-14">
+          <Reveal className="text-center max-w-3xl mx-auto space-y-3 mb-14">
             <span className="text-xs font-bold uppercase tracking-wider text-solar-green bg-solar-green-light px-3 py-1 rounded-full">
               {badge}
             </span>
@@ -144,13 +145,14 @@ export default async function SolutionsGrid({
             <p className="text-sm sm:text-base text-slate-muted">
               {subtitle}
             </p>
-          </div>
+          </Reveal>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <StaggerGrid className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {displaySolutions.map((sol) => (
-            <div
+            <StaggerItem
               key={sol.slug}
+              hoverLift
               className="group bg-white rounded-3xl border border-slate-border hover:border-solar-green/40 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden"
             >
               {/* Image Banner or Title Box Card */}
@@ -213,9 +215,9 @@ export default async function SolutionsGrid({
                   </Link>
                 </div>
               </div>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerGrid>
       </div>
     </section>
   );

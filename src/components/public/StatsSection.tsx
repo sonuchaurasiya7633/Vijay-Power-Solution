@@ -1,6 +1,7 @@
 import { Award, Zap, MapPin, Calendar } from "lucide-react";
 import connectDB from "@/lib/db/connection";
 import Setting from "@/models/Setting";
+import { StaggerGrid, StaggerItem, AnimatedCounter } from "@/components/ui/MotionPrimitives";
 
 export default async function StatsSection() {
   const defaultStats = [
@@ -69,19 +70,20 @@ export default async function StatsSection() {
   return (
     <section className="bg-navy-50 py-12 border-y border-slate-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <StaggerGrid className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {displayStats.map((stat, idx) => {
             const Icon = icons[idx % icons.length];
             return (
-              <div
+              <StaggerItem
                 key={idx}
-                className="bg-white p-6 rounded-2xl border border-slate-border shadow-sm flex flex-col items-center text-center space-y-2 hover:border-solar-green/40 transition-colors"
+                hoverLift
+                className="bg-white p-6 rounded-2xl border border-slate-border shadow-sm flex flex-col items-center text-center space-y-2 hover:border-solar-green/40 hover:shadow-md transition-all duration-300"
               >
                 <div className="w-10 h-10 rounded-xl bg-solar-green-light text-solar-green flex items-center justify-center">
                   <Icon className="w-5 h-5" />
                 </div>
                 <div className="font-display font-extrabold text-3xl sm:text-4xl text-navy-800 tracking-tight">
-                  {stat.value}
+                  <AnimatedCounter value={stat.value} />
                 </div>
                 <p className="text-xs font-bold text-navy-800 uppercase tracking-wide">
                   {stat.label}
@@ -91,10 +93,10 @@ export default async function StatsSection() {
                     {stat.suffix}
                   </span>
                 )}
-              </div>
+              </StaggerItem>
             );
           })}
-        </div>
+        </StaggerGrid>
       </div>
     </section>
   );

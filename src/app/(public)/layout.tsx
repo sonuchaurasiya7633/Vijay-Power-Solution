@@ -1,4 +1,5 @@
 import Navbar from "@/components/public/Navbar";
+import { PageTransition } from "@/components/ui/MotionPrimitives";
 import Footer from "@/components/public/Footer";
 import FloatingWhatsApp from "@/components/public/FloatingWhatsApp";
 import { getPublicShellSettings } from "@/lib/cms-server";
@@ -18,7 +19,9 @@ export default async function PublicLayout({
   return (
     <>
       <Navbar initialCms={Object.keys(hf).length > 0 ? hf : undefined} />
-      <main className="flex-1 overflow-x-clip">{children}</main>
+      <main className="flex-1 overflow-x-clip">
+        <PageTransition>{children}</PageTransition>
+      </main>
       <Footer initialShell={shell} />
       <FloatingWhatsApp phone={phone} whatsapp={whatsapp} skipClientFetch />
     </>

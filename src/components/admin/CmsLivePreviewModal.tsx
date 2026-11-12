@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { Monitor, Tablet, Smartphone, ExternalLink, RefreshCw, X } from "lucide-react";
+import { motion } from "framer-motion";
+import { VPS_EASE } from "@/components/ui/MotionPrimitives";
 
 interface CmsLivePreviewModalProps {
   isOpen: boolean;
@@ -37,12 +39,20 @@ export default function CmsLivePreviewModal({
   };
 
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2 }}
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-navy-950/80 backdrop-blur-md animate-fadeIn"
+      className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-navy-950/80 backdrop-blur-md"
     >
-      <div className="bg-white rounded-3xl w-full h-[94vh] shadow-2xl border border-slate-border flex flex-col overflow-hidden">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96, y: 8 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.24, ease: VPS_EASE }}
+        className="bg-white rounded-3xl w-full h-[94vh] shadow-2xl border border-slate-border flex flex-col overflow-hidden"
+      >
         {/* Top Control Bar */}
         <div className="flex items-center justify-between px-6 py-3.5 border-b border-slate-border bg-slate-50">
           <div className="flex items-center gap-3">
@@ -126,7 +136,7 @@ export default function CmsLivePreviewModal({
             />
           </div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

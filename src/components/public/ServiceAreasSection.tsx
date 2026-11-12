@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { MapPin, ArrowRight, Check, Compass, ShieldCheck, Truck, Building2 } from "lucide-react";
+import { Reveal, StaggerGrid, StaggerItem } from "@/components/ui/MotionPrimitives";
 
 export default function ServiceAreasSection() {
   const regionalHubs = [
@@ -56,7 +57,7 @@ export default function ServiceAreasSection() {
     <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-3 mb-12">
+        <Reveal className="text-center max-w-3xl mx-auto space-y-3 mb-12">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-solar-green-light border border-solar-green/20 text-solar-green text-xs font-extrabold uppercase tracking-wider">
             <span className="w-2 h-2 rounded-full bg-solar-green animate-pulse" />
             <span>Pan India Service Coverage</span>
@@ -67,16 +68,17 @@ export default function ServiceAreasSection() {
           <p className="text-sm text-slate-muted leading-relaxed">
             Vijoy Power Solution delivers reliable solar panel supply and professional turnkey installation solutions for residential, commercial, industrial, and agricultural requirements across India.
           </p>
-        </div>
+        </Reveal>
 
         {/* Pan India Coverage Ribbon */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+        <StaggerGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
           {nationwideHighlights.map((hl, i) => {
             const Icon = hl.icon;
             return (
-              <div
+              <StaggerItem
                 key={i}
-                className="bg-navy-800 text-white rounded-2xl p-5 border border-navy-700 flex items-start gap-3.5 shadow-md"
+                hoverLift
+                className="bg-navy-800 text-white rounded-2xl p-5 border border-navy-700 flex items-start gap-3.5 shadow-md hover:border-solar-green/40 transition-colors"
               >
                 <div className="w-10 h-10 rounded-xl bg-solar-green/20 border border-solar-green/30 flex items-center justify-center text-solar-yellow shrink-0">
                   <Icon className="w-5 h-5" />
@@ -85,10 +87,10 @@ export default function ServiceAreasSection() {
                   <h4 className="text-sm font-bold text-white mb-0.5">{hl.title}</h4>
                   <p className="text-xs text-slate-300 leading-snug">{hl.desc}</p>
                 </div>
-              </div>
+              </StaggerItem>
             );
           })}
-        </div>
+        </StaggerGrid>
 
         {/* Operational Hubs Title */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">

@@ -1,5 +1,6 @@
 import connectDB from "@/lib/db/connection";
 import Setting from "@/models/Setting";
+import { Reveal, StaggerGrid, StaggerItem } from "@/components/ui/MotionPrimitives";
 
 export default async function InstallationProcess() {
   const defaultData = {
@@ -74,7 +75,7 @@ export default async function InstallationProcess() {
   return (
     <section className="py-20 bg-navy-800 text-white relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-2xl mx-auto space-y-3 mb-16">
+        <Reveal className="text-center max-w-2xl mx-auto space-y-3 mb-16">
           <span className="text-xs font-bold uppercase tracking-wider text-solar-yellow bg-white/10 px-3 py-1 rounded-full">
             {data.badge}
           </span>
@@ -84,22 +85,23 @@ export default async function InstallationProcess() {
           <p className="text-sm text-slate-300">
             {data.subtitle}
           </p>
-        </div>
+        </Reveal>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <StaggerGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {data.steps.map((s, idx) => (
-            <div
+            <StaggerItem
               key={idx}
-              className="p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-solar-green/40 hover:bg-white/10 transition-colors space-y-3 relative group"
+              hoverLift
+              className="p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-solar-green/40 hover:bg-white/10 transition-all duration-300 space-y-3 relative group"
             >
               <span className="font-mono text-3xl font-extrabold text-solar-green/60 group-hover:text-solar-green transition-colors">
                 {s.step || `0${idx + 1}`}
               </span>
               <h3 className="text-base font-bold text-white">{s.title}</h3>
               <p className="text-xs text-slate-300 leading-relaxed">{s.desc}</p>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerGrid>
       </div>
     </section>
   );

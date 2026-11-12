@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Reveal, VPS_EASE } from "@/components/ui/MotionPrimitives";
 
 export interface FAQItem {
   question: string;
@@ -46,7 +48,7 @@ export default function FaqAccordion({
   return (
     <section className="py-20 bg-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center space-y-3 mb-14">
+        <Reveal className="text-center space-y-3 mb-14">
           <span className="text-xs font-bold uppercase tracking-wider text-solar-green bg-solar-green-light px-3 py-1 rounded-full">
             Frequently Asked Questions
           </span>
@@ -56,7 +58,7 @@ export default function FaqAccordion({
           <p className="text-sm text-slate-muted">
             Have questions about net metering, national subsidies, warranties, or roof feasibility?
           </p>
-        </div>
+        </Reveal>
 
         <div className="space-y-3">
           {faqList.map((faq, idx) => {
@@ -64,11 +66,14 @@ export default function FaqAccordion({
             return (
               <div
                 key={idx}
-                className="border border-slate-border rounded-2xl overflow-hidden transition-all"
+                className={`border rounded-2xl overflow-hidden transition-colors duration-200 ${
+                  isOpen ? "border-solar-green/40 shadow-sm" : "border-slate-border hover:border-navy-200"
+                }`}
               >
                 <button
                   type="button"
                   onClick={() => toggle(idx)}
+                  aria-expanded={isOpen}
                   className="w-full text-left p-5 flex items-center justify-between gap-4 bg-white hover:bg-slate-bg transition-colors"
                 >
                   <span className="text-sm sm:text-base font-bold text-navy-800">
@@ -80,11 +85,22 @@ export default function FaqAccordion({
                     }`}
                   />
                 </button>
-                {isOpen && (
-                  <div className="p-5 pt-0 text-xs sm:text-sm text-slate-muted leading-relaxed border-t border-slate-100 bg-slate-bg/30">
-                    {faq.answer}
-                  </div>
-                )}
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      key="content"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.25, ease: VPS_EASE }}
+                      className="overflow-hidden border-t border-slate-100 bg-slate-bg/30"
+                    >
+                      <div className="p-5 pt-4 text-xs sm:text-sm text-slate-muted leading-relaxed">
+                        {faq.answer}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             );
           })}
