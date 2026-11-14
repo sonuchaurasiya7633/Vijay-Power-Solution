@@ -29,7 +29,7 @@ test("Language System: LanguageSwitcher supports navbar, mobile-header, and mobi
   assert.ok(content.includes('variant === "navbar"'), "Supports navbar variant");
   assert.ok(content.includes('variant === "mobile-header"'), "Supports mobile-header variant");
   assert.ok(content.includes('variant === "mobile-drawer"'), "Supports mobile-drawer variant");
-  assert.ok(content.includes("setLanguage"), "Uses setLanguage action");
+  assert.ok(content.includes("toggleLanguage"), "Uses toggleLanguage action for shuffle");
   assert.ok(content.includes("हिन्दी") || content.includes("हिंदी"), "Renders Hindi option");
 });
 
