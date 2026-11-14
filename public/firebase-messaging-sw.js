@@ -5,7 +5,7 @@ importScripts("https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js
 importScripts("https://www.gstatic.com/firebasejs/10.13.0/firebase-messaging-compat.js");
 
 const firebaseConfig = {
-  apiKey: "",
+  apiKey: "AIzaSyDlfmnsYMi-0aIom-l-hJoMxlkCYGHqZDE",
   projectId: "vijoy-power-solution",
   messagingSenderId: "527277487994",
   appId: "1:527277487994:web:2d6293d248eefe5afb08c3",
