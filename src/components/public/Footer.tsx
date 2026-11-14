@@ -93,11 +93,12 @@ export default async function Footer({
     { label: "About Us", href: "/about", Icon: Building2 },
     { label: "Solar Solutions", href: "/solar-solutions", Icon: Grid2x2 },
     { label: "Panel Catalogue (10W – 730W)", href: "/solar-panels", Icon: Layers },
-    { label: "Installation Services", href: "/services", Icon: Wrench },
+    { label: "Solar Installation Services", href: "/services", Icon: Wrench },
     { label: "Real Installations", href: "/projects", Icon: Images },
   ];
 
   const toolLinks = [
+    { label: "Installation Services", href: "/services", Icon: Wrench, featured: false },
     { label: "Solar Savings Calculator", href: "/solar-calculator", Icon: Sun, featured: true },
     { label: "PM Surya Ghar Subsidy Guide", href: "/subsidy-information", Icon: FileText, featured: false },
     { label: "Pan-India Service Coverage", href: "/service-areas", Icon: MapPin, featured: false },

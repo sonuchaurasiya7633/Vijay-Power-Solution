@@ -220,14 +220,6 @@ export default function Navbar({
             </Link>
 
             <Link
-              href="/services"
-              className={`hover:text-solar-green transition-colors ${
-                isLinkActive("/services") ? "text-solar-green font-bold" : ""
-              }`}
-            >
-              Services
-            </Link>
-            <Link
               href="/projects"
               className={`hover:text-solar-green transition-colors ${
                 isLinkActive("/projects") || isLinkActive("/gallery") ? "text-solar-green font-bold" : ""
