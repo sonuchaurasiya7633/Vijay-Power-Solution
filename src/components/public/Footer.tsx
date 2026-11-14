@@ -22,6 +22,7 @@ import { YouTubeIcon, InstagramIcon, FacebookIcon } from "@/components/public/So
 import FooterAccordionSection from "@/components/public/FooterAccordionSection";
 import { resolveSocialLinks } from "@/lib/constants/social";
 import { getPublicShellSettings, type PublicShellSettings } from "@/lib/cms-server";
+import LanguageSwitcher from "@/components/public/LanguageSwitcher";
 
 export default async function Footer({
   initialShell,
@@ -145,7 +146,7 @@ export default async function Footer({
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-10 pb-8">
           {/* Col 1: Brand, Tagline, Contact & Social Pills */}
           <div className="md:col-span-5 space-y-4">
-            <Link href="/" className="inline-flex items-center gap-3.5 group">
+            <Link href="/" className="inline-flex items-center gap-3.5 group notranslate" translate="no">
               <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-white/10 p-0.5 border border-white/20 shadow-sm shrink-0">
                 <Image
                   src={headerFooterCms?.logoUrl || "/images/logo.png"}
@@ -388,6 +389,8 @@ export default async function Footer({
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+            <LanguageSwitcher variant="footer" className="mr-1" />
+            <span className="hidden sm:inline text-white/20" aria-hidden="true">•</span>
             {legalLinks.map((item, idx) => (
               <div key={item.href} className="inline-flex items-center gap-3 sm:gap-4">
                 {idx > 0 && (

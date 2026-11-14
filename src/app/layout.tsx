@@ -15,6 +15,7 @@ import {
   buildOrganizationSchema,
   buildWebSiteSchema,
 } from "@/lib/seo-schema";
+import { LanguageProvider } from "@/context/LanguageContext";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -137,17 +138,19 @@ export default async function RootLayout({
         <JsonLd data={websiteSchema} />
       </head>
       <body className="antialiased min-h-screen flex flex-col font-sans">
-        <MotionProvider>
-          <Suspense fallback={null}>
-            <NavigationProgress />
-            <GoogleAnalyticsConsent
-              ga4MeasurementId={seoConfig.ga4MeasurementId}
-              enableConsentBanner={seoConfig.enableConsentBanner}
-            />
-          </Suspense>
-          <ToastProvider />
-          {children}
-        </MotionProvider>
+        <LanguageProvider>
+          <MotionProvider>
+            <Suspense fallback={null}>
+              <NavigationProgress />
+              <GoogleAnalyticsConsent
+                ga4MeasurementId={seoConfig.ga4MeasurementId}
+                enableConsentBanner={seoConfig.enableConsentBanner}
+              />
+            </Suspense>
+            <ToastProvider />
+            {children}
+          </MotionProvider>
+        </LanguageProvider>
       </body>
     </html>
   );

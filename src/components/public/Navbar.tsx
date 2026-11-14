@@ -26,6 +26,7 @@ import SocialLinksBar from "@/components/public/SocialLinksBar";
 import { DEFAULT_SOCIAL_LINKS } from "@/lib/constants/social";
 import { AnimatePresence, motion } from "framer-motion";
 import { VPS_EASE } from "@/components/ui/MotionPrimitives";
+import LanguageSwitcher from "@/components/public/LanguageSwitcher";
 
 export default function Navbar({
   initialCms,
@@ -162,7 +163,7 @@ export default function Navbar({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo & Brand */}
-          <Link href="/" className="flex items-center gap-3 group">
+          <Link href="/" className="flex items-center gap-3 group notranslate" translate="no">
             <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-slate-border bg-navy-800 p-0.5 shadow-sm group-hover:scale-105 transition-transform shrink-0">
               <Image
                 src={headerCms.logoUrl || "/images/logo.png"}
@@ -261,6 +262,7 @@ export default function Navbar({
 
           {/* Desktop Actions */}
           <div className="hidden lg:flex items-center gap-3">
+            <LanguageSwitcher variant="navbar" />
             <Link
               href="/get-quote"
               className="inline-flex items-center justify-center px-5 py-2.5 rounded-xl font-semibold text-sm bg-solar-green text-white hover:bg-solar-green-hover shadow-md shadow-solar-green/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
@@ -271,6 +273,7 @@ export default function Navbar({
 
           {/* Mobile Right Action & Hamburger Button */}
           <div className="flex items-center gap-2 lg:hidden">
+            <LanguageSwitcher variant="mobile-header" />
             <a
               href={`tel:${cleanPhone}`}
               className="w-10 h-10 rounded-xl bg-slate-bg text-navy-800 border border-slate-border flex items-center justify-center hover:bg-navy-50 transition-colors"
@@ -329,7 +332,8 @@ export default function Navbar({
           <Link
             href="/"
             onClick={() => setMobileMenuOpen(false)}
-            className="flex items-center gap-3 group"
+            className="flex items-center gap-3 group notranslate"
+            translate="no"
           >
             <div className="relative w-10 h-10 rounded-xl overflow-hidden border border-slate-200 bg-navy-800 p-0.5 shrink-0 shadow-sm">
               <Image
@@ -362,6 +366,9 @@ export default function Navbar({
 
         {/* Drawer Scrollable Navigation Body */}
         <div className="flex-1 min-h-0 overflow-y-auto px-4 py-4 space-y-1 overscroll-contain">
+          {/* Language Switcher Card */}
+          <LanguageSwitcher variant="mobile-drawer" className="mb-3" />
+
           {/* 1. Home */}
           <Link
             href="/"
