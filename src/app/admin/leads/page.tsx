@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
   Users,
@@ -9,23 +10,42 @@ import {
   ChevronLeft,
   ChevronRight,
   RotateCcw,
+  RefreshCw,
   AlertCircle,
 } from "lucide-react";
 import { formatDateIST } from "@/lib/utils/formatters";
 import { INDIAN_STATES_AND_UTS } from "@/lib/constants/states";
 import { AdminTableSkeleton } from "@/components/ui/SkeletonLoaders";
 
-export default function LeadsCRMPage() {
+function LeadsCRMContent() {
+  const searchParams = useSearchParams();
+  const initialStage = searchParams.get("stage") || "all";
+  const initialState = searchParams.get("state") || "all";
+  const initialPriority = searchParams.get("priority") || "all";
+  const initialSearch = searchParams.get("search") || "";
+
   const [leads, setLeads] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [lastSyncTime, setLastSyncTime] = useState<string>("Just now");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [searchInput, setSearchInput] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [stageFilter, setStageFilter] = useState("all");
-  const [priorityFilter, setPriorityFilter] = useState("all");
-  const [stateFilter, setStateFilter] = useState("all");
+  const [searchInput, setSearchInput] = useState(initialSearch);
+  const [debouncedSearch, setDebouncedSearch] = useState(initialSearch);
+  const [stageFilter, setStageFilter] = useState(initialStage);
+  const [priorityFilter, setPriorityFilter] = useState(initialPriority);
+  const [stateFilter, setStateFilter] = useState(initialState);
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({ page: 1, limit: 25, total: 0, totalPages: 1 });
+
+  const isFetchingRef = useRef(false);
+
+  // Sync state if URL query params change externally
+  useEffect(() => {
+    const stageParam = searchParams.get("stage");
+    if (stageParam) {
+      setStageFilter((prev) => (stageParam !== prev ? stageParam : prev));
+    }
+  }, [searchParams]);
 
   // Live debounced search
   useEffect(() => {
@@ -37,9 +57,17 @@ export default function LeadsCRMPage() {
   }, [searchInput]);
 
   const fetchLeads = useCallback(
-    async (signal?: AbortSignal) => {
-      setLoading(true);
+    async (silent = false, signal?: AbortSignal) => {
+      if (isFetchingRef.current) return;
+      isFetchingRef.current = true;
+
+      if (!silent) {
+        setLoading(true);
+      } else {
+        setIsSyncing(true);
+      }
       setErrorMsg(null);
+
       try {
         const params = new URLSearchParams();
         if (debouncedSearch) params.set("search", debouncedSearch);
@@ -50,6 +78,7 @@ export default function LeadsCRMPage() {
 
         const res = await fetch(`/api/leads?${params.toString()}`, {
           cache: "no-store",
+          headers: { "Cache-Control": "no-cache" },
           signal,
         });
         const data = await res.json();
@@ -58,23 +87,62 @@ export default function LeadsCRMPage() {
         }
         setLeads(data.leads || []);
         setPagination(data.pagination || { page, limit: 25, total: 0, totalPages: 1 });
+        const now = new Date();
+        setLastSyncTime(
+          now.toLocaleTimeString("en-IN", {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: true,
+          })
+        );
       } catch (err: any) {
         if (err?.name === "AbortError") return;
         console.error("Fetch leads error:", err);
-        setErrorMsg(err?.message || "Unable to fetch leads right now.");
+        if (!silent) {
+          setErrorMsg(err?.message || "Unable to fetch leads right now.");
+        }
       } finally {
+        isFetchingRef.current = false;
         if (!signal?.aborted) {
           setLoading(false);
+          setIsSyncing(false);
         }
       }
     },
     [debouncedSearch, stageFilter, priorityFilter, stateFilter, page]
   );
 
+  // Initial and filter-change fetch
   useEffect(() => {
     const controller = new AbortController();
-    fetchLeads(controller.signal);
+    fetchLeads(false, controller.signal);
     return () => controller.abort();
+  }, [fetchLeads]);
+
+  // Real-time background polling & auto-sync on tab switch/focus
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (typeof document !== "undefined" && document.visibilityState === "visible") {
+        fetchLeads(true);
+      }
+    }, 12000);
+
+    const handleFocus = () => fetchLeads(true);
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        fetchLeads(true);
+      }
+    };
+
+    window.addEventListener("focus", handleFocus);
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("focus", handleFocus);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
   }, [fetchLeads]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -140,9 +208,18 @@ export default function LeadsCRMPage() {
       {/* Header & Controls */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-border shadow-sm">
         <div>
-          <span className="text-xs font-bold uppercase tracking-wider text-solar-green">
-            Lead Pipeline CRM
-          </span>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-solar-green-light text-solar-green border border-solar-green/20">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-solar-green opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-solar-green"></span>
+              </span>
+              Live Sync Active
+            </span>
+            <span className="text-[11px] text-slate-muted">
+              Auto-syncs live &bull; Last updated: {lastSyncTime}
+            </span>
+          </div>
           <h1 className="text-2xl font-bold font-display text-navy-800">
             Inbound Solar Enquiries & Lead Tracking
           </h1>
@@ -153,6 +230,17 @@ export default function LeadsCRMPage() {
 
         <div className="flex items-center gap-2">
           <button
+            type="button"
+            onClick={() => fetchLeads(false)}
+            disabled={isSyncing || loading}
+            className="px-3.5 py-2 rounded-xl text-xs font-bold border border-slate-border text-navy-800 hover:bg-slate-bg flex items-center gap-1.5 transition-all shadow-sm cursor-pointer disabled:opacity-50"
+            title="Refresh leads live without reloading the page"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 text-solar-green ${isSyncing ? "animate-spin" : ""}`} />
+            <span>{isSyncing ? "Syncing..." : "Sync Live"}</span>
+          </button>
+          <button
+            type="button"
             onClick={exportCSV}
             className="px-4 py-2 rounded-xl text-xs font-bold border border-slate-border text-navy-800 hover:bg-slate-bg flex items-center gap-1.5 transition-colors cursor-pointer"
           >
@@ -262,7 +350,7 @@ export default function LeadsCRMPage() {
             <p className="text-xs text-slate-muted">{errorMsg}</p>
             <button
               type="button"
-              onClick={() => fetchLeads()}
+              onClick={() => fetchLeads(false)}
               className="px-4 py-2 rounded-xl text-xs font-bold bg-solar-green text-white hover:bg-solar-green-hover transition-colors cursor-pointer"
             >
               Retry Loading Leads
@@ -316,7 +404,7 @@ export default function LeadsCRMPage() {
                       </td>
                       <td className="p-4 font-mono text-slate-muted">{l.phone}</td>
                       <td className="p-4 text-slate-muted">
-                        {l.city}, {l.state}
+                        {l.city ? `${l.city}, ` : ""}{l.state}
                       </td>
                       <td className="p-4 text-navy-800 font-medium truncate max-w-xs">
                         {l.solarSolutionType || l.productName || "General Solar"}
@@ -387,5 +475,13 @@ export default function LeadsCRMPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function LeadsCRMPage() {
+  return (
+    <Suspense fallback={<AdminTableSkeleton rows={8} />}>
+      <LeadsCRMContent />
+    </Suspense>
   );
 }

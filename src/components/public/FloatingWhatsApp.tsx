@@ -20,6 +20,18 @@ export default function FloatingWhatsApp({
     phone,
     whatsapp,
   });
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const checkDrawer = () => {
+      setIsDrawerOpen(document.body.getAttribute("data-mobile-menu") === "open");
+    };
+    checkDrawer();
+    const observer = new MutationObserver(checkDrawer);
+    observer.observe(document.body, { attributes: true, attributeFilter: ["data-mobile-menu"] });
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     if (skipClientFetch) return;
@@ -67,6 +79,10 @@ export default function FloatingWhatsApp({
   const cleanWa = contactData.whatsapp.replace(/[^\d]/g, "");
   const cleanPhone = contactData.phone.replace(/[^0-9+]/g, "");
   const waUrl = `https://wa.me/${cleanWa}?text=${encodeURIComponent(message)}`;
+
+  if (isDrawerOpen) {
+    return null;
+  }
 
   return (
     <motion.aside

@@ -78,18 +78,21 @@ export default function Navbar({
       .catch(() => {});
   }, [initialCms]);
 
-  // Lock background body scroll when mobile drawer is open
+  // Lock background body scroll and signal floating contact buttons when mobile drawer is open
   useEffect(() => {
     if (mobileMenuOpen) {
       document.body.style.overflow = "hidden";
       document.body.style.touchAction = "none";
+      document.body.setAttribute("data-mobile-menu", "open");
     } else {
       document.body.style.overflow = "";
       document.body.style.touchAction = "";
+      document.body.removeAttribute("data-mobile-menu");
     }
     return () => {
       document.body.style.overflow = "";
       document.body.style.touchAction = "";
+      document.body.removeAttribute("data-mobile-menu");
     };
   }, [mobileMenuOpen]);
 

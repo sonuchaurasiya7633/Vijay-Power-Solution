@@ -1,31 +1,80 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
-import { Kanban, ArrowRight, Phone, MapPin } from "lucide-react";
+import { Kanban, ArrowRight, Phone, MapPin, RefreshCw } from "lucide-react";
 import { AdminTableSkeleton } from "@/components/ui/SkeletonLoaders";
 
 export default function PipelinePage() {
   const [leads, setLeads] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [lastSyncTime, setLastSyncTime] = useState<string>("Just now");
+  const isFetchingRef = useRef(false);
 
-  const fetchLeads = async () => {
+  const fetchLeads = useCallback(async (silent = false) => {
+    if (isFetchingRef.current) return;
+    isFetchingRef.current = true;
+
+    if (!silent) setLoading(true);
+    else setIsSyncing(true);
+
     try {
-      const res = await fetch("/api/leads?limit=100");
+      const res = await fetch("/api/leads?limit=100", {
+        cache: "no-store",
+        headers: { "Cache-Control": "no-cache" },
+      });
       if (res.ok) {
         const data = await res.json();
         setLeads(data.leads || []);
+        const now = new Date();
+        setLastSyncTime(
+          now.toLocaleTimeString("en-IN", {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: true,
+          })
+        );
       }
     } catch (err) {
       console.error("Fetch pipeline error:", err);
     } finally {
-      setLoading(false);
+      isFetchingRef.current = false;
+      if (!silent) setLoading(false);
+      else setIsSyncing(false);
     }
-  };
-
-  useEffect(() => {
-    fetchLeads();
   }, []);
+
+  // Initial fetch
+  useEffect(() => {
+    fetchLeads(false);
+  }, [fetchLeads]);
+
+  // Real-time background auto-polling & focus sync
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (typeof document !== "undefined" && document.visibilityState === "visible") {
+        fetchLeads(true);
+      }
+    }, 12000);
+
+    const handleFocus = () => fetchLeads(true);
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        fetchLeads(true);
+      }
+    };
+
+    window.addEventListener("focus", handleFocus);
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("focus", handleFocus);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
+  }, [fetchLeads]);
 
   const stages = [
     { key: "new_lead", label: "New Lead", color: "border-navy-600" },
@@ -38,9 +87,20 @@ export default function PipelinePage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between bg-white p-6 rounded-2xl border border-slate-border shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-border shadow-sm">
         <div>
-          <span className="text-xs font-bold uppercase tracking-wider text-solar-green">Visual CRM Funnel</span>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-solar-green-light text-solar-green border border-solar-green/20">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-solar-green opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-solar-green"></span>
+              </span>
+              Live Sync Active
+            </span>
+            <span className="text-[11px] text-slate-muted">
+              Auto-syncs live &bull; Updated: {lastSyncTime}
+            </span>
+          </div>
           <h1 className="text-2xl font-bold font-display text-navy-800">
             Lead Pipeline Stages
           </h1>
@@ -49,12 +109,24 @@ export default function PipelinePage() {
           </p>
         </div>
 
-        <Link
-          href="/admin/leads"
-          className="px-4 py-2 rounded-xl text-xs font-bold bg-navy-800 text-white hover:bg-navy-900 transition-colors"
-        >
-          Table Grid View
-        </Link>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => fetchLeads(false)}
+            disabled={isSyncing || loading}
+            className="px-3.5 py-2 rounded-xl text-xs font-bold border border-slate-border text-navy-800 hover:bg-slate-bg flex items-center gap-1.5 transition-all shadow-sm cursor-pointer disabled:opacity-50"
+            title="Refresh pipeline live without reloading the page"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 text-solar-green ${isSyncing ? "animate-spin" : ""}`} />
+            <span>{isSyncing ? "Syncing..." : "Sync Live"}</span>
+          </button>
+          <Link
+            href="/admin/leads"
+            className="px-4 py-2 rounded-xl text-xs font-bold bg-navy-800 text-white hover:bg-navy-900 transition-colors"
+          >
+            Table Grid View
+          </Link>
+        </div>
       </div>
 
       {loading ? (
@@ -65,6 +137,8 @@ export default function PipelinePage() {
             const aliases: Record<string, string[]> = {
               new_lead: ["new_lead", "new"],
               site_survey_scheduled: ["site_survey_scheduled", "survey_scheduled"],
+              site_survey_completed: ["site_survey_completed", "survey_completed"],
+              installation_completed: ["installation_completed", "completed"],
             };
             const accepted = aliases[st.key] || [st.key];
             const stageLeads = leads.filter((l) => accepted.includes(l.stage));
@@ -117,7 +191,9 @@ export default function PipelinePage() {
 
                         <div className="flex items-center gap-1 text-[11px] text-slate-muted">
                           <MapPin className="w-3 h-3 text-solar-green shrink-0" />
-                          <span className="truncate">{lead.city}, {lead.state}</span>
+                          <span className="truncate">
+                            {lead.city ? `${lead.city}, ` : ""}{lead.state}
+                          </span>
                         </div>
 
                         <div className="text-[11px] font-medium text-navy-800 bg-slate-bg p-2 rounded-lg truncate">
