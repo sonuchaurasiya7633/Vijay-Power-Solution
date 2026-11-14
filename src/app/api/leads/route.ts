@@ -10,6 +10,7 @@ import { hasPermission } from "@/lib/auth/permissions";
 import { sendEmail } from "@/lib/email/mailer";
 import { escapeHtml, escapeRegex, isValidObjectId } from "@/lib/security/sanitize";
 import { checkRateLimit, getClientIp, rateLimitResponse } from "@/lib/security/rate-limit";
+import { createAndBroadcastNotification } from "@/lib/firebase/admin";
 
 export const dynamic = "force-dynamic";
 
@@ -60,6 +61,16 @@ export async function POST(req: NextRequest) {
         description: `Customer submitted additional enquiry: "${data.message || 'No message'}" for ${data.solarSolutionType || 'general solar consultation'}.`,
         metadata: { enquiryType: data.enquiryType, solution: data.solarSolutionType },
       });
+
+      // Send in-app & push notification to admins
+      createAndBroadcastNotification({
+        title: `Updated Solar Enquiry: ${data.fullName}`,
+        body: `Customer submitted additional enquiry from ${data.city || ""}, ${data.state}: "${data.message || data.solarSolutionType || 'Solar Enquiry'}" (${existingLead.leadId})`,
+        type: "lead",
+        link: `/admin/leads/${existingLead._id}`,
+        leadId: existingLead._id,
+        metadata: { leadId: existingLead.leadId, isDuplicate: true },
+      }).catch((e) => console.warn("Notification broadcast notice:", e));
 
       return NextResponse.json({
         success: true,
@@ -142,6 +153,23 @@ export async function POST(req: NextRequest) {
         <p>Please log in to the VIJOY POWER SOLUTION Admin CRM to review and assign this lead.</p>
       `,
     }).catch((err) => console.error("Notification email error:", err));
+
+    // Trigger real-time Firebase FCM Web Push and MongoDB Notification history
+    createAndBroadcastNotification({
+      title: `New Solar Enquiry: ${newLead.fullName}`,
+      body: `${newLead.city ? `${newLead.city}, ` : ""}${newLead.state} • ${newLead.solarSolutionType || newLead.productName || "General Solar"} (${newLead.leadId})`,
+      type: "lead",
+      link: `/admin/leads/${newLead._id}`,
+      leadId: newLead._id,
+      metadata: {
+        leadId: newLead.leadId,
+        customerName: newLead.fullName,
+        phone: newLead.phone,
+        city: newLead.city,
+        state: newLead.state,
+        customerType: newLead.customerType,
+      },
+    }).catch((notifErr) => console.warn("Notification broadcast notice:", notifErr));
 
     return NextResponse.json({
       success: true,

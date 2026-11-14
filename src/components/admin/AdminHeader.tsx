@@ -10,6 +10,7 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
 } from "lucide-react";
+import AdminNotificationBell from "./AdminNotificationBell";
 
 interface AdminHeaderProps {
   userName?: string;
@@ -121,8 +122,10 @@ export default function AdminHeader({
         </div>
       </div>
 
-      {/* Right: View Live Website + User Avatar */}
-      <div className="flex items-center gap-3 shrink-0">
+      {/* Right: Notifications Bell + View Live Website + User Avatar */}
+      <div className="flex items-center gap-2.5 shrink-0">
+        <AdminNotificationBell />
+
         <Link
           href="/"
           target="_blank"
