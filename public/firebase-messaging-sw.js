@@ -31,9 +31,10 @@ try {
       icon: "/images/logo.png",
       badge: "/images/logo.png",
       tag: payload.data?.leadId || "vps-solar-lead",
+      silent: false,
       renotify: true,
       requireInteraction: true,
-      vibrate: [200, 100, 200],
+      vibrate: [200, 100, 200, 100, 200],
       data: {
         link: link,
         leadId: payload.data?.leadId,
