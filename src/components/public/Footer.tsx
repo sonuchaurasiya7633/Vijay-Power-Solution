@@ -389,26 +389,7 @@ export default async function Footer({
             <p>{copyrightText}</p>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
-            <LanguageSwitcher variant="footer" className="mr-1" />
-            <span className="hidden sm:inline text-white/20" aria-hidden="true">•</span>
-            {legalLinks.map((item, idx) => (
-              <div key={item.href} className="inline-flex items-center gap-3 sm:gap-4">
-                {idx > 0 && (
-                  <>
-                    <span className="md:hidden text-solar-green/70" aria-hidden="true">|</span>
-                    <span className="hidden md:inline text-solar-yellow" aria-hidden="true">•</span>
-                  </>
-                )}
-                <Link
-                  href={item.href}
-                  className="hover:text-white transition-colors whitespace-nowrap"
-                >
-                  {item.label}
-                </Link>
-              </div>
-            ))}
-          </div>
+          
         </div>
       </div>
     </footer>
