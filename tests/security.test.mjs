@@ -61,6 +61,13 @@ test("Security: Auth login rate limiting and deactivated account revocation", ()
 
   const meSrc = readSrc("src/app/api/auth/me/route.ts");
   assert.ok(meSrc.includes("isActive"), "/api/auth/me must verify active user state in DB");
+
+  const changePwdSrc = readSrc("src/app/api/auth/change-password/route.ts");
+  assert.ok(changePwdSrc.includes("getSession()"), "Change password must verify session");
+  assert.ok(changePwdSrc.includes("comparePassword("), "Change password must verify current password");
+  assert.ok(changePwdSrc.includes("hashPassword("), "Change password must hash new password");
+  assert.ok(changePwdSrc.includes("newPassword.length < 8"), "Change password must enforce 8+ chars");
+  assert.ok(changePwdSrc.includes("checkRateLimit("), "Change password must enforce rate limiting");
 });
 
 test("Security: Privilege escalation blocked in Team management routes", () => {

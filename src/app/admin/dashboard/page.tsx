@@ -14,6 +14,7 @@ import {
   Calendar,
 } from "lucide-react";
 import connectDB from "@/lib/db/connection";
+import "@/models/User";
 import Lead from "@/models/Lead";
 import FollowUp from "@/models/FollowUp";
 import SiteSurvey from "@/models/SiteSurvey";
@@ -67,7 +68,7 @@ export default async function AdminDashboardPage() {
 
     const now = new Date();
     const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
+    const startOfWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay());
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
     const [
@@ -88,13 +89,13 @@ export default async function AdminDashboardPage() {
       rLeads,
       sBreakdown,
     ] = await Promise.all([
-      Lead.countDocuments({ isArchived: false }),
-      Lead.countDocuments({ createdAt: { $gte: startOfToday }, isArchived: false }),
-      Lead.countDocuments({ createdAt: { $gte: startOfWeek }, isArchived: false }),
-      Lead.countDocuments({ createdAt: { $gte: startOfMonth }, isArchived: false }),
-      Lead.countDocuments({ stage: "new_lead", isArchived: false }),
-      Lead.countDocuments({ stage: "won", isArchived: false }),
-      Lead.countDocuments({ stage: { $in: ["lost", "not_interested"] }, isArchived: false }),
+      Lead.countDocuments({ isArchived: { $ne: true } }),
+      Lead.countDocuments({ createdAt: { $gte: startOfToday }, isArchived: { $ne: true } }),
+      Lead.countDocuments({ createdAt: { $gte: startOfWeek }, isArchived: { $ne: true } }),
+      Lead.countDocuments({ createdAt: { $gte: startOfMonth }, isArchived: { $ne: true } }),
+      Lead.countDocuments({ stage: { $in: ["new_lead", "new"] }, isArchived: { $ne: true } }),
+      Lead.countDocuments({ stage: "won", isArchived: { $ne: true } }),
+      Lead.countDocuments({ stage: { $in: ["lost", "not_interested"] }, isArchived: { $ne: true } }),
       FollowUp.countDocuments({ status: { $in: ["pending", "due_today", "overdue"] } }),
       SiteSurvey.countDocuments({ status: { $in: ["requested", "scheduled", "assigned"] } }),
       InstallationJob.countDocuments({
@@ -104,13 +105,13 @@ export default async function AdminDashboardPage() {
       SolarProduct.countDocuments({ isPublished: true }),
       InstallationGallery.countDocuments({ isPublished: true }),
       Page.countDocuments(),
-      Lead.find({ isArchived: false })
+      Lead.find({ isArchived: { $ne: true } })
         .sort({ createdAt: -1 })
         .limit(6)
         .populate("assignedTo", "name email")
         .lean(),
       Lead.aggregate([
-        { $match: { isArchived: false } },
+        { $match: { isArchived: { $ne: true } } },
         { $group: { _id: "$state", count: { $sum: 1 } } },
         { $sort: { count: -1 } },
       ]),
@@ -133,7 +134,7 @@ export default async function AdminDashboardPage() {
     recentLeads = rLeads;
     stateBreakdown = sBreakdown;
   } catch (err) {
-    console.warn("DB offline during build, using defaults");
+    console.error("[Dashboard Load Error]", err);
   }
 
   const cards = [
@@ -359,7 +360,7 @@ export default async function AdminDashboardPage() {
                   </td>
                   <td className="p-4">
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-solar-green-light text-solar-green uppercase">
-                      {l.stage.replace(/_/g, " ")}
+                      {(l.stage || "new_lead").replace(/_/g, " ")}
                     </span>
                   </td>
                   <td className="p-4">
