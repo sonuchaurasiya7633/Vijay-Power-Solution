@@ -16,6 +16,7 @@ import {
 import { formatDateIST } from "@/lib/utils/formatters";
 import { INDIAN_STATES_AND_UTS } from "@/lib/constants/states";
 import { AdminTableSkeleton } from "@/components/ui/SkeletonLoaders";
+import { stopRepeatingAlert } from "@/lib/utils/notificationSound";
 
 function LeadsCRMContent() {
   const searchParams = useSearchParams();
@@ -431,6 +432,7 @@ function LeadsCRMContent() {
                       <td className="p-4">
                         <Link
                           href={`/admin/leads/${l._id}`}
+                          onClick={() => stopRepeatingAlert()}
                           className="px-2.5 py-1 rounded-lg bg-navy-50 text-navy-800 hover:bg-navy-800 hover:text-white font-bold transition-colors inline-block"
                         >
                           View Profile

@@ -109,8 +109,11 @@ export default function AdminNotificationBell() {
         setNotifications(items);
         setUnreadCount(newUnread);
 
-        // Start repeating 2s pause alert chime if new unread notification arrives
-        if (hasHydratedRef.current && newUnread > prevUnreadRef.current) {
+        // If no unread notifications remain, automatically stop alert chime
+        if (newUnread === 0) {
+          stopRepeatingAlert();
+        } else if (hasHydratedRef.current && newUnread > prevUnreadRef.current) {
+          // Start repeating 2s pause alert chime when a new unread lead arrives
           startRepeatingAlert();
         }
 
@@ -135,11 +138,13 @@ export default function AdminNotificationBell() {
     const handleFocus = () => fetchNotifications(true);
     window.addEventListener("focus", handleFocus);
     document.addEventListener("visibilitychange", handleFocus);
+    window.addEventListener("vps:notification_sync", handleFocus);
 
     return () => {
       clearInterval(interval);
       window.removeEventListener("focus", handleFocus);
       document.removeEventListener("visibilitychange", handleFocus);
+      window.removeEventListener("vps:notification_sync", handleFocus);
     };
   }, [fetchNotifications]);
 

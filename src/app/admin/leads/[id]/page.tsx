@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { formatDateIST, formatDateTimeIST } from "@/lib/utils/formatters";
 import { SolarPanelLoader } from "@/components/ui/SolarLoader";
+import { stopRepeatingAlert } from "@/lib/utils/notificationSound";
 
 export default function LeadDetailPage() {
   const { id } = useParams() as { id: string };
@@ -46,7 +47,12 @@ export default function LeadDetailPage() {
   }, [id]);
 
   useEffect(() => {
+    // When viewing lead details, silence repeating alarm and sync notifications
+    stopRepeatingAlert();
     fetchDetail();
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("vps:notification_sync"));
+    }
   }, [fetchDetail]);
 
   const handleStageChange = async (newStage: string) => {
@@ -58,8 +64,12 @@ export default function LeadDetailPage() {
         body: JSON.stringify({ stage: newStage }),
       });
       if (res.ok) {
+        stopRepeatingAlert();
         toast.updated("Updated successfully!", `Pipeline stage moved to "${newStage.replace(/_/g, " ")}".`);
         fetchDetail();
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("vps:notification_sync"));
+        }
       } else {
         const d = await res.json().catch(() => ({}));
         toast.error(d.error || "Failed to update pipeline stage");
@@ -80,8 +90,12 @@ export default function LeadDetailPage() {
         body: JSON.stringify({ priority: newPriority }),
       });
       if (res.ok) {
+        stopRepeatingAlert();
         toast.updated("Updated successfully!", `Lead priority set to "${newPriority.toUpperCase()}".`);
         fetchDetail();
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("vps:notification_sync"));
+        }
       } else {
         const d = await res.json().catch(() => ({}));
         toast.error(d.error || "Failed to update priority");

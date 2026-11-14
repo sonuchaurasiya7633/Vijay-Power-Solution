@@ -5,6 +5,7 @@ import LeadActivity from "@/models/LeadActivity";
 import FollowUp from "@/models/FollowUp";
 import SiteSurvey from "@/models/SiteSurvey";
 import Quotation from "@/models/Quotation";
+import Notification from "@/models/Notification";
 import "@/models/User";
 import "@/models/SolarProduct";
 import { getSession } from "@/lib/auth/session";
@@ -69,6 +70,12 @@ export async function GET(
     if (!lead) {
       return NextResponse.json({ error: "Lead not found" }, { status: 404 });
     }
+
+    // Automatically mark all related unread notifications as read when the lead is viewed
+    Notification.updateMany(
+      { leadId: lead._id, isRead: false },
+      { $set: { isRead: true, readAt: new Date() } }
+    ).catch((err) => console.warn("Auto-read notification error on view:", err));
 
     if (
       session.role === "sales_executive" &&
@@ -137,6 +144,12 @@ export async function PATCH(
     if (!lead) {
       return NextResponse.json({ error: "Lead not found" }, { status: 404 });
     }
+
+    // Automatically mark all related unread notifications as read when the lead is viewed
+    Notification.updateMany(
+      { leadId: lead._id, isRead: false },
+      { $set: { isRead: true, readAt: new Date() } }
+    ).catch((err) => console.warn("Auto-read notification error on view:", err));
 
     if (
       session.role === "sales_executive" &&
@@ -234,6 +247,12 @@ export async function PATCH(
     }
 
     await lead.save();
+
+    // Automatically mark all related unread notifications as read when stage or status is updated
+    Notification.updateMany(
+      { leadId: lead._id, isRead: false },
+      { $set: { isRead: true, readAt: new Date() } }
+    ).catch((err) => console.warn("Auto-read notification error on status change:", err));
 
     return NextResponse.json({ success: true, lead });
   } catch (error) {

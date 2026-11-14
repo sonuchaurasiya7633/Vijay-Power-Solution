@@ -66,3 +66,22 @@ test('Notifications: Lead capture endpoint triggers notification creation', asyn
   assert.ok(leadsRoute.includes('createAndBroadcastNotification'));
   assert.ok(leadsRoute.includes('New Solar Enquiry:'));
 });
+
+test('Notifications: Lead view and status change automatically marks notification as read', async () => {
+  const fs = await import('node:fs/promises');
+  const leadDetailRoute = await fs.readFile('src/app/api/leads/[id]/route.ts', 'utf-8');
+  const notifRoute = await fs.readFile('src/app/api/admin/notifications/route.ts', 'utf-8');
+
+  assert.ok(leadDetailRoute.includes('Notification.updateMany'));
+  assert.ok(notifRoute.includes('body.leadId'));
+});
+
+test('Notifications: Audio alert utility exports repeating 2s alarm functions', async () => {
+  const fs = await import('node:fs/promises');
+  const soundUtil = await fs.readFile('src/lib/utils/notificationSound.ts', 'utf-8');
+
+  assert.ok(soundUtil.includes('startRepeatingAlert'));
+  assert.ok(soundUtil.includes('stopRepeatingAlert'));
+  assert.ok(soundUtil.includes('isAlertRinging'));
+  assert.ok(soundUtil.includes('2650'));
+});

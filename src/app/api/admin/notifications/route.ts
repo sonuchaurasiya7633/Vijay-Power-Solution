@@ -53,6 +53,17 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ success: true, message: "All notifications marked as read." });
     }
 
+    if (body.leadId) {
+      if (!isValidObjectId(body.leadId)) {
+        return NextResponse.json({ error: "Invalid lead ID" }, { status: 400 });
+      }
+      await Notification.updateMany(
+        { leadId: body.leadId, isRead: false },
+        { $set: { isRead: true, readAt: new Date() } }
+      );
+      return NextResponse.json({ success: true, message: "Lead notifications marked as read." });
+    }
+
     if (body.id) {
       if (!isValidObjectId(body.id)) {
         return NextResponse.json({ error: "Invalid notification ID" }, { status: 400 });
