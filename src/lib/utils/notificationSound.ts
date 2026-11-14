@@ -1,6 +1,11 @@
 let audioContext: AudioContext | null = null;
 let isAudioUnlocked = false;
 
+let alertIntervalId: any = null;
+let alertIterationCount = 0;
+const MAX_ALERT_ITERATIONS = 40; // Max ~1.5 minutes if unacknowledged
+let onAlertStateChangeCallbacks: Array<(ringing: boolean) => void> = [];
+
 /**
  * Initializes and unlocks AudioContext on first user interaction to satisfy browser autoplay policies
  */
@@ -39,6 +44,28 @@ export function isSoundEnabled(): boolean {
 export function setSoundEnabled(enabled: boolean) {
   if (typeof window === "undefined") return;
   localStorage.setItem("vps_notif_sound_enabled", String(enabled));
+  if (!enabled) {
+    stopRepeatingAlert();
+  }
+}
+
+export function isAlertRinging(): boolean {
+  return alertIntervalId !== null;
+}
+
+export function subscribeAlertState(cb: (ringing: boolean) => void) {
+  onAlertStateChangeCallbacks.push(cb);
+  return () => {
+    onAlertStateChangeCallbacks = onAlertStateChangeCallbacks.filter((c) => c !== cb);
+  };
+}
+
+function notifyAlertState(ringing: boolean) {
+  onAlertStateChangeCallbacks.forEach((cb) => {
+    try {
+      cb(ringing);
+    } catch {}
+  });
 }
 
 /**
@@ -105,4 +132,48 @@ export function playNotificationSound() {
   } catch (fallbackErr) {
     console.warn("Audio element error:", fallbackErr);
   }
+}
+
+/**
+ * Starts a repeating chime alert with a 2-second pause between chimes.
+ * Continues ringing until stopRepeatingAlert() is called or user acknowledges.
+ */
+export function startRepeatingAlert() {
+  if (typeof window === "undefined") return;
+  if (!isSoundEnabled()) return;
+
+  unlockAudioContext();
+
+  // Stop any existing loop first
+  stopRepeatingAlert();
+
+  alertIterationCount = 0;
+
+  // Play immediately for turn 1
+  playNotificationSound();
+  alertIterationCount++;
+  notifyAlertState(true);
+
+  // Each chime lasts ~0.65s + 2s pause = 2.65s (2650ms) interval
+  // Ensures exact 2-second pause between sounds as requested
+  alertIntervalId = setInterval(() => {
+    if (!isSoundEnabled() || alertIterationCount >= MAX_ALERT_ITERATIONS) {
+      stopRepeatingAlert();
+      return;
+    }
+    playNotificationSound();
+    alertIterationCount++;
+  }, 2650);
+}
+
+/**
+ * Stops the repeating chime alert
+ */
+export function stopRepeatingAlert() {
+  if (alertIntervalId) {
+    clearInterval(alertIntervalId);
+    alertIntervalId = null;
+  }
+  alertIterationCount = 0;
+  notifyAlertState(false);
 }

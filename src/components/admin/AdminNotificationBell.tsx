@@ -18,11 +18,16 @@ import {
   Volume2,
   VolumeX,
   Music,
+  Square,
 } from "lucide-react";
 import { toast } from "sonner";
 import { requestPushPermissionAndToken, subscribeForegroundMessages } from "@/lib/firebase/client";
 import {
   playNotificationSound,
+  startRepeatingAlert,
+  stopRepeatingAlert,
+  isAlertRinging,
+  subscribeAlertState,
   unlockAudioContext,
   isSoundEnabled,
   setSoundEnabled,
@@ -55,6 +60,7 @@ export default function AdminNotificationBell() {
   const [isRequestingPerm, setIsRequestingPerm] = useState(false);
   const [isSendingTest, setIsSendingTest] = useState(false);
   const [soundActive, setSoundActive] = useState(true);
+  const [ringing, setRinging] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const prevUnreadRef = useRef<number>(0);
@@ -67,6 +73,12 @@ export default function AdminNotificationBell() {
         setPermissionState(Notification.permission);
       }
       setSoundActive(isSoundEnabled());
+      setRinging(isAlertRinging());
+
+      // Subscribe to alert sound ringing state changes
+      const unsubscribeAlert = subscribeAlertState((isRinging) => {
+        setRinging(isRinging);
+      });
 
       // Unlock Web Audio context on first user click or touch anywhere on the page
       const handleUserGesture = () => {
@@ -76,6 +88,7 @@ export default function AdminNotificationBell() {
       window.addEventListener("touchstart", handleUserGesture, { once: true });
 
       return () => {
+        unsubscribeAlert();
         window.removeEventListener("click", handleUserGesture);
         window.removeEventListener("touchstart", handleUserGesture);
       };
@@ -96,9 +109,9 @@ export default function AdminNotificationBell() {
         setNotifications(items);
         setUnreadCount(newUnread);
 
-        // Play chime if new unread notifications arrived while active
+        // Start repeating 2s pause alert chime if new unread notification arrives
         if (hasHydratedRef.current && newUnread > prevUnreadRef.current) {
-          playNotificationSound();
+          startRepeatingAlert();
         }
 
         prevUnreadRef.current = newUnread;
@@ -109,7 +122,7 @@ export default function AdminNotificationBell() {
     }
   }, []);
 
-  // Initial fetch and 10s auto-polling
+  // Initial fetch and 10s auto-polling across any admin page
   useEffect(() => {
     fetchNotifications(false);
 
@@ -130,21 +143,23 @@ export default function AdminNotificationBell() {
     };
   }, [fetchNotifications]);
 
-  // Listen to foreground FCM push messages
+  // Listen to foreground FCM push messages across any admin page
   useEffect(() => {
     const unsubscribe = subscribeForegroundMessages((payload) => {
-      // 1. Play audible chime immediately
-      playNotificationSound();
+      // 1. Start continuous repeating alert (every 2 sec pause) until acknowledged
+      startRepeatingAlert();
 
       // 2. Refresh notification list & counter
       fetchNotifications(true);
 
-      // 3. Show rich toast notification
+      // 3. Show rich toast notification with direct stop/view action
       toast.success(payload.title || "New Solar Lead!", {
-        description: payload.body || "A new customer inquiry was received.",
+        description: payload.body || "A new customer inquiry was received. Alert sounding every 2s.",
+        duration: 10000,
         action: {
           label: "View Lead",
           onClick: () => {
+            stopRepeatingAlert();
             if (payload.link) router.push(payload.link);
           },
         },
@@ -182,6 +197,7 @@ export default function AdminNotificationBell() {
       playNotificationSound();
       toast.success("Notification sound enabled");
     } else {
+      stopRepeatingAlert();
       toast.info("Notification sound muted");
     }
   };
@@ -203,7 +219,7 @@ export default function AdminNotificationBell() {
       if (result.permission === "granted") {
         playNotificationSound();
         toast.success("Push Notifications & Sound Enabled!", {
-          description: "You will receive instant push alerts with sound whenever a new solar lead arrives.",
+          description: "You will receive instant repeating push alerts with sound whenever a new solar lead arrives.",
         });
       } else if (result.permission === "denied") {
         toast.error("Notification permission denied", {
@@ -226,10 +242,14 @@ export default function AdminNotificationBell() {
       const res = await fetch("/api/admin/notifications/test", { method: "POST" });
       const data = await res.json();
       if (res.ok) {
-        // Play instant notification sound
-        playNotificationSound();
-        toast.success("Test notification & sound sent!", {
-          description: "Check your screen/notification center for the push notification.",
+        // Start repeating alert (every 2s pause) to test the flow
+        startRepeatingAlert();
+        toast.success("Test alert sounding every 2 seconds!", {
+          description: "Click 'Stop Alert' to silence.",
+          action: {
+            label: "Stop Sound",
+            onClick: () => stopRepeatingAlert(),
+          },
         });
         fetchNotifications(true);
       } else {
@@ -250,6 +270,11 @@ export default function AdminNotificationBell() {
       );
       setUnreadCount((c) => Math.max(0, c - 1));
 
+      // Stop repeating alert if no more unread notifications
+      if (unreadCount <= 1) {
+        stopRepeatingAlert();
+      }
+
       await fetch("/api/admin/notifications", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -262,6 +287,7 @@ export default function AdminNotificationBell() {
 
   const handleMarkAllAsRead = async () => {
     try {
+      stopRepeatingAlert();
       setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
       setUnreadCount(0);
 
@@ -303,6 +329,7 @@ export default function AdminNotificationBell() {
 
   const handleNotificationClick = (item: NotificationItem) => {
     unlockAudioContext();
+    stopRepeatingAlert();
     if (!item.isRead) {
       handleMarkAsRead(item._id);
     }
@@ -328,7 +355,28 @@ export default function AdminNotificationBell() {
   };
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative flex items-center gap-2" ref={dropdownRef}>
+      {/* Repeating Sound Alert Pill (Visible on ANY admin page when new lead arrives) */}
+      {ringing && (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            stopRepeatingAlert();
+            toast.info("Alert chime silenced");
+          }}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-md animate-pulse cursor-pointer shrink-0 transition-transform active:scale-95"
+          title="New lead alert repeating every 2 seconds - Click to stop"
+        >
+          <Volume2 className="w-3.5 h-3.5 animate-bounce" />
+          <span className="hidden sm:inline">Lead Alert Ringing (2s)</span>
+          <span className="bg-black/25 hover:bg-black/40 px-1.5 py-0.5 rounded text-[10px] inline-flex items-center gap-1">
+            <Square className="w-2.5 h-2.5 fill-current" />
+            <span>Stop</span>
+          </span>
+        </button>
+      )}
+
       {/* Bell Button */}
       <button
         type="button"
@@ -336,7 +384,9 @@ export default function AdminNotificationBell() {
           unlockAudioContext();
           setIsOpen(!isOpen);
         }}
-        className="relative w-9 h-9 rounded-xl border border-slate-border bg-white text-navy-800 hover:bg-slate-50 flex items-center justify-center transition-all shadow-2xs cursor-pointer group"
+        className={`relative w-9 h-9 rounded-xl border border-slate-border bg-white text-navy-800 hover:bg-slate-50 flex items-center justify-center transition-all shadow-2xs cursor-pointer group ${
+          ringing ? "ring-2 ring-amber-500 animate-bounce" : ""
+        }`}
         aria-label="View notifications"
         title="Admin Notifications"
       >
@@ -351,7 +401,24 @@ export default function AdminNotificationBell() {
 
       {/* Dropdown Panel */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-[min(94vw,420px)] bg-white rounded-2xl border border-slate-border shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+        <div className="absolute right-0 top-full mt-2 w-[min(94vw,430px)] bg-white rounded-2xl border border-slate-border shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+          {/* Active Sound Ringing Alert Banner */}
+          {ringing && (
+            <div className="p-3 bg-gradient-to-r from-amber-500 to-amber-600 text-white flex items-center justify-between text-xs font-bold shadow-sm">
+              <div className="flex items-center gap-2">
+                <Volume2 className="w-4 h-4 animate-bounce shrink-0" />
+                <span>New Lead Alert Sounding (every 2s)</span>
+              </div>
+              <button
+                type="button"
+                onClick={stopRepeatingAlert}
+                className="px-2.5 py-1 rounded-lg bg-black/20 hover:bg-black/40 text-white text-[11px] font-bold transition-colors cursor-pointer"
+              >
+                Stop Sound
+              </button>
+            </div>
+          )}
+
           {/* Header */}
           <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-bg/50">
             <div className="flex items-center gap-2">
@@ -372,7 +439,7 @@ export default function AdminNotificationBell() {
               <button
                 type="button"
                 onClick={handleToggleSound}
-                className={`p-1.5 rounded-lg text-xs font-medium transition-colors ${
+                className={`p-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
                   soundActive
                     ? "text-solar-green bg-solar-green-light hover:bg-solar-green/20"
                     : "text-slate-400 bg-slate-100 hover:text-navy-800"
@@ -386,7 +453,7 @@ export default function AdminNotificationBell() {
                 <button
                   type="button"
                   onClick={handleMarkAllAsRead}
-                  className="p-1.5 rounded-lg text-slate-400 hover:text-solar-green hover:bg-white text-xs font-medium transition-colors"
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-solar-green hover:bg-white text-xs font-medium transition-colors cursor-pointer"
                   title="Mark all as read"
                 >
                   <CheckCheck className="w-4 h-4" />
@@ -396,7 +463,7 @@ export default function AdminNotificationBell() {
                 <button
                   type="button"
                   onClick={handleClearRead}
-                  className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-white text-xs font-medium transition-colors"
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-white text-xs font-medium transition-colors cursor-pointer"
                   title="Clear read notifications"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -405,7 +472,7 @@ export default function AdminNotificationBell() {
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-navy-800 hover:bg-white transition-colors"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-navy-800 hover:bg-white transition-colors cursor-pointer"
                 title="Close"
               >
                 <X className="w-4 h-4" />
@@ -459,10 +526,10 @@ export default function AdminNotificationBell() {
                   onClick={handleSendTestPush}
                   disabled={isSendingTest}
                   className="px-2 py-0.5 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-navy-800 font-bold text-[10px] inline-flex items-center gap-1 transition-colors cursor-pointer disabled:opacity-50"
-                  title="Send a live test notification to verify push delivery"
+                  title="Send a live test notification that rings every 2 seconds"
                 >
                   <Send className="w-2.5 h-2.5 text-solar-green" />
-                  <span>{isSendingTest ? "Sending..." : "Test Push"}</span>
+                  <span>{isSendingTest ? "Sending..." : "Test Alert (2s)"}</span>
                 </button>
               )}
             </div>
@@ -475,7 +542,7 @@ export default function AdminNotificationBell() {
                 <Bell className="w-8 h-8 text-slate-300 mx-auto" />
                 <p className="text-xs font-bold text-navy-800">No notifications yet</p>
                 <p className="text-[11px] text-slate-muted">
-                  New customer inquiries and survey requests will appear here automatically with sound alerts.
+                  New customer inquiries and survey requests will appear here automatically with repeating sound alerts.
                 </p>
               </div>
             ) : (
@@ -541,7 +608,7 @@ export default function AdminNotificationBell() {
                       <button
                         type="button"
                         onClick={(e) => handleMarkAsRead(item._id, e)}
-                        className="w-5 h-5 rounded hover:bg-slate-200 text-slate-400 hover:text-solar-green flex items-center justify-center transition-colors"
+                        className="w-5 h-5 rounded hover:bg-slate-200 text-slate-400 hover:text-solar-green flex items-center justify-center transition-colors cursor-pointer"
                         title="Mark as read"
                       >
                         <CheckCheck className="w-3.5 h-3.5" />
@@ -550,7 +617,7 @@ export default function AdminNotificationBell() {
                     <button
                       type="button"
                       onClick={(e) => handleDelete(item._id, e)}
-                      className="w-5 h-5 rounded hover:bg-rose-50 text-slate-300 hover:text-rose-500 flex items-center justify-center transition-colors"
+                      className="w-5 h-5 rounded hover:bg-rose-50 text-slate-300 hover:text-rose-500 flex items-center justify-center transition-colors cursor-pointer"
                       title="Delete notification"
                     >
                       <Trash2 className="w-3 h-3" />
@@ -565,13 +632,16 @@ export default function AdminNotificationBell() {
           <div className="p-3 border-t border-slate-100 bg-slate-bg/40 flex items-center justify-between text-xs">
             <Link
               href="/admin/leads"
-              onClick={() => setIsOpen(false)}
+              onClick={() => {
+                stopRepeatingAlert();
+                setIsOpen(false);
+              }}
               className="text-[11px] font-bold text-solar-green hover:underline flex items-center gap-1"
             >
               <span>View Inbound Leads</span>
               <ExternalLink className="w-3 h-3" />
             </Link>
-            <span className="text-[10px] text-slate-400">Firebase FCM &bull; Audio Chime Active</span>
+            <span className="text-[10px] text-slate-400">Repeating 2s Chime Alert</span>
           </div>
         </div>
       )}
