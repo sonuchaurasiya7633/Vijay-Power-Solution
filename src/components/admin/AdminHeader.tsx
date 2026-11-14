@@ -76,27 +76,27 @@ export default function AdminHeader({
       : "Executive Dashboard";
 
   return (
-    <header className="h-16 bg-white border-b border-slate-border px-4 sm:px-6 flex items-center justify-between shrink-0 shadow-sm z-30">
-      {/* Left: Mobile Hamburger + Desktop Toggle + Breadcrumbs */}
-      <div className="flex items-center gap-3 min-w-0">
-        {/* Mobile Hamburger Button */}
+    <header className="h-16 bg-white border-b border-slate-border px-3 sm:px-6 flex items-center justify-between shrink-0 shadow-sm z-30">
+      {/* Left: Single Toggle Button (Mobile Hamburger / Desktop Collapse) + Breadcrumbs */}
+      <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+        {/* Mobile Hamburger Button (lg:hidden) */}
         {setMobileOpen && (
           <button
             type="button"
             onClick={() => setMobileOpen(true)}
-            className="lg:hidden w-10 h-10 rounded-xl bg-slate-50 border border-slate-border text-navy-800 flex items-center justify-center hover:bg-slate-100 transition-colors"
+            className="lg:hidden w-9 h-9 rounded-xl bg-slate-50 border border-slate-border text-navy-800 flex items-center justify-center hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
             aria-label="Open sidebar menu"
           >
-            <Menu className="w-5 h-5" />
+            <Menu className="w-4 h-4" />
           </button>
         )}
 
-        {/* Desktop Collapse Toggle */}
+        {/* Desktop Single Collapse Toggle (hidden lg:flex) */}
         {setCollapsed && (
           <button
             type="button"
             onClick={() => setCollapsed(!collapsed)}
-            className="hidden lg:flex w-9 h-9 rounded-xl text-slate-400 hover:text-navy-800 hover:bg-slate-100 items-center justify-center transition-colors"
+            className="hidden lg:flex w-9 h-9 rounded-xl border border-slate-border/60 text-slate-500 hover:text-navy-800 hover:bg-slate-100 items-center justify-center transition-colors cursor-pointer shrink-0"
             title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
             {collapsed ? (
@@ -116,27 +116,28 @@ export default function AdminHeader({
             Admin
           </Link>
           <ChevronRight className="w-3.5 h-3.5 text-slate-300 hidden sm:inline shrink-0" />
-          <h1 className="text-sm font-bold text-navy-800 capitalize font-display truncate">
+          <h1 className="text-xs sm:text-sm font-bold text-navy-800 capitalize font-display truncate max-w-[130px] xs:max-w-[200px] sm:max-w-none">
             {pageTitle}
           </h1>
         </div>
       </div>
 
       {/* Right: Notifications Bell + View Live Website + User Avatar */}
-      <div className="flex items-center gap-2.5 shrink-0">
+      <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
         <AdminNotificationBell />
 
         <Link
           href="/"
           target="_blank"
-          className="text-xs font-bold text-navy-800 hover:text-solar-green flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-border hover:bg-slate-50 transition-colors shadow-2xs"
+          className="text-xs font-bold text-navy-800 hover:text-solar-green flex items-center gap-1.5 p-2 sm:px-3 sm:py-1.5 rounded-xl border border-slate-border hover:bg-slate-50 transition-colors shadow-2xs"
+          title="View Public Website"
         >
-          <span className="hidden sm:inline">View Public Website</span>
-          <span className="sm:hidden">Live Site</span>
+          <span className="hidden md:inline">View Public Website</span>
+          <span className="hidden sm:inline md:hidden">Live Site</span>
           <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
         </Link>
 
-        <div className="flex items-center gap-2 pl-2 border-l border-slate-200">
+        <div className="flex items-center gap-2 pl-1.5 sm:pl-2 border-l border-slate-200">
           <div className="w-8 h-8 rounded-xl bg-solar-green-light text-solar-green flex items-center justify-center font-bold text-xs shadow-2xs shrink-0">
             {userName.slice(0, 1).toUpperCase()}
           </div>

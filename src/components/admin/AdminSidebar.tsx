@@ -37,8 +37,6 @@ import {
   ChevronLeft,
   Menu,
   X,
-  PanelLeftClose,
-  PanelLeftOpen,
 } from "lucide-react";
 
 interface AdminSidebarProps {
@@ -144,10 +142,15 @@ export default function AdminSidebar({
       }`}
     >
       {/* Brand Header */}
-      <div className="h-16 px-4 border-b border-navy-700 flex items-center justify-between shrink-0">
+      <div
+        className={`h-16 px-4 border-b border-navy-700 flex items-center ${
+          collapsed ? "lg:justify-center" : "justify-between"
+        } shrink-0`}
+      >
         <Link
           href="/admin/dashboard"
           className="flex items-center gap-2.5 overflow-hidden group"
+          title={collapsed ? "VIJOY POWER SOLUTION - Admin Dashboard" : undefined}
         >
           <div className="relative w-9 h-9 rounded-xl overflow-hidden bg-white/10 p-0.5 border border-white/20 shrink-0 shadow-sm">
             <Image src="/images/logo.png" alt="VPS Logo" fill className="object-contain" priority />
@@ -164,28 +167,12 @@ export default function AdminSidebar({
           )}
         </Link>
 
-        {/* Desktop Collapse Button */}
-        {setCollapsed && (
-          <button
-            type="button"
-            onClick={() => setCollapsed(!collapsed)}
-            className="hidden lg:flex w-8 h-8 rounded-lg text-slate-300 hover:text-white hover:bg-navy-700 items-center justify-center transition-colors"
-            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          >
-            {collapsed ? (
-              <PanelLeftOpen className="w-4 h-4 text-solar-yellow" />
-            ) : (
-              <PanelLeftClose className="w-4 h-4" />
-            )}
-          </button>
-        )}
-
-        {/* Mobile Close Button */}
+        {/* Mobile Close Button (Mobile drawer only) */}
         {setMobileOpen && (
           <button
             type="button"
             onClick={() => setMobileOpen(false)}
-            className="lg:hidden w-8 h-8 rounded-lg text-slate-300 hover:text-white hover:bg-navy-700 flex items-center justify-center"
+            className="lg:hidden w-8 h-8 rounded-lg text-slate-300 hover:text-white hover:bg-navy-700 flex items-center justify-center cursor-pointer transition-colors"
             aria-label="Close sidebar"
           >
             <X className="w-5 h-5" />
